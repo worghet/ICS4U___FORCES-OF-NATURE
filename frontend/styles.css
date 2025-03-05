@@ -1,0 +1,27 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.game-window {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 15px solid black;
+    width: 1100px;
+    height: 500px;
+    background-color: lightgray;
+}
+
+.box {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    top: 0px;
+    left: 0px;
+}
