@@ -17,8 +17,8 @@ const Y = 1;
 
 const MAX_VELOCITY = 10;  // max speed (in any direction)
 const ACCELERATION = 0.8; // acceleration rate (how fast something accelerates)
-const FRICTION = 0.7; // reduces velocity when no key is pressed
-const GRAVITY = 0.4; // gravity pulls the player down
+const FRICTION = 0.55; // reduces velocity when no key is pressed
+const GRAVITY = 0.55; // gravity pulls the player down
 const JUMP_FORCE = 12; // how strong the jump is (capped by max-velocity)
 const GROUND_Y = 400; // y-position where the ground is (will set accoring to maps)
 
@@ -149,7 +149,7 @@ function intToPx(int_px) {
 
 function updatePosition() {
 
-    // CHECK PRESSED KEYS
+    // CHECK PRESSED KEYS (MANAGE ACCELERATION)
 
     // if going left or right, change the acceleration; this acceleration will impact velocity later
     if (keys_pressed.left) {
@@ -164,7 +164,7 @@ function updatePosition() {
     
 
 
-    // CHECK THAT NO KEY IS PRESSED (friction)
+    // CHECK THAT NO KEY IS PRESSED (APPLY FRICTION)
 
     // not moving horizontally
     if (!keys_pressed.left && !keys_pressed.right) {
@@ -173,7 +173,7 @@ function updatePosition() {
 
     // we dont need to check vertical movement cuz gravity got that
 
-    // LIMIT VELOCITIES TO MAXIMUM
+    // LIMIT VELOCITIES TO MAXIMUM (LIMITVELOCITIES())
 
     // if x velocity is out of the max range, limit it
     if (velocity[X] > MAX_VELOCITY) {
@@ -191,13 +191,13 @@ function updatePosition() {
         velocity[Y] = -MAX_VELOCITY;
     }
 
-    // UPDATE POSITION
+    // UPDATE POSITION VARIABLE 
 
     // update position based on velocity
     position[X] += velocity[X];
     position[Y] += velocity[Y];
 
-    // CHECK COLLISION WITH GROUND
+    // CHECK COLLISION WITH GROUND 
     
     if (position[Y] >= GROUND_Y) { // checkts that the player is ON the ground or BELOW it
         position[Y] = GROUND_Y; // just clip the player ON the ground
@@ -205,8 +205,26 @@ function updatePosition() {
         numJumps = 0; // reset jumps
         // isInTheAir = false; again, won't need this yet
     }
+    if (position[Y] <= 0) {
+        position[Y] = 0;
+        velocity[Y] = 0;
+    }
 
-    // change the css to actually move the box on the screen
+    if (position[X] <= 0) { // can replace 0 and 1100 with wall pixels
+        velocity[X] = 0;
+        position[X] = 0;
+        // numJumps = 2; extra jump
+    }
+    else if (position[X] >= 1000) {
+        velocity[X] = 0;
+        position[X] = 1000;
+        // velocity[X] = -10; "wall jump effect"
+        // numJumps = 2; extra jump
+    }
+
+    // CHANGE CSS (THIS AND BELOW IS THE ONLY PART THAT WILL BE KEPT FROM JAVA TRANSFER) 
+
+    // change the css to actually move the box on the screen 
     box.style.left = intToPx(position[X]);
     box.style.top = intToPx(position[Y]);
 
