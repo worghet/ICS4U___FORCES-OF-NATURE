@@ -16,13 +16,13 @@ const Y = 1;
 // PHYSICS CONSTANTS (can change due if different characters)
 
 const MAX_VELOCITY = 10;  // max speed (in any direction)
-const MAX_CROUCH_VELOCITY = 4;
+const MAX_CROUCH_VELOCITY = 4; // increase this to make crouch to slide
 const CROUCH_FRICTION = 0.2;
 const CROUCH_GRAVITY = 15;
 const ACCELERATION = 0.8; // acceleration rate (how fast something accelerates)
 const FRICTION = 0.55; // reduces velocity when no key is pressed
-const GRAVITY = 0.55; // gravity pulls the player down
-const JUMP_FORCE = 12; // how strong the jump is (capped by max-velocity)
+const GRAVITY = 0.7; // gravity pulls the player down
+const JUMP_FORCE = 14; // how strong the jump is (capped by max-velocity)
 const GROUND_Y = 400; // y-position where the ground is (will set accoring to maps)
 const NUM_CONSECUTIVE_JUMPS = 3;
 
@@ -148,6 +148,7 @@ function intToPx(int_px) {
 // UPDATE POSITION (key (super important) looping method)
 
 function updatePosition() {
+    // *in reality this will GET user positions, sprites, and display them
 
     // CHECK PRESSED KEYS (MANAGE ACCELERATION)
 
@@ -187,6 +188,8 @@ function updatePosition() {
 
     // if x velocity is out of the max range, limit it
     if (isCrouching) {
+        
+        // comment this (or increase max crouch velocity) for sliding;
         if (velocity[X] > MAX_CROUCH_VELOCITY) {
             velocity[X] = MAX_CROUCH_VELOCITY;
         }
@@ -203,12 +206,13 @@ function updatePosition() {
             velocity[X] = -MAX_VELOCITY;
         }
 
-        if (velocity[Y] > MAX_VELOCITY) {
-            velocity[Y] = MAX_VELOCITY;
-        }
-        else if (velocity[Y] < -MAX_VELOCITY) {
-            velocity[Y] = -MAX_VELOCITY;
-        }
+        // by keeping this commented, jumping height wont be limited
+        // if (velocity[Y] > MAX_VELOCITY) {
+        //     velocity[Y] = MAX_VELOCITY;
+        // }
+        // else if (velocity[Y] < -MAX_VELOCITY) {
+        //     velocity[Y] = -MAX_VELOCITY;
+        // }
     }
 
     // do the same with y velocity (so that jumps dont get OP)
