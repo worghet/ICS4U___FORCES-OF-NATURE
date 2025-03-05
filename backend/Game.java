@@ -4,24 +4,35 @@ import java.util.ArrayList;
 
 public class Game {
     ArrayList<Player> players;
-    //Timer timer;
     boolean gameRunning = true; //whether or not game is active
     
 
     //constructor
     public Game(){
         this.players = new ArrayList<Player>();
-        //this.timer = new Timer();
+        
 
     }
 
+    //checks position, attack status (+implements attacks), of all players
     public void performLoop(){
         for(int i = 0; i< players.size(); i++){
-            players.get(i).updatePosition();//checks if player has moved, updates
+
+            Player temp = players.get(i);
+            temp.updatePosition();//checks if player has moved, updates
+
+            //if player is long range attacking, creates projectile
+            if(temp.isLongAttack()){
+                Projectile shot = new Projectile(temp);//inputs player obj that attacked to get x,y, & type (ex. Welder)
+                while(shot.getIsMoving()){
+                    shot.somethingHit();
+
+                }
+                
+            }
          
             
         }
-
     }
 
     public void resetGame(){
