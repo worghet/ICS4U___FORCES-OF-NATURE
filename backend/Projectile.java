@@ -13,18 +13,19 @@ public class Projectile {
         this.position = player.getPosition();
         this.direction = player.getDirection();
         this.isMoving = true;
+        player.setAttackCooldown(player.MAX_ATTACK_COOLDOWN);
 
     }
 
     //skeleton right now, 
-    public void somethingHit(ArrayList<Players> players){
+    public void somethingHit(ArrayList<Player> players){
         //check for collisions with players in arraylist in Game
         for(int i = 0; i< players.size(); i++){
             Player temp = players.get(i);
 
             //what happens if a player is hit by projectile
             if(Projectile.this.position == temp.getPosition()){
-                temp.loseLife();
+                temp.setLives(temp.getLives()-1);
                 Projectile.this.isMoving = false;
 
             }

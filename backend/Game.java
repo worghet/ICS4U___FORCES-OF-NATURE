@@ -19,7 +19,7 @@ public class Game {
         for(int i = 0; i< players.size(); i++){
 
             Player temp = players.get(i);
-            temp.updatePosition();//checks if player has moved, updates
+            temp.update();//checks if player has moved, updates
 
             //if player is long range attacking, creates projectile
             if(temp.isLongAttack()){
