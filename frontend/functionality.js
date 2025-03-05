@@ -16,11 +16,15 @@ const Y = 1;
 // PHYSICS CONSTANTS (can change due if different characters)
 
 const MAX_VELOCITY = 10;  // max speed (in any direction)
+const MAX_CROUCH_VELOCITY = 4;
+const CROUCH_FRICTION = 0.2;
+const CROUCH_GRAVITY = 15;
 const ACCELERATION = 0.8; // acceleration rate (how fast something accelerates)
 const FRICTION = 0.55; // reduces velocity when no key is pressed
 const GRAVITY = 0.55; // gravity pulls the player down
 const JUMP_FORCE = 12; // how strong the jump is (capped by max-velocity)
 const GROUND_Y = 400; // y-position where the ground is (will set accoring to maps)
+const NUM_CONSECUTIVE_JUMPS = 3;
 
 // PLAYER
 
@@ -44,6 +48,7 @@ var keys_pressed = {
 var velocity = [0, 0]; // rate of change in position
 var position = [500, 0]; // GROUND_Y so that the user spawns on the ground
 var isJumping = false; // track if the player is in the air
+var isCrouching = false;
 var numJumps = 0; // track for 3-jumps
 // var animationFrame <-- for when we need to cycle between different animations
 
@@ -69,19 +74,22 @@ document.addEventListener("keydown", function (event) {
 
         // left
         case "a":
+        case "A":    
             keys_pressed.left = true;
             break;
 
         // right    
         case "d":
+        case "D": // using a "fall-through" technique to catch multiple inputs under 1    
             keys_pressed.right = true;
-            break;
+            break;    
 
         // up (jump)    
         case "w":
+        case " ":    
 
             // check if the user has exceeded the 
-            if (numJumps < 3) {
+            if (numJumps < NUM_CONSECUTIVE_JUMPS) {
                 velocity[Y] = -JUMP_FORCE; // apply jump force; gravity will take care of coming down.
                                            // negative because top-bottom pixel number INCREASES, since we're going up, we need to go NEGATIVE. 
                                             // gravity maxes out at -MAX_VELOCITY
@@ -90,21 +98,11 @@ document.addEventListener("keydown", function (event) {
             }
             break;
 
-        // up (jump --> some people prefer using space bar :\)    
-        case " ":
-
-            // commented this last time, same idea
-
-            if (numJumps < 3) {
-                velocity[Y] = -JUMP_FORCE;
-                // isInTheAir = true; technically we dont need this (we will later when we do attacks; can't attack mid-air)
-                numJumps++;
-            }
-            break;
-
         // down (crouch?)    
         case "s":
-            keys_pressed.down = true;
+        case "Shift":
+        keys_pressed.down = true;
+            isCrouching = true;
             break;
     }
 });
@@ -115,19 +113,21 @@ document.addEventListener("keyup", function (event) {
     // switch the pressed key; pretty self-explanatory
     switch (event.key) {
         case "a":
+        case "A":    
             keys_pressed.left = false;
             break;
         case "d":
+        case "D":    
             keys_pressed.right = false;
             break;
         case "w":
-            keys_pressed.up = false;
-            break;
-        case " ":
+        case " ":    
             keys_pressed.up = false;
             break;
         case "s":
-            keys_pressed.down = false;
+        case "Shift":
+        keys_pressed.down = false;
+            isCrouching = false;
             break;
     }
 });
@@ -160,36 +160,59 @@ function updatePosition() {
     }
 
     // apply gravity to vertical velocity (cuz we wanna go down)
-    velocity[Y] += GRAVITY;
-    
-
+    if (isCrouching) {
+        velocity[Y] += CROUCH_GRAVITY;
+    }
+    else {
+        velocity[Y] += GRAVITY;
+    }
 
     // CHECK THAT NO KEY IS PRESSED (APPLY FRICTION)
 
     // not moving horizontally
-    if (!keys_pressed.left && !keys_pressed.right) {
-        velocity[X] *= FRICTION;
-    }
+    if (isCrouching) {
 
+        if (!keys_pressed.left && !keys_pressed.right) {
+            velocity[X] *= CROUCH_FRICTION;
+        }
+    }
+    else {
+        if (!keys_pressed.left && !keys_pressed.right) {
+            velocity[X] *= FRICTION;
+        }
+    }
     // we dont need to check vertical movement cuz gravity got that
 
     // LIMIT VELOCITIES TO MAXIMUM (LIMITVELOCITIES())
 
     // if x velocity is out of the max range, limit it
-    if (velocity[X] > MAX_VELOCITY) {
-        velocity[X] = MAX_VELOCITY;
+    if (isCrouching) {
+        if (velocity[X] > MAX_CROUCH_VELOCITY) {
+            velocity[X] = MAX_CROUCH_VELOCITY;
+        }
+        else if (velocity[X] < -MAX_CROUCH_VELOCITY) {
+            velocity[X] = -MAX_CROUCH_VELOCITY;
+        }
+
     }
-    else if (velocity[X] < -MAX_VELOCITY) {
-        velocity[X] = -MAX_VELOCITY;
+    else {
+        if (velocity[X] > MAX_VELOCITY) {
+            velocity[X] = MAX_VELOCITY;
+        }
+        else if (velocity[X] < -MAX_VELOCITY) {
+            velocity[X] = -MAX_VELOCITY;
+        }
+
+        if (velocity[Y] > MAX_VELOCITY) {
+            velocity[Y] = MAX_VELOCITY;
+        }
+        else if (velocity[Y] < -MAX_VELOCITY) {
+            velocity[Y] = -MAX_VELOCITY;
+        }
     }
 
     // do the same with y velocity (so that jumps dont get OP)
-    if (velocity[Y] > MAX_VELOCITY) {
-        velocity[Y] = MAX_VELOCITY;
-    }
-    else if (velocity[Y] < -MAX_VELOCITY) {
-        velocity[Y] = -MAX_VELOCITY;
-    }
+
 
     // UPDATE POSITION VARIABLE 
 
@@ -226,7 +249,15 @@ function updatePosition() {
 
     // change the css to actually move the box on the screen 
     box.style.left = intToPx(position[X]);
-    box.style.top = intToPx(position[Y]);
+
+    // CROUCHING OR NOT?
+    if (keys_pressed.down) {
+        box.style.height = "50px"; // Shrink height
+        box.style.top = intToPx(position[Y] + 50); // Adjust position downward
+    } else {
+        box.style.height = "100px"; // Reset height
+        box.style.top = intToPx(position[Y]); // Reset position
+    }
 
     // keep the update loop in sync with the browser's refresh rate
     requestAnimationFrame(updatePosition);
