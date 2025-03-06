@@ -63,14 +63,18 @@ box.style.top = intToPx(position[Y]);
 
 updatePosition();
 function sendPlayerAction() {
-    const currentAction = "left: " + keys_pressed.left + " right: " + keys_pressed.right + " down: " + keys_pressed.down + " up: " + keys_pressed.up;
+    const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
 
     fetch("/player-action", {
         method: "POST",
         headers: {
             "Content-Type": "text/plain"
         },
-        body: currentAction
+        body: JSON.stringify( {
+
+            "playerId": 1,
+            "keys_pressed": currentAction
+        })
     })
     .then(response => {
         if (!response.ok) {
