@@ -242,6 +242,7 @@ public class Player {
         this.attackCooldown = 0;
     }
     public void updatePosition() {
+
         boolean[] keys_pressed = latestActionPerformed.getKeys_Pressed();
         if (isCrouching) {
             this.velocity[Y] += CROUCH_GRAVITY; // apply crouch gravity
