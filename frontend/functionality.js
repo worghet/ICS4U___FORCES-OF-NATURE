@@ -18,6 +18,7 @@ const Y = 1;
 const MAX_VELOCITY = 10;  // max speed (in any direction)
 const MAX_CROUCH_VELOCITY = 4; // increase this to make crouch to slide
 const CROUCH_FRICTION = 0.2;
+const AIR_FRICTION = 0.975;
 const CROUCH_GRAVITY = 15;
 const ACCELERATION = 0.8; // acceleration rate (how fast something accelerates)
 const FRICTION = 0.55; // reduces velocity when no key is pressed
@@ -210,6 +211,11 @@ function updatePosition() {
             velocity[X] *= CROUCH_FRICTION;
         }
     }
+    else if (isJumping) {
+        if (!keys_pressed.left && !keys_pressed.right) {
+                velocity[X] *= AIR_FRICTION;
+        }
+    }
     else {
         if (!keys_pressed.left && !keys_pressed.right) {
             velocity[X] *= FRICTION;
@@ -263,6 +269,7 @@ function updatePosition() {
         position[Y] = GROUND_Y; // just clip the player ON the ground
         velocity[Y] = 0; // sets the vertical velocity to zero (as to not have gravity stack)
         numJumps = 0; // reset jumps
+        isJumping = false;
         // isInTheAir = false; again, won't need this yet
     }
     if (position[Y] <= 0) {
