@@ -1,6 +1,7 @@
-package backend;
+import java.util.HashMap;
 
 public class Player {
+
     public static final int X = 0;
     public static final int Y = 1;
     public static final int MAX_VELOCITY = 10;
@@ -16,11 +17,18 @@ public class Player {
     public static final int MAX_ATTACK_COOLDOWN = 10;
     public static final int MAX_X_POSITION = 1000;
 
+    private static int numUsers = 0;
+
+    private String username;
+    private int id;
+
+    private PlayerAction latestActionPerformed;
+
     private int[] position;
     private int[] velocity;
     private int health;
     private int lives;
-    private int numJumps;
+    private int timesJumped;
     private boolean isCrouching;
     private boolean isJumping;
     private boolean isAttacking;
@@ -32,15 +40,54 @@ public class Player {
         this.velocity = new int[]{0, 0};
         this.health = 100;
         this.lives = 3;
-        this.numJumps = 3;
+        this.timesJumped = 0;
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
         this.attackCooldown = 0;
         this.direction = true;
+
+        numUsers++;
+        id = numUsers;
+    }
+
+    public Player(String username) {
+        this.username = username;
+        this.position = new int[] {0, 0};
+        this.velocity = new int[] {0, 0};
+        this.health = 100;
+        this.lives = 3;
+        this.timesJumped = 0;
+        this.isCrouching = false;
+        this.isJumping = false;
+        this.isAttacking = false;
+        this.attackCooldown = 0;
+        this.direction = true;
+
+
+        numUsers++;
+        id = numUsers;
     }
 
     //getters and setters
+
+    public PlayerAction getLatestActionPerformed() {
+        return latestActionPerformed;
+    }
+
+    public void setLatestPlayerActionPerformed(PlayerAction playerAction) {
+        latestActionPerformed = playerAction;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     public int[] getPosition() {
         return position;
     }
@@ -53,8 +100,8 @@ public class Player {
     public int getLives() {
         return lives;
     }
-    public int getNumJumps() {
-        return numJumps;
+    public int getTimesJumped() {
+        return timesJumped;
     }
     public boolean getIsCrouching() {
         return isCrouching;
@@ -121,13 +168,13 @@ public class Player {
         }
         this.lives = lives;
     }
-    public void setNumJumps(int numJumps) {
+    public void setTimesJumped(int numJumps) {
         if (numJumps < 0) {
             numJumps = 0;
         } else if (numJumps > 3) {
             numJumps = 3;
         }
-        this.numJumps = numJumps;
+        this.timesJumped = numJumps;
     }
     public void setCrouching(boolean isCrouching) {
         this.isCrouching = isCrouching;
@@ -163,9 +210,9 @@ public class Player {
         this.isCrouching = true;
     }
     public void jump() {
-        if(this.numJumps > 0) {
+        if(this.timesJumped > 0) {
             this.velocity[Y] = -JUMP_FORCE;
-            this.numJumps--;
+            this.timesJumped--;
         }
     }
     public void takeDamage(int damage) {
@@ -182,14 +229,14 @@ public class Player {
         if (this.position[Y] >= GROUNDY) {
             this.position[Y] = GROUNDY;
             this.velocity[Y] = 0;
-            this.numJumps = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
+            this.timesJumped = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
         }
     }
     public void reset() {
         this.position = new int[]{500, 0};
         this.velocity = new int[]{0, 0};
         this.health = 100;
-        this.numJumps = MAX_CONSECUTIVE_JUMPS;
+        this.timesJumped = MAX_CONSECUTIVE_JUMPS;
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;

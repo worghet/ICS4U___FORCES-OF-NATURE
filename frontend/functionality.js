@@ -59,7 +59,39 @@ box.style.top = intToPx(position[Y]);
 // == PROGRAM ITSELF ===========================
 
 // run the looping update position
+
 updatePosition();
+function sendPlayerAction() {
+    const currentAction = "left: " + keys_pressed.left + " right: " + keys_pressed.right + " down: " + keys_pressed.down + " up: " + keys_pressed.up;
+
+    fetch("/player-action", {
+        method: "POST",
+        headers: {
+            "Content-Type": "text/plain"
+        },
+        body: currentAction
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Server responded with status: " + response.status);
+        }
+        return response.text();
+    })
+    .then(data => {
+        console.log("Sent movement --> " + currentAction);
+        console.log("Server response:", data);
+    })
+    .catch(error => {
+        console.error("Error sending player action:", error);
+    })
+    .finally(() => {
+        setTimeout(sendPlayerAction, 50); // looper var; restarts the method every X milliseconds
+    });
+}
+
+sendPlayerAction(); // Starts the loop
+
+
 
 // == INPUT LISTENERS =============================
 
@@ -67,7 +99,7 @@ updatePosition();
 document.addEventListener("keydown", function (event) {
 
     // debugging purposes
-    console.log("key pressed: " + event.key);
+    // console.log("key pressed: " + event.key);
     
     // check which key was pressed (for optimization can ignore this if the key is the same as the previous but whatever)
     switch (event.key) {
@@ -96,6 +128,7 @@ document.addEventListener("keydown", function (event) {
                 isJumping = true;
                 numJumps++; // update jump tracker 
             }
+            keys_pressed.up = true;
             break;
 
         // down (crouch?)    

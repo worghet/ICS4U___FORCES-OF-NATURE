@@ -1,5 +1,5 @@
 
-// import com.google.gson.Gson;
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +26,7 @@ public class GameServer {
     private int serverPort;
     private String localHostAddress;
     private HttpServer httpServer;
+    private Game game;
 
     // api constants (for readability)
     static private final int GAMEPLAY_PAGE = 0;
@@ -32,7 +34,7 @@ public class GameServer {
     static private final int MAIN_MENU_PAGE = 2;
 
     // JSON serialization/deserialization object
-    // private Gson gson = new Gson();
+    private Gson gson = new Gson();
 
     // == METHODS =================================
 
@@ -58,6 +60,8 @@ public class GameServer {
             // gameServer.startTimer() (todo)
         }
 
+        // GAME CREATION
+
     }
 
     // primary constructor
@@ -66,6 +70,7 @@ public class GameServer {
         // set instance variables
         localHostAddress = hostAddress;
         serverPort = port;
+        game = new Game();
 
         // use try to catch errors
         try {
@@ -75,12 +80,18 @@ public class GameServer {
             httpServer.createContext("/styles.css", new StaticFileHandler("frontend/styles.css", "text/css"));
             httpServer.createContext("/functionality.js",
                     new StaticFileHandler("frontend/functionality.js", "frontend/javascript"));
+            // todo make animation frame getters, etc
 
             // ADD PAGE APIS -------------
-            httpServer.createContext("/forces-of-nature/gameplay", new WebpageHandler(GAMEPLAY_PAGE));
             httpServer.createContext("/forces-of-nature", new WebpageHandler(MAIN_MENU_PAGE));
             httpServer.createContext("/forces-of-nature/waitroom", new WebpageHandler(CHARACTER_SELECT_PAGE));
-            
+            httpServer.createContext("/forces-of-nature/gameplay", new WebpageHandler(GAMEPLAY_PAGE));
+
+            // GAME DATA APIS --------------
+            httpServer.createContext("/gamedata", new GameHandler(game));
+            httpServer.createContext("/player-action", new PlayerActionHandler());
+
+            // GAME RELATED APIS --------------------------------
 
             // idk what this is
             httpServer.setExecutor(null);
@@ -89,6 +100,9 @@ public class GameServer {
             System.out.println("STARTED!");
             System.out.println("http://" + hostAddress + ":" + serverPort + "/forces-of-nature/gameplay" +
                     "\n(IF FROM CHROMEBOOK, USE IP ADDRESS)\n----------------------------------------");
+
+            // SERVER STARTED, BEGIN GAME
+            game.players.add(new Player("simpleton"));
 
         } catch (Exception exception) {
             System.out.println("Server setup went wrong... " + exception.toString());
@@ -134,29 +148,29 @@ public class GameServer {
         }
 
         @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                   // technically shouldnt get post anytime, but did if just in case
-                if ("GET".equals(httpExchange.getRequestMethod())) {
-    
-                    // if message list not empty; load it (
-                    // serve html
-    
-                    // get byt file path
-                    System.out.println("giving page..");
-    
-                    String path = "";
+        public void handle(HttpExchange httpExchange) throws IOException {
+            // technically shouldnt get post anytime, but did if just in case
+            if ("GET".equals(httpExchange.getRequestMethod())) {
 
-                    switch (requestedPage) {
-                        case GAMEPLAY_PAGE:
-                            path = "frontend/game-screen.html";
-                            break;
-                
-                        case MAIN_MENU_PAGE:
-                            path = "frontend/main-screen.html";
-                            break;
-                        case CHARACTER_SELECT_PAGE:
-                            path = "frontend/character-select-screen.html"; 
-                            break;   
+                // if message list not empty; load it (
+                // serve html
+
+                // get byt file path
+                System.out.println("giving page..");
+
+                String path = "";
+
+                switch (requestedPage) {
+                    case GAMEPLAY_PAGE:
+                        path = "frontend/game-screen.html";
+                        break;
+
+                    case MAIN_MENU_PAGE:
+                        path = "frontend/main-screen.html";
+                        break;
+                    case CHARACTER_SELECT_PAGE:
+                        path = "frontend/character-select-screen.html";
+                        break;
                     default:
                         break;
                 }
@@ -187,19 +201,68 @@ public class GameServer {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
-            Path path = Paths.get(filePath);
-            if (Files.exists(path)) {
-                byte[] fileBytes = Files.readAllBytes(path);
-                httpExchange.getResponseHeaders().set("Content-Type", contentType);
-                httpExchange.sendResponseHeaders(200, fileBytes.length);
+            byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
+            httpExchange.getResponseHeaders().set("Content-Type", contentType);
+            httpExchange.sendResponseHeaders(200, fileBytes.length);
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(fileBytes);
+            os.close();
+        }
+    }
+
+    static class GameHandler implements HttpHandler {
+
+        private Gson gson = new Gson();
+        private Game game;
+
+        public GameHandler(Game game) {
+            this.game = game;
+        }
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            if ("GET".equals(httpExchange.getRequestMethod())) {
+                String jsonResponse = gson.toJson(game);
+                byte[] responseBytes = jsonResponse.getBytes();
+
+                httpExchange.getResponseHeaders().set("Content-Type", "application/json");
+                httpExchange.sendResponseHeaders(200, responseBytes.length);
                 OutputStream os = httpExchange.getResponseBody();
-                os.write(fileBytes);
+                os.write(responseBytes);
                 os.close();
-            } else {
-                httpExchange.sendResponseHeaders(404, 0);
-                httpExchange.close();
+            } else if ("POST".equals(httpExchange.getRequestMethod())) {
+                // player update / input (ONE PLAYER)
+
+                // use game.update() here, then return it
             }
         }
+
+    }
+
+    static class PlayerActionHandler implements HttpHandler {
+
+        static int counter = 0;
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            if ("POST".equals(httpExchange.getRequestMethod())) {
+
+                // deserialize contents, update player's last action performed
+
+
+
+                counter++;
+                String response = "(" + counter + ") Action received";
+                
+                // LET BROWSER KNOW THAT WE RECIEVED MESSAGE
+                httpExchange.sendResponseHeaders(200, response.length());
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(response.getBytes(StandardCharsets.UTF_8));
+                os.close();
+                System.out.println(response);
+            }
+        }
+
     }
 
 }
