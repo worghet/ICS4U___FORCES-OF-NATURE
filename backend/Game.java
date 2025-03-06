@@ -42,6 +42,9 @@ public class Game {
         return this.toJson();
     }
 
+    public Player[] getPlayers(){
+        return players.toArray(new Player[players.size()]);
+    }
 
 
 }//end of Game Class

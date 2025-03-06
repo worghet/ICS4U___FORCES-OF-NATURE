@@ -1,4 +1,3 @@
-import java.util.HashMap;
 
 public class Player {
 
@@ -35,8 +34,8 @@ public class Player {
     private int attackCooldown;
     private boolean direction; // true for right, false for left
     
-    public Player(int startX, int startY) {
-        this.position = new int[]{startX, startY};
+    public Player(int startX) {
+        this.position = new int[]{startX, GROUNDY};
         this.velocity = new int[]{0, 0};
         this.health = 100;
         this.lives = 3;
@@ -242,17 +241,18 @@ public class Player {
         this.isAttacking = false;
         this.attackCooldown = 0;
     }
-    public void update() {
+    public void updatePosition() {
+        boolean[] keys_pressed = latestActionPerformed.getKeys_Pressed();
         if (isCrouching) {
             this.velocity[Y] += CROUCH_GRAVITY; // apply crouch gravity
-            /*if (no horizontal movement(check for keyboard input)) {
+            if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
                 velocity[X] *= CROUCH_FRICTION; // apply crouch friction
-            } */
+            }
         } else {
             this.velocity[Y] += GRAVITY; // apply normal gravity
-            /*if (no horizontal movement(check for keyboard input/) {
+            if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
                 velocity[X] *= FRICTION; // apply normal friction
-            } */
+            }
         }
     
         /*
