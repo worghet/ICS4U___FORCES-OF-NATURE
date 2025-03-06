@@ -4,18 +4,18 @@ public class Player {
 
     public static final int X = 0;
     public static final int Y = 1;
+    public static final int MAX_ATTACK_COOLDOWN = 10;
+    public static final int MAX_X_POSITION = 1000;
     public static final int MAX_VELOCITY = 10;
     public static final int MAX_CROUCH_VELOCITY = 4;
     public static final double CROUCH_FRICTION = 0.2;
     public static final int CROUCH_GRAVITY = 15;
     public static final double ACCELERATION = 0.8;
-    public static final double FRICTION = 0.55;
-    public static final double GRAVITY = 0.55;
-    public static final int JUMP_FORCE = 12;
-    public static final int GROUNDY = 400;
-    public static final int MAX_CONSECUTIVE_JUMPS = 3;
-    public static final int MAX_ATTACK_COOLDOWN = 10;
-    public static final int MAX_X_POSITION = 1000;
+    protected static double FRICTION = 0.55;
+    protected static double GRAVITY = 0.55;
+    protected static int JUMP_FORCE = 12;
+    protected static int GROUNDY = 400;
+    protected static int MAX_CONSECUTIVE_JUMPS = 3;
 
     private static int numUsers = 0;
 

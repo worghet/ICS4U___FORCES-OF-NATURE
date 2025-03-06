@@ -7,7 +7,7 @@ public class Projectile {
     private int[] position;
     private int speed;
     private boolean direction;//true = right, false = left
-    private boolean isMoving;
+    
 
     public Projectile(Player player){
         this.position = player.getPosition();
@@ -26,12 +26,12 @@ public class Projectile {
             //what happens if a player is hit by projectile
             if(Projectile.this.position == temp.getPosition()){
                 temp.setLives(temp.getLives()-1);
-                Projectile.this.isMoving = false;
+                Projectile.this.active = false;
 
             }
             
         }
-    }
+    }//end of something hit method
 
     //gettes & setters
     public int[] getPosition() {
@@ -58,13 +58,11 @@ public class Projectile {
         this.direction = direction;
     }
     
-    public boolean getIsMoving() {
-        return isMoving;
+    public boolean getIsMoving(Player temp) {
+        return (temp.getAttackCooldown() > 0);
     }
     
-    public void setMoving(boolean isMoving) {
-        this.isMoving = isMoving;
-    }
+  
     
     
 }//end of Projectile Class
