@@ -28,7 +28,7 @@ public class Player {
     private int[] velocity;
     private int health;
     private int lives;
-    private int timesJumped;
+    private int numJumps; // jumps remaining
     private boolean isCrouching;
     private boolean isJumping;
     private boolean isAttacking;
@@ -40,7 +40,7 @@ public class Player {
         this.velocity = new int[]{0, 0};
         this.health = 100;
         this.lives = 3;
-        this.timesJumped = 0;
+        this.numJumps = 3;
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
@@ -57,7 +57,7 @@ public class Player {
         this.velocity = new int[] {0, 0};
         this.health = 100;
         this.lives = 3;
-        this.timesJumped = 0;
+        this.numJumps = 3;
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
@@ -100,8 +100,8 @@ public class Player {
     public int getLives() {
         return lives;
     }
-    public int getTimesJumped() {
-        return timesJumped;
+    public int getNumJumps() {
+        return numJumps;
     }
     public boolean getIsCrouching() {
         return isCrouching;
@@ -168,13 +168,13 @@ public class Player {
         }
         this.lives = lives;
     }
-    public void setTimesJumped(int numJumps) {
+    public void setNumJumps(int numJumps) {
         if (numJumps < 0) {
             numJumps = 0;
         } else if (numJumps > 3) {
             numJumps = 3;
         }
-        this.timesJumped = numJumps;
+        this.numJumps = numJumps;
     }
     public void setCrouching(boolean isCrouching) {
         this.isCrouching = isCrouching;
@@ -210,9 +210,9 @@ public class Player {
         this.isCrouching = true;
     }
     public void jump() {
-        if(this.timesJumped > 0) {
+        if(this.numJumps > 0) {
             this.velocity[Y] = -JUMP_FORCE;
-            this.timesJumped--;
+            this.numJumps--;
         }
     }
     public void takeDamage(int damage) {
@@ -229,14 +229,14 @@ public class Player {
         if (this.position[Y] >= GROUNDY) {
             this.position[Y] = GROUNDY;
             this.velocity[Y] = 0;
-            this.timesJumped = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
+            this.numJumps = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
         }
     }
     public void reset() {
         this.position = new int[]{500, 0};
         this.velocity = new int[]{0, 0};
         this.health = 100;
-        this.timesJumped = MAX_CONSECUTIVE_JUMPS;
+        this.numJumps = MAX_CONSECUTIVE_JUMPS;
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
