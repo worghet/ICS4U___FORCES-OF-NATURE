@@ -38,6 +38,7 @@ public class Game {
         }
     }
 
+
     public void resetGame(){
         this.gameRunning = false;
     }
@@ -46,6 +47,9 @@ public class Game {
         return this.toJson();
     }
 
+    public Player[] getPlayers(){
+        return players.toArray(new Player[players.size()]);
+    }
 
 
 

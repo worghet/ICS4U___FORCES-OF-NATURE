@@ -40,8 +40,12 @@ public class PlayerAction {
      * The game's updating cycle should reflect these actions
      * 
      */
-    private HashMap<String, Boolean> actions_performed; // Boolean can be null, but it should never be received as null.
+    private boolean[] keys_pressed = new boolean[]{false, false, false, false}; // left, right, up, down
 
+    public static final int LEFT = 0;
+    public static final int RIGHT = 1;
+    public static final int UP = 2;
+    public static final int DOWN = 3;
 
     // getters
 
@@ -49,8 +53,8 @@ public class PlayerAction {
         return playerId;
     }
 
-    public HashMap<String, Boolean> getKeysPressed() {
-        return actions_performed;
+    public boolean[] getKeys_Pressed() {
+        return keys_pressed;
     }
 
 }

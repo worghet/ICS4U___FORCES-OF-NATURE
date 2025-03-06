@@ -4,15 +4,13 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +32,7 @@ public class GameServer {
     static private final int MAIN_MENU_PAGE = 2;
 
     // JSON serialization/deserialization object
-    private Gson gson = new Gson();
+    static Gson gson = new Gson();
 
     // == METHODS =================================
 
@@ -89,7 +87,7 @@ public class GameServer {
 
             // GAME DATA APIS --------------
             httpServer.createContext("/gamedata", new GameHandler(game));
-            httpServer.createContext("/player-action", new PlayerActionHandler());
+            httpServer.createContext("/player-action", new PlayerActionHandler(game));
 
             // GAME RELATED APIS --------------------------------
 
@@ -241,7 +239,12 @@ public class GameServer {
 
     static class PlayerActionHandler implements HttpHandler {
 
-        static int counter = 0;
+//        static int counter = 0;
+        private Game game;
+
+        PlayerActionHandler(Game game) {
+            this.game = game;
+        }
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -249,17 +252,29 @@ public class GameServer {
 
                 // deserialize contents, update player's last action performed
 
+                InputStream inputStream = httpExchange.getRequestBody();
+                String requestBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+//                System.out.println("got data");
 
+                // Deserialize JSON to an object
+                PlayerAction playerAction = gson.fromJson(requestBody, PlayerAction.class);
+//                System.out.println(playerAction.toString());
 
-                counter++;
-                String response = "(" + counter + ") Action received";
-                
-                // LET BROWSER KNOW THAT WE RECIEVED MESSAGE
+                //
+                int requestedPlayerId = playerAction.getPlayerID();
+                for (Player player: game.players) {
+                    if (player.getId() == requestedPlayerId) {
+                        player.setLatestPlayerActionPerformed(playerAction);
+                        System.out.println(player.getUsername() + ": " + Arrays.toString(playerAction.getKeys_Pressed()));
+                    }
+                }
+
+                String response = "OK";
                 httpExchange.sendResponseHeaders(200, response.length());
                 OutputStream os = httpExchange.getResponseBody();
                 os.write(response.getBytes(StandardCharsets.UTF_8));
                 os.close();
-                System.out.println(response);
+//                System.out.println(response);
             }
         }
 
