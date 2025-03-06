@@ -18,13 +18,13 @@ public class Game {
         for(int i = 0; i< players.size(); i++){
 
             Player temp = players.get(i);
-            temp.update();//checks if player has moved, updates
+            temp.updatePosition();//checks if player has moved, updates
 
             //if player is long range attacking, creates projectile
             if(temp.isLongAttack()){
                 Projectile shot = new Projectile(temp);//inputs player obj that attacked to get x,y, & type (ex. Welder)
-                while(shot.getIsMoving()){
-                    shot.somethingHit();
+                while(shot.getIsMoving(temp)){
+                    shot.somethingHit(players);
 
                 }
                 
@@ -33,6 +33,7 @@ public class Game {
             
         }
     }
+
 
     public void resetGame(){
         this.gameRunning = false;
