@@ -62,6 +62,23 @@ box.style.top = intToPx(position[Y]);
 // run the looping update position
 
 updatePosition();
+sendPlayerAction(); // Starts the loop
+
+
+
+
+
+
+
+function getGameData() {
+    fetch("/gamedata", {
+        method: "GET"
+    })
+    .then((response) => response.json())
+    .then((json) => console.log(json));
+}
+
+
 function sendPlayerAction() {
     const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
 
@@ -83,8 +100,8 @@ function sendPlayerAction() {
         return response.text();
     })
     .then(data => {
-        console.log("Sent movement --> " + currentAction);
-        console.log("Server response:", data);
+//        console.log("Sent movement --> " + currentAction);
+//        console.log("Server response:", data);
     })
     .catch(error => {
         console.error("Error sending player action:", error);
@@ -94,7 +111,6 @@ function sendPlayerAction() {
     });
 }
 
-sendPlayerAction(); // Starts the loop
 
 
 
@@ -186,6 +202,7 @@ function intToPx(int_px) {
 // UPDATE POSITION (key (super important) looping method)
 
 function updatePosition() {
+    getGameData();
     // *in reality this will GET user positions, sprites, and display them
 
     // CHECK PRESSED KEYS (MANAGE ACCELERATION)
@@ -231,7 +248,7 @@ function updatePosition() {
 
     // if x velocity is out of the max range, limit it
     if (isCrouching) {
-        
+
         // comment this (or increase max crouch velocity) for sliding;
         if (velocity[X] > MAX_CROUCH_VELOCITY) {
             velocity[X] = MAX_CROUCH_VELOCITY;
@@ -261,14 +278,14 @@ function updatePosition() {
     // do the same with y velocity (so that jumps dont get OP)
 
 
-    // UPDATE POSITION VARIABLE 
+    // UPDATE POSITION VARIABLE
 
     // update position based on velocity
     position[X] += velocity[X];
     position[Y] += velocity[Y];
 
-    // CHECK COLLISION WITH GROUND 
-    
+    // CHECK COLLISION WITH GROUND
+
     if (position[Y] >= GROUND_Y) { // checkts that the player is ON the ground or BELOW it
         position[Y] = GROUND_Y; // just clip the player ON the ground
         velocity[Y] = 0; // sets the vertical velocity to zero (as to not have gravity stack)
@@ -293,20 +310,36 @@ function updatePosition() {
         // numJumps = 2; extra jump
     }
 
-    // CHANGE CSS (THIS AND BELOW IS THE ONLY PART THAT WILL BE KEPT FROM JAVA TRANSFER) 
+    // CHANGE CSS (THIS AND BELOW IS THE ONLY PART THAT WILL BE KEPT FROM JAVA TRANSFER)
 
-    // change the css to actually move the box on the screen 
+    // change the css to actually move the box on the screen
     box.style.left = intToPx(position[X]);
 
     // CROUCHING OR NOT?
     if (keys_pressed.down) {
-        box.style.height = "50px"; // Shrink height
-        box.style.top = intToPx(position[Y] + 50); // Adjust position downward
+        box.style.height = "50px";
+        box.style.top = intToPx(position[Y] + 50);
     } else {
-        box.style.height = "100px"; // Reset height
-        box.style.top = intToPx(position[Y]); // Reset position
+        box.style.height = "100px";
+        box.style.top = intToPx(position[Y]);
     }
 
     // keep the update loop in sync with the browser's refresh rate
     requestAnimationFrame(updatePosition);
+}
+
+
+
+//const playerId;
+function addPlayer() {
+    console.log("add player called");
+    fetch ("/add-player", {
+
+        method: "POST"
+
+    })
+    .then((response) => response.json())
+    .then((json) => console.log(json))
+
+
 }

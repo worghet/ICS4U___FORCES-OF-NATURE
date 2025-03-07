@@ -68,6 +68,25 @@ public class Player {
         id = numUsers;
     }
 
+    public Player() {
+        this.username = "unset";
+        this.position = new int[] {0, 0};
+        this.velocity = new int[] {0, 0};
+        this.health = 100;
+        this.lives = 3;
+        this.numJumps = 3;
+        this.isCrouching = false;
+        this.isJumping = false;
+        this.isAttacking = false;
+        this.attackCooldown = 0;
+        this.direction = true;
+
+
+        numUsers++;
+        id = numUsers;
+
+    }
+
     //getters and setters
 
     public PlayerAction getLatestActionPerformed() {
@@ -77,7 +96,6 @@ public class Player {
     public void setLatestPlayerActionPerformed(PlayerAction playerAction) {
         latestActionPerformed = playerAction;
     }
-
 
     public String getUsername() {
         return username;

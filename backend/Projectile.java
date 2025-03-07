@@ -7,10 +7,10 @@ public class Projectile {
     private int[] position;
     private int speed;
     private boolean direction;//true = right, false = left
-<<<<<<< HEAD
-    
-=======
->>>>>>> 39f4fc30d0e0d4164f93f559fcf6113aa7829aa4
+//<<<<<<< HEAD
+//
+//=======
+//>>>>>>> 39f4fc30d0e0d4164f93f559fcf6113aa7829aa4
 
     public Projectile(Player player){
         this.position = player.getPosition();
@@ -28,11 +28,11 @@ public class Projectile {
             //what happens if a player is hit by projectile
             if(Projectile.this.position == temp.getPosition()){
                 temp.setLives(temp.getLives()-1);
-<<<<<<< HEAD
-                Projectile.this.active = false;
-
-=======
->>>>>>> 39f4fc30d0e0d4164f93f559fcf6113aa7829aa4
+//<<<<<<< HEAD
+//                Projectile.this.active = false;
+//
+//=======
+//>>>>>>> 39f4fc30d0e0d4164f93f559fcf6113aa7829aa4
             }
             
         }

@@ -4,14 +4,29 @@ import java.util.ArrayList;
 //import java.util.Timer;
 
 public class Game {
-    ArrayList<Player> players  = new ArrayList<Player>();
-    boolean gameRunning = true; //whether or not game is active
+    private ArrayList<Player> players  = new ArrayList<Player>();
+    private boolean gameRunning = true; //whether or not game is active
     
 
     //constructor
     public Game(){
 
     }
+
+    public void addPlayer(Player newPlayer) {
+        players.add(newPlayer);
+    }
+
+    public void removePlayer(int playerId) {
+        for (Player player : players) {
+            if (player.getId() == playerId) {
+                players.remove(player);
+                break;
+            }
+        }
+    }
+
+
 
     //checks position, attack status (+implements attacks), of all players
     public void performLoop(){
@@ -30,11 +45,11 @@ public class Game {
                 while(shot.getActive()){
                     shot.somethingHit(Game.this.players);
                 }
-                
+
             }
 
-         
-            
+
+
         }
     }
 
@@ -47,8 +62,8 @@ public class Game {
         return this.toJson();
     }
 
-    public Player[] getPlayers(){
-        return players.toArray(new Player[players.size()]);
+    public ArrayList<Player> getPlayers(){
+        return players;
     }
 
 

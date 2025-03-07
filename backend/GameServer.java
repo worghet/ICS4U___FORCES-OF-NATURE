@@ -88,6 +88,7 @@ public class GameServer {
             // GAME DATA APIS --------------
             httpServer.createContext("/gamedata", new GameHandler(game));
             httpServer.createContext("/player-action", new PlayerActionHandler(game));
+            httpServer.createContext("/add-player", new AddPlayerHandler(game));
 
             // GAME RELATED APIS --------------------------------
 
@@ -100,7 +101,7 @@ public class GameServer {
                     "\n(IF FROM CHROMEBOOK, USE IP ADDRESS)\n----------------------------------------");
 
             // SERVER STARTED, BEGIN GAME
-            game.players.add(new Player("simpleton"));
+            game.addPlayer(new Player("playtester"));
 
         } catch (Exception exception) {
             System.out.println("Server setup went wrong... " + exception.toString());
@@ -228,10 +229,6 @@ public class GameServer {
                 OutputStream os = httpExchange.getResponseBody();
                 os.write(responseBytes);
                 os.close();
-            } else if ("POST".equals(httpExchange.getRequestMethod())) {
-                // player update / input (ONE PLAYER)
-
-                // use game.update() here, then return it
             }
         }
 
@@ -262,10 +259,10 @@ public class GameServer {
 
                 //
                 int requestedPlayerId = playerAction.getPlayerID();
-                for (Player player: game.players) {
+                for (Player player: game.getPlayers()) {
                     if (player.getId() == requestedPlayerId) {
                         player.setLatestPlayerActionPerformed(playerAction);
-                        System.out.println(player.getUsername() + ": " + Arrays.toString(playerAction.getKeys_Pressed()));
+//                        System.out.println(player.getUsername() + ": " + Arrays.toString(playerAction.getKeys_Pressed()));
                     }
                 }
 
@@ -278,6 +275,36 @@ public class GameServer {
             }
         }
 
+    }
+
+    static class AddPlayerHandler implements HttpHandler {
+
+        private Game game;
+
+        public AddPlayerHandler(Game game) {
+            this.game = game;
+        }
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            if ("POST".equals(httpExchange.getRequestMethod())) {
+
+                System.out.println("add player handler called");
+
+                Player newPlayer = new Player();
+                game.addPlayer(newPlayer);
+                int newPlayerId = newPlayer.getId();
+
+
+                String response = String.valueOf(newPlayerId);
+
+                httpExchange.sendResponseHeaders(200, response.length()); // Correct length
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(response.getBytes(StandardCharsets.UTF_8)); // Send as UTF-8 string
+                os.close();
+
+            }
+        }
     }
 
 }
