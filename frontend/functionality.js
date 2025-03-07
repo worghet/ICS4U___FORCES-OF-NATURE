@@ -3,11 +3,11 @@
 
 // INDEXES
 
-// left/right for the moveX, moveY functions
-const LEFT = 0;
-const RIGHT = 1;
-const UP = 1;
-const DOWN = 0;
+//// left/right for the moveX, moveY functions
+//const LEFT = 0;
+//const RIGHT = 1;
+//const UP = 1;
+//const DOWN = 0;
 
 // x/y for the position[X], position[Y], velocity[X], velocity[Y]
 const X = 0;
@@ -15,22 +15,22 @@ const Y = 1;
 
 // PHYSICS CONSTANTS (can change due if different characters)
 
-const MAX_VELOCITY = 10;  // max speed (in any direction)
-const MAX_CROUCH_VELOCITY = 4; // increase this to make crouch to slide
-const CROUCH_FRICTION = 0.2;
-const AIR_FRICTION = 0.975;
-const CROUCH_GRAVITY = 15;
-const ACCELERATION = 0.8; // acceleration rate (how fast something accelerates)
-const FRICTION = 0.55; // reduces velocity when no key is pressed
-const GRAVITY = 0.7; // gravity pulls the player down
-const JUMP_FORCE = 14; // how strong the jump is (capped by max-velocity)
-const GROUND_Y = 400; // y-position where the ground is (will set accoring to maps)
-const NUM_CONSECUTIVE_JUMPS = 3;
+//const MAX_VELOCITY = 10;  // max speed (in any direction)
+//const MAX_CROUCH_VELOCITY = 4; // increase this to make crouch to slide
+//const CROUCH_FRICTION = 0.2;
+//const AIR_FRICTION = 0.975;
+//const CROUCH_GRAVITY = 15;
+//const ACCELERATION = 0.8; // acceleration rate (how fast something accelerates)
+//const FRICTION = 0.55; // reduces velocity when no key is pressed
+//const GRAVITY = 0.7; // gravity pulls the player down
+//const JUMP_FORCE = 14; // how strong the jump is (capped by max-velocity)
+//const GROUND_Y = 400; // y-position where the ground is (will set accoring to maps)
+//const NUM_CONSECUTIVE_JUMPS = 3;
 
 // PLAYER
 
 // essentially the moving object in the HTML(currently just a square) (later will replace with actual images)
-const box = document.getElementById("box"); 
+//const box = document.getElementById("box");
 
 // == VARIABLES ===========================
 
@@ -44,18 +44,20 @@ var keys_pressed = {
     down: false,
 };
 
+let id;
+
 // PLAYER MOVEMENT
 
-var velocity = [0, 0]; // rate of change in position
-var position = [500, 0]; // GROUND_Y so that the user spawns on the ground
-var isJumping = false; // track if the player is in the air
-var isCrouching = false;
-var numJumps = 0; // track for 3-jumps
+//var velocity = [0, 0]; // rate of change in position
+//var position = [500, 0]; // GROUND_Y so that the user spawns on the ground
+//var isJumping = false; // track if the player is in the air
+//var isCrouching = false;
+//var numJumps = 0; // track for 3-jumps
 // var animationFrame <-- for when we need to cycle between different animations
 
 // set the player's visual to the position
-box.style.left = intToPx(position[X]);
-box.style.top = intToPx(position[Y]); 
+//box.style.left = intToPx(position[X]);
+//box.style.top = intToPx(position[Y]);
 
 // == PROGRAM ITSELF ===========================
 
@@ -63,21 +65,6 @@ box.style.top = intToPx(position[Y]);
 
 updatePosition();
 sendPlayerAction(); // Starts the loop
-
-
-
-
-
-
-
-function getGameData() {
-    fetch("/gamedata", {
-        method: "GET"
-    })
-    .then((response) => response.json())
-    .then((json) => console.log(json));
-}
-
 
 function sendPlayerAction() {
     const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
@@ -142,13 +129,13 @@ document.addEventListener("keydown", function (event) {
         case " ":    
 
             // check if the user has exceeded the 
-            if (numJumps < NUM_CONSECUTIVE_JUMPS) {
-                velocity[Y] = -JUMP_FORCE; // apply jump force; gravity will take care of coming down.
-                                           // negative because top-bottom pixel number INCREASES, since we're going up, we need to go NEGATIVE. 
-                                            // gravity maxes out at -MAX_VELOCITY
-                isJumping = true;
-                numJumps++; // update jump tracker 
-            }
+//            if (numJumps < NUM_CONSECUTIVE_JUMPS) {
+//                velocity[Y] = -JUMP_FORCE; // apply jump force; gravity will take care of coming down.
+//                                           // negative because top-bottom pixel number INCREASES, since we're going up, we need to go NEGATIVE.
+//                                            // gravity maxes out at -MAX_VELOCITY
+//                isJumping = true;
+//                numJumps++; // update jump tracker
+//            }
             keys_pressed.up = true;
             break;
 
@@ -201,136 +188,55 @@ function intToPx(int_px) {
 
 // UPDATE POSITION (key (super important) looping method)
 
+let currentGameData = null;
+
+function getGameData() {
+    return fetch("/gamedata", { method: "GET" })
+        .then(response => response.json())
+        .then(json => {
+            currentGameData = json; // Store game data
+            clearGameWindow();
+            renderPlayers(currentGameData.players); // Render players after fetching data
+        })
+
+}
+
 function updatePosition() {
-    getGameData();
-    // *in reality this will GET user positions, sprites, and display them
+    getGameData(); // Get the latest game data
+    requestAnimationFrame(updatePosition); // Continue the game loop
+}
 
-    // CHECK PRESSED KEYS (MANAGE ACCELERATION)
-
-    // if going left or right, change the acceleration; this acceleration will impact velocity later
-    if (keys_pressed.left) {
-        velocity[X] -= ACCELERATION;
-    }
-    if (keys_pressed.right) {
-        velocity[X] += ACCELERATION;
-    }
-
-    // apply gravity to vertical velocity (cuz we wanna go down)
-    if (isCrouching) {
-        velocity[Y] += CROUCH_GRAVITY;
-    }
-    else {
-        velocity[Y] += GRAVITY;
-    }
-
-    // CHECK THAT NO KEY IS PRESSED (APPLY FRICTION)
-
-    // not moving horizontally
-    if (isCrouching) {
-
-        if (!keys_pressed.left && !keys_pressed.right) {
-            velocity[X] *= CROUCH_FRICTION;
-        }
-    }
-    else if (isJumping) {
-        if (!keys_pressed.left && !keys_pressed.right) {
-                velocity[X] *= AIR_FRICTION;
-        }
-    }
-    else {
-        if (!keys_pressed.left && !keys_pressed.right) {
-            velocity[X] *= FRICTION;
-        }
-    }
-    // we dont need to check vertical movement cuz gravity got that
-
-    // LIMIT VELOCITIES TO MAXIMUM (LIMITVELOCITIES())
-
-    // if x velocity is out of the max range, limit it
-    if (isCrouching) {
-
-        // comment this (or increase max crouch velocity) for sliding;
-        if (velocity[X] > MAX_CROUCH_VELOCITY) {
-            velocity[X] = MAX_CROUCH_VELOCITY;
-        }
-        else if (velocity[X] < -MAX_CROUCH_VELOCITY) {
-            velocity[X] = -MAX_CROUCH_VELOCITY;
-        }
-
-    }
-    else {
-        if (velocity[X] > MAX_VELOCITY) {
-            velocity[X] = MAX_VELOCITY;
-        }
-        else if (velocity[X] < -MAX_VELOCITY) {
-            velocity[X] = -MAX_VELOCITY;
-        }
-
-        // by keeping this commented, jumping height wont be limited
-        // if (velocity[Y] > MAX_VELOCITY) {
-        //     velocity[Y] = MAX_VELOCITY;
-        // }
-        // else if (velocity[Y] < -MAX_VELOCITY) {
-        //     velocity[Y] = -MAX_VELOCITY;
-        // }
-    }
-
-    // do the same with y velocity (so that jumps dont get OP)
-
-
-    // UPDATE POSITION VARIABLE
-
-    // update position based on velocity
-    position[X] += velocity[X];
-    position[Y] += velocity[Y];
-
-    // CHECK COLLISION WITH GROUND
-
-    if (position[Y] >= GROUND_Y) { // checkts that the player is ON the ground or BELOW it
-        position[Y] = GROUND_Y; // just clip the player ON the ground
-        velocity[Y] = 0; // sets the vertical velocity to zero (as to not have gravity stack)
-        numJumps = 0; // reset jumps
-        isJumping = false;
-        // isInTheAir = false; again, won't need this yet
-    }
-    if (position[Y] <= 0) {
-        position[Y] = 0;
-        velocity[Y] = 0;
-    }
-
-    if (position[X] <= 0) { // can replace 0 and 1100 with wall pixels
-        velocity[X] = 0;
-        position[X] = 0;
-        // numJumps = 2; extra jump
-    }
-    else if (position[X] >= 1000) {
-        velocity[X] = 0;
-        position[X] = 1000;
-        // velocity[X] = -10; "wall jump effect"
-        // numJumps = 2; extra jump
-    }
-
-    // CHANGE CSS (THIS AND BELOW IS THE ONLY PART THAT WILL BE KEPT FROM JAVA TRANSFER)
-
-    // change the css to actually move the box on the screen
-    box.style.left = intToPx(position[X]);
-
-    // CROUCHING OR NOT?
-    if (keys_pressed.down) {
-        box.style.height = "50px";
-        box.style.top = intToPx(position[Y] + 50);
-    } else {
-        box.style.height = "100px";
-        box.style.top = intToPx(position[Y]);
-    }
-
-    // keep the update loop in sync with the browser's refresh rate
-    requestAnimationFrame(updatePosition);
+function clearGameWindow() {
+    document.getElementById("game-window").innerHTML = "";
 }
 
 
+function renderPlayers(players) {
+    if (!players || players.length === 0) return; // Prevent errors on empty data
 
-//const playerId;
+//    console.log("Rendering players:", players);
+
+    players.forEach(player => {
+//        console.log("Rendering player with id:", player.id);
+
+        var playerBox = document.createElement("div");
+        playerBox.className = "box";
+
+
+        playerBox.style.backgroundColor = "red";
+
+        // Ensure player.position exists and has valid coordinates
+        console.log("id " + localID + " --> x: " + player.position[X] + " y: " + player.position[Y])
+        playerBox.style.left = intToPx(player.position[X]);
+        playerBox.style.top = intToPx(player.position[Y]);
+
+        document.getElementById("game-window").appendChild(playerBox);
+    });
+}
+
+
+let localPlayerId;
+
 function addPlayer() {
     console.log("add player called");
     fetch ("/add-player", {
@@ -338,8 +244,20 @@ function addPlayer() {
         method: "POST"
 
     })
-    .then((response) => response.json())
-    .then((json) => console.log(json))
+    .then((response) => response.text()) // Read the response as text
+    .then((playerId) => {
+        localID = parseInt(playerId); // Store the received ID
+        console.log("Assigned localID:", localID);
+    })
+}
 
+function startGame() {
+
+    console.log("game should start (called)");
+    fetch ("/start-game", {
+
+        method: "POST"
+
+    })
 
 }

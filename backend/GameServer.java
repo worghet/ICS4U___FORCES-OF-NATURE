@@ -10,10 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameServer {
@@ -89,6 +86,7 @@ public class GameServer {
             httpServer.createContext("/gamedata", new GameHandler(game));
             httpServer.createContext("/player-action", new PlayerActionHandler(game));
             httpServer.createContext("/add-player", new AddPlayerHandler(game));
+            httpServer.createContext("/start-game", new GameStartupHandler(game));
 
             // GAME RELATED APIS --------------------------------
 
@@ -101,7 +99,7 @@ public class GameServer {
                     "\n(IF FROM CHROMEBOOK, USE IP ADDRESS)\n----------------------------------------");
 
             // SERVER STARTED, BEGIN GAME
-            game.addPlayer(new Player("playtester"));
+//            game.addPlayer(new Player("playtester"));
 
         } catch (Exception exception) {
             System.out.println("Server setup went wrong... " + exception.toString());
@@ -289,12 +287,12 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("POST".equals(httpExchange.getRequestMethod())) {
 
-                System.out.println("add player handler called");
 
-                Player newPlayer = new Player();
+                Player newPlayer = new Player(new Random().nextInt(1000));
                 game.addPlayer(newPlayer);
                 int newPlayerId = newPlayer.getId();
 
+                System.out.println("Player with id " + newPlayerId + " created.");
 
                 String response = String.valueOf(newPlayerId);
 
@@ -307,4 +305,28 @@ public class GameServer {
         }
     }
 
+    static class GameStartupHandler implements HttpHandler {
+
+        private Game game;
+
+        public GameStartupHandler(Game game) {
+            this.game = game;
+        }
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            if ("POST".equals(httpExchange.getRequestMethod())) {
+
+                game.startGame();
+                System.out.println("GAME STARTED");
+
+                String response = "OK";
+
+                httpExchange.sendResponseHeaders(200, response.length()); // Correct length
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(response.getBytes(StandardCharsets.UTF_8)); // Send as UTF-8 string
+                os.close();
+            }
+        }
+    }
 }

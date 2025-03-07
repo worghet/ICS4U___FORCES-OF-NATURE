@@ -301,4 +301,9 @@ public class Player {
             //change frame to crouching
         }
     }
+
+//    public void TESTING_ONLY_moveRight() {
+//        position[X] += 2;
+//    }
+
 }
