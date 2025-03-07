@@ -7,7 +7,7 @@ public class Angler extends Player {
     }
 
     public void bite(){
-        int[] pos = this.getPosition();
+        double[] pos = this.getPosition();
         
 
     }//close attack

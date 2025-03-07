@@ -9,7 +9,7 @@ public class Player {
     public static final int MAX_CROUCH_VELOCITY = 4;
     public static final double CROUCH_FRICTION = 0.2;
     public static final int CROUCH_GRAVITY = 15;
-    public static final double ACCELERATION = 0.8;
+    public static final double ACCELERATION = 0.5;
     protected static double FRICTION = 0.55;
     protected static double GRAVITY = 0.55;
     protected static int JUMP_FORCE = 12;
@@ -21,10 +21,12 @@ public class Player {
     private String username;
     private int id;
 
+    private boolean previouslyJumped = false;
     private PlayerAction latestActionPerformed;
 
-    private int[] position;
-    private int[] velocity;
+    private double[] position;
+    private double[] velocity;
+
     private int health;
     private int lives;
     private int numJumps; // jumps remaining
@@ -33,10 +35,10 @@ public class Player {
     private boolean isAttacking;
     private int attackCooldown;
     private boolean direction; // true for right, false for left
-    
+
     public Player(int startX) {
-        this.position = new int[]{startX, GROUNDY};
-        this.velocity = new int[]{0, 0};
+        this.position = new double[]{startX, GROUNDY};
+        this.velocity = new double[]{0, 0};
         this.health = 100;
         this.lives = 3;
         this.numJumps = 3;
@@ -52,8 +54,8 @@ public class Player {
 
     public Player(String username) {
         this.username = username;
-        this.position = new int[] {0, 0};
-        this.velocity = new int[] {0, 0};
+        this.position = new double[] {0, 0};
+        this.velocity = new double[] {0, 0};
         this.health = 100;
         this.lives = 3;
         this.numJumps = 3;
@@ -70,8 +72,8 @@ public class Player {
 
     public Player() {
         this.username = "unset";
-        this.position = new int[] {0, 0};
-        this.velocity = new int[] {0, 0};
+        this.position = new double[] {0, 0};
+        this.velocity = new double[] {0, 0};
         this.health = 100;
         this.lives = 3;
         this.numJumps = 3;
@@ -105,10 +107,10 @@ public class Player {
         return id;
     }
 
-    public int[] getPosition() {
+    public double[] getPosition() {
         return position;
     }
-    public int[] getVelocity() {
+    public double[] getVelocity() {
         return velocity;
     }
     public int getHealth() {
@@ -135,7 +137,7 @@ public class Player {
     public boolean getDirection() {
         return direction;
     }
-    public void setPosition(int[] position) {
+    public void setPosition(double[] position) {
         if (position[Y] > GROUNDY) {
             position[Y] = GROUNDY;
         } else if (position[X] < 0) {
@@ -145,7 +147,7 @@ public class Player {
         }
         this.position = position;
     }
-    public void setVelocity(int[] velocity) {
+    public void setVelocity() {
         if (isCrouching) {
             if (velocity[X] > MAX_CROUCH_VELOCITY) {
                 velocity[X] = MAX_CROUCH_VELOCITY;
@@ -168,7 +170,7 @@ public class Player {
             }
         }
         this.velocity = velocity;
-    }  
+    }
     public void setHealth(int health) {
         if (health > 100) {
             health = 100;
@@ -224,10 +226,10 @@ public class Player {
         this.direction = true;
     }
     public void crouch() {
-        this.isCrouching = true;
+        isCrouching = true;
     }
     public void jump() {
-        if(this.numJumps > 0) {
+        if(numJumps > 0) {
             this.velocity[Y] = -JUMP_FORCE;
             this.numJumps--;
         }
@@ -247,11 +249,12 @@ public class Player {
             this.position[Y] = GROUNDY;
             this.velocity[Y] = 0;
             this.numJumps = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
+            isJumping = false;
         }
     }
     public void reset() {
-        this.position = new int[]{500, 0};
-        this.velocity = new int[]{0, 0};
+        this.position = new double[]{500, 0};
+        this.velocity = new double[]{0, 0};
         this.health = 100;
         this.numJumps = MAX_CONSECUTIVE_JUMPS;
         this.isCrouching = false;
@@ -260,45 +263,69 @@ public class Player {
         this.attackCooldown = 0;
     }
     public void updatePosition() {
-
         boolean[] keys_pressed = latestActionPerformed.getKeys_Pressed();
+
+        // -- VELOCITY ------------------------------
+        if (keys_pressed[PlayerAction.LEFT]) {
+            velocity[X] -= ACCELERATION;  // Or apply acceleration
+        }
+        if (keys_pressed[PlayerAction.RIGHT]) {
+            velocity[X] += ACCELERATION;  // Or apply acceleration
+        }
+        if (keys_pressed[PlayerAction.UP]) {
+            // check that person is not holding but just jumping (check previous input)
+            if (!previouslyJumped) {
+                jump();
+                previouslyJumped = true;
+            }
+
+        }
+        else {
+            previouslyJumped = false;
+        }
+
+        if (keys_pressed[PlayerAction.DOWN]) {
+            isCrouching = true;
+        } else {
+            isCrouching = false;
+        }
+
+        // -- GRAVITY --------------------------------------
         if (isCrouching) {
-            this.velocity[Y] += CROUCH_GRAVITY; // apply crouch gravity
+            velocity[Y] += CROUCH_GRAVITY;  // Apply crouch gravity
             if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
-                velocity[X] *= CROUCH_FRICTION; // apply crouch friction
+                velocity[X] *= CROUCH_FRICTION;  // Apply crouch friction
             }
         } else {
-            this.velocity[Y] += GRAVITY; // apply normal gravity
+            velocity[Y] += GRAVITY;  // Apply normal gravity
             if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
-                velocity[X] *= FRICTION; // apply normal friction
+                velocity[X] *= FRICTION;  // Apply normal friction
             }
         }
-    
-        /*
-         * here we need to update velocity based off keyboard input
-         */
+        // Update position based on velocity
+        position[X] += velocity[X];
+        position[Y] += velocity[Y];
 
-        // update position based on velocity
-        int[] newPosition = new int[]{getPosition()[X] + getVelocity()[X], getPosition()[Y] + getVelocity()[Y]};
-        setPosition(newPosition);
-    
-        // check ground collision
+        setVelocity();
+
+        // Check if player has landed
         checkLanded();
-    
-        // update attack cooldown
+
+        // Convert to integer values for rendering
+//        int pixelX = Math.round((float) position[X]);
+//        int pixelY = Math.round((float) position[Y]);
+
+        // Update the player's render position (use pixelX, pixelY in your render function)
+//        renderCharacter(pixelX, pixelY);
+
+        // Update attack cooldown
         if (this.attackCooldown > 0) {
             this.attackCooldown--;
         }
-    
-        // reset attacking state after attack is complete
+
+        // Reset attacking state after attack is complete
         if (this.isAttacking && this.attackCooldown <= 0) {
             this.isAttacking = false;
-        }
-
-        if (isCrouching) {
-            //halve height of player
-            //adjust position downward
-            //change frame to crouching
         }
     }
 

@@ -63,7 +63,8 @@ let id;
 
 // run the looping update position
 
-updatePosition();
+setInterval(updatePosition, 10)
+//updatePosition();
 sendPlayerAction(); // Starts the loop
 
 function sendPlayerAction() {
@@ -97,9 +98,6 @@ function sendPlayerAction() {
         setTimeout(sendPlayerAction, 50); // looper var; restarts the method every X milliseconds
     });
 }
-
-
-
 
 // == INPUT LISTENERS =============================
 
@@ -203,7 +201,7 @@ function getGameData() {
 
 function updatePosition() {
     getGameData(); // Get the latest game data
-    requestAnimationFrame(updatePosition); // Continue the game loop
+//    requestAnimationFrame(updatePosition); // Continue the game loop
 }
 
 function clearGameWindow() {
@@ -228,7 +226,16 @@ function renderPlayers(players) {
         // Ensure player.position exists and has valid coordinates
         console.log("id " + localID + " --> x: " + player.position[X] + " y: " + player.position[Y])
         playerBox.style.left = intToPx(player.position[X]);
-        playerBox.style.top = intToPx(player.position[Y]);
+
+        if (player.isCrouching) {
+            playerBox.style.height = "50px"
+            playerBox.style.top = intToPx(player.position[Y] + 50);
+        }
+        else {
+            playerBox.style.height = "100px"
+            playerBox.style.top = intToPx(player.position[Y]);
+        }
+
 
         document.getElementById("game-window").appendChild(playerBox);
     });

@@ -1,6 +1,7 @@
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 //import java.util.Timer;
@@ -31,10 +32,12 @@ public class Game {
         TimerTask gameLoop = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("Game loop started...");
+//                System.out.println("Game loop started...");
                 // performLoop();
                 for (Player aPlayer : players) {
                     aPlayer.updatePosition();
+//                    System.out.println(Arrays.toString(aPlayer.getLatestActionPerformed().getKeys_Pressed()));
+//                    System.out.println(Arrays.toString(aPlayer.getPosition()));
 //                    System.out.println("moved " + aPlayer.getId() + "right 1");
                 }
 
@@ -44,7 +47,7 @@ public class Game {
         };
 
         long delay = 0; // Start immediately
-        long period = 1000; // Run every 50 milliseconds (adjust as needed)
+        long period = 10; // Run every 50 milliseconds (adjust as needed)
 
         timer.scheduleAtFixedRate(gameLoop, delay, period);
     }
@@ -94,8 +97,8 @@ public class Game {
         for (int i = 0; i < players.size(); i++) {
             Player temp = players.get(i);
             if (temp != attacker) {
-                int[] attackerPos = attacker.getPosition();
-                int[] check = temp.getPosition();
+                double[] attackerPos = attacker.getPosition();
+                double[] check = temp.getPosition();
 
 
                 //checking position of attacker vs others, not done

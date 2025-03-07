@@ -40,12 +40,12 @@ public class PlayerAction {
      * The game's updating cycle should reflect these actions
      * 
      */
-    private boolean[] keys_pressed = new boolean[]{false, false, false, false}; // left, right, up, down
+    private boolean[] keys_pressed = new boolean[]{false, false, false, false}; // left, right, down, up
 
     public static final int LEFT = 0;
     public static final int RIGHT = 1;
-    public static final int UP = 2;
-    public static final int DOWN = 3;
+    public static final int DOWN = 2;
+    public static final int UP = 3;
 
     // getters
 

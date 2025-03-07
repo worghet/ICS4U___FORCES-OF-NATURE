@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Projectile {
 
-    private int[] position;
+    private double[] position;
     private int speed;
     private boolean direction;//true = right, false = left
 //<<<<<<< HEAD
@@ -39,11 +39,11 @@ public class Projectile {
     }//end of something hit method
 
     //gettes & setters
-    public int[] getPosition() {
+    public double[] getPosition() {
         return position;
     }
     
-    public void setPosition(int[] position) {
+    public void setPosition(double[] position) {
         this.position = position;
     }
     
