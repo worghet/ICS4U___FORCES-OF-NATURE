@@ -22,7 +22,7 @@ public class Player {
     private int id;
 
     private boolean previouslyJumped = false;
-    private PlayerAction latestActionPerformed;
+    private PlayerAction latestActionPerformed = new PlayerAction();
 
     private double[] position;
     private double[] velocity;

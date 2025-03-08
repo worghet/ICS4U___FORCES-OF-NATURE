@@ -257,9 +257,11 @@ public class GameServer {
 
                 //
                 int requestedPlayerId = playerAction.getPlayerID();
+//                System.out.println(game.getPlayers().size());
                 for (Player player: game.getPlayers()) {
                     if (player.getId() == requestedPlayerId) {
                         player.setLatestPlayerActionPerformed(playerAction);
+
 //                        System.out.println(player.getUsername() + ": " + Arrays.toString(playerAction.getKeys_Pressed()));
                     }
                 }
@@ -288,7 +290,7 @@ public class GameServer {
             if ("POST".equals(httpExchange.getRequestMethod())) {
 
 
-                Player newPlayer = new Player(new Random().nextInt(1000));
+                Player newPlayer = new Player();
                 game.addPlayer(newPlayer);
                 int newPlayerId = newPlayer.getId();
 
@@ -321,6 +323,16 @@ public class GameServer {
                 System.out.println("GAME STARTED");
 
                 String response = "OK";
+
+                httpExchange.sendResponseHeaders(200, response.length()); // Correct length
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(response.getBytes(StandardCharsets.UTF_8)); // Send as UTF-8 string
+                os.close();
+            }
+            else if ("GET".equals(httpExchange.getRequestMethod())) {
+
+                String response = String.valueOf(game.isGameRunning());
+//                System.out.println(response);
 
                 httpExchange.sendResponseHeaders(200, response.length()); // Correct length
                 OutputStream os = httpExchange.getResponseBody();

@@ -63,13 +63,11 @@ let id;
 
 // run the looping update position
 
-setInterval(updatePosition, 10)
 //updatePosition();
-sendPlayerAction(); // Starts the loop
 
 function sendPlayerAction() {
     const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
-
+    console.log(currentAction);
     fetch("/player-action", {
         method: "POST",
         headers: {
@@ -77,26 +75,10 @@ function sendPlayerAction() {
         },
         body: JSON.stringify( {
 
-            "playerId": 1,
+            "playerId": localID,
             "keys_pressed": currentAction
         })
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Server responded with status: " + response.status);
-        }
-        return response.text();
-    })
-    .then(data => {
-//        console.log("Sent movement --> " + currentAction);
-//        console.log("Server response:", data);
-    })
-    .catch(error => {
-        console.error("Error sending player action:", error);
-    })
-    .finally(() => {
-        setTimeout(sendPlayerAction, 50); // looper var; restarts the method every X milliseconds
-    });
 }
 
 // == INPUT LISTENERS =============================
@@ -189,15 +171,16 @@ function intToPx(int_px) {
 let currentGameData = null;
 
 function getGameData() {
-    return fetch("/gamedata", { method: "GET" })
+    fetch("/gamedata", { method: "GET" })
         .then(response => response.json())
         .then(json => {
+            if (JSON.stringify(currentGameData) === JSON.stringify(json)) return; // Skip if data is the same
             currentGameData = json; // Store game data
             clearGameWindow();
-            renderPlayers(currentGameData.players); // Render players after fetching data
+            renderPlayers(currentGameData.players); // Render only if there's new data
         })
-
 }
+
 
 function updatePosition() {
     getGameData(); // Get the latest game data
@@ -208,38 +191,36 @@ function clearGameWindow() {
     document.getElementById("game-window").innerHTML = "";
 }
 
-
 function renderPlayers(players) {
     if (!players || players.length === 0) return; // Prevent errors on empty data
 
-//    console.log("Rendering players:", players);
-
     players.forEach(player => {
-//        console.log("Rendering player with id:", player.id);
+        let playerBox = document.getElementById(`player-${player.id}`);
 
-        var playerBox = document.createElement("div");
-        playerBox.className = "box";
+        if (!playerBox) {
+            // Create a new div if it doesn't exist
+            playerBox = document.createElement("div");
+            playerBox.id = `player-${player.id}`;
+            playerBox.className = "box";
+            playerBox.style.backgroundColor = "red";
+            document.getElementById("game-window").appendChild(playerBox);
+        }
 
-
-        playerBox.style.backgroundColor = "red";
-
-        // Ensure player.position exists and has valid coordinates
-        console.log("id " + localID + " --> x: " + player.position[X] + " y: " + player.position[Y])
+        // Update position
         playerBox.style.left = intToPx(player.position[X]);
 
         if (player.isCrouching) {
-            playerBox.style.height = "50px"
+            playerBox.style.height = "50px";
             playerBox.style.top = intToPx(player.position[Y] + 50);
-        }
-        else {
-            playerBox.style.height = "100px"
+        } else {
+            playerBox.style.height = "100px";
             playerBox.style.top = intToPx(player.position[Y]);
         }
-
-
-        document.getElementById("game-window").appendChild(playerBox);
     });
 }
+
+//setInterval(sendPlayerAction, 5);
+//setInterval(updatePosition, 10);
 
 
 let localPlayerId;
@@ -259,12 +240,29 @@ function addPlayer() {
 }
 
 function startGame() {
-
     console.log("game should start (called)");
-    fetch ("/start-game", {
-
-        method: "POST"
-
-    })
-
+    fetch("/start-game", { method: "POST" }); // Tells the server to start the game
 }
+
+let gameStarted = false;
+
+function hasTheGameStarted() {
+    fetch("/start-game", { method: "GET" })
+        .then(response => response.text())
+        .then(text => {
+            if (text === "true") {
+                gameStarted = true;
+                console.log("STARTED");
+                clearInterval(checkInterval); // Stop checking when the game starts
+                setInterval(sendPlayerAction, 10); // Send actions every 50ms (20 times per second)
+                setInterval(updatePosition, 10); // Update game state every 100ms (10 times per second)
+            }
+        });
+}
+
+const checkInterval = setInterval(() => {
+    if (!gameStarted) {
+        console.log("NOT STARTED");
+        hasTheGameStarted();
+    }
+}, 10);

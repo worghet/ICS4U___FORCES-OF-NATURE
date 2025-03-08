@@ -8,7 +8,7 @@ import java.util.TimerTask;
 
 public class Game {
     private ArrayList<Player> players = new ArrayList<Player>();
-    private boolean gameRunning = true; //whether or not game is active
+    private boolean gameRunning; //whether or not game is active
 
     //constructor
     public Game() {
@@ -27,7 +27,12 @@ public class Game {
         }
     }
 
+    public boolean isGameRunning() {
+        return gameRunning;
+    }
+
     public void startGame() {
+        gameRunning = true;
         Timer timer = new Timer();
         TimerTask gameLoop = new TimerTask() {
             @Override
@@ -81,6 +86,7 @@ public class Game {
 
     public void resetGame() {
         this.gameRunning = false;
+        // clear all players / reset ID status
     }
 
     public Game toJson() {
