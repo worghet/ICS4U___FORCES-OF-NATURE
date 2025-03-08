@@ -267,10 +267,10 @@ public class Player {
 
         // -- VELOCITY ------------------------------
         if (keys_pressed[PlayerAction.LEFT]) {
-            velocity[X] -= ACCELERATION;  // Or apply acceleration
+            moveLeft();  // Or apply acceleration
         }
         if (keys_pressed[PlayerAction.RIGHT]) {
-            velocity[X] += ACCELERATION;  // Or apply acceleration
+            moveRight();  // Or apply acceleration
         }
         if (keys_pressed[PlayerAction.UP]) {
             // check that person is not holding but just jumping (check previous input)
@@ -295,11 +295,13 @@ public class Player {
             velocity[Y] += CROUCH_GRAVITY;  // Apply crouch gravity
             if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
                 velocity[X] *= CROUCH_FRICTION;  // Apply crouch friction
+                //change the frame of the player, halve its height
             }
         } else {
             velocity[Y] += GRAVITY;  // Apply normal gravity
             if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
                 velocity[X] *= FRICTION;  // Apply normal friction
+                //change the frame of the player, halve its height
             }
         }
         // Update position based on velocity
