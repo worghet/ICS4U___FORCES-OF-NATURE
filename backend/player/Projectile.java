@@ -1,3 +1,4 @@
+package player;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ public class Projectile {
 
     //skeleton right now, 
     public void somethingHit(ArrayList<Player> players){
-        //check for collisions with players in arraylist in Game
+        //check for collisions with players in arraylist in game.Game
         for(int i = 0; i< players.size(); i++){
             Player temp = players.get(i);
 
@@ -29,7 +30,7 @@ public class Projectile {
             if(Projectile.this.position == temp.getPosition()){
                 temp.setLives(temp.getLives()-1);
 //<<<<<<< HEAD
-//                Projectile.this.active = false;
+//                Player.Projectile.this.active = false;
 //
 //=======
 //>>>>>>> 39f4fc30d0e0d4164f93f559fcf6113aa7829aa4
@@ -70,4 +71,4 @@ public class Projectile {
   
     
     
-}//end of Projectile Class
+}//end of Player.Projectile Class

@@ -1,213 +1,242 @@
+// This is a javascript file centered around the server-functionality of the project.
+// It includes many (if not, all) of the API communicators here.
 
-// == CONSTANTS ======
+// == CONSTANTS [FOR READABILITY] ==========================
 
-// INDEXES
 
-//// left/right for the moveX, moveY functions
-//const LEFT = 0;
-//const RIGHT = 1;
-//const UP = 1;
-//const DOWN = 0;
-
-// x/y for the position[X], position[Y], velocity[X], velocity[Y]
 const X = 0;
 const Y = 1;
+const FPS = 30;
 
-// PHYSICS CONSTANTS (can change due if different characters)
 
-//const MAX_VELOCITY = 10;  // max speed (in any direction)
-//const MAX_CROUCH_VELOCITY = 4; // increase this to make crouch to slide
-//const CROUCH_FRICTION = 0.2;
-//const AIR_FRICTION = 0.975;
-//const CROUCH_GRAVITY = 15;
-//const ACCELERATION = 0.8; // acceleration rate (how fast something accelerates)
-//const FRICTION = 0.55; // reduces velocity when no key is pressed
-//const GRAVITY = 0.7; // gravity pulls the player down
-//const JUMP_FORCE = 14; // how strong the jump is (capped by max-velocity)
-//const GROUND_Y = 400; // y-position where the ground is (will set accoring to maps)
-//const NUM_CONSECUTIVE_JUMPS = 3;
+// == IMPORTANT VARIABLES ==================================
 
-// PLAYER
 
-// essentially the moving object in the HTML(currently just a square) (later will replace with actual images)
-//const box = document.getElementById("box");
+// This holds the keyboard inputs sent to the back end.
+var keys_pressed = {left: false, right: false, up: false, down: false};
 
-// == VARIABLES ===========================
+// These help with user identification / messaging.
+let localPlayerId;
+let username;
 
-// KEYS
+// Other vital
+let gameStarted = false;
+let currentGameData = null;
 
-// keeps track of which keys are pressed; used in the update loop
-var keys_pressed = {
-    left: false,
-    right: false,
-    up: false,
-    down: false,
-};
 
-let id;
+// ============================================================
+// ======================== PROGRAM ===========================
 
-// PLAYER MOVEMENT
 
-//var velocity = [0, 0]; // rate of change in position
-//var position = [500, 0]; // GROUND_Y so that the user spawns on the ground
-//var isJumping = false; // track if the player is in the air
-//var isCrouching = false;
-//var numJumps = 0; // track for 3-jumps
-// var animationFrame <-- for when we need to cycle between different animations
+// Pretty much just wait for the game to start.
 
-// set the player's visual to the position
-//box.style.left = intToPx(position[X]);
-//box.style.top = intToPx(position[Y]);
+const checkInterval = setInterval(() => {
+    if (!gameStarted) {
+        hasTheGameStarted();
+    }
+}, (1000 / FPS));
 
-// == PROGRAM ITSELF ===========================
 
-// run the looping update position
+// ======================== PROGRAM ===========================
+// ============================================================
 
-//updatePosition();
+
+// == INPUT LISTENERS ======================================
+
+// Input listener for when key is PRESSED.
+document.addEventListener("keydown", function (event) {
+
+    // Check which key is pressed.
+    // Using a cool "fall-through" technique to catch multiple inputs under one statement.
+
+    switch (event.key) {
+
+        // Left.
+
+        case "a":
+        case "A":
+            keys_pressed.left = true;
+            break;
+
+        // Right.
+
+        case "d":
+        case "D":
+            keys_pressed.right = true;
+            break;
+
+        // Up (JUMP).
+
+        case "w":
+        case " ":
+            keys_pressed.up = true;
+            break;
+
+        // Down (CROUCH).
+
+        case "s":
+        case "Shift":
+            keys_pressed.down = true;
+            break;
+    }
+});
+
+// Input listener for when key is RELEASED.
+document.addEventListener("keyup", function (event) {
+
+    // Check which key is pressed.
+    // Using a cool "fall-through" technique to catch multiple inputs under one statement.
+
+    switch (event.key) {
+
+        // Left.
+
+        case "a":
+        case "A":
+            keys_pressed.left = false;
+            break;
+
+        // Right.
+
+        case "d":
+        case "D":
+            keys_pressed.right = false;
+            break;
+
+        // Up.
+
+        case "w":
+        case " ":
+            keys_pressed.up = false;
+            break;
+
+        // Down (STAND UP).
+
+        case "s":
+        case "Shift":
+        keys_pressed.down = false;
+            break;
+    }
+});
+
+
+// == FUNCTIONS [REPEATING] ================================
+
 
 function sendPlayerAction() {
-    const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
-    console.log(currentAction);
-    fetch("/player-action", {
-        method: "POST",
-        headers: {
-            "Content-Type": "text/plain"
-        },
-        body: JSON.stringify( {
 
-            "playerId": localID,
+    // Build keys_pressed into a legible array.
+
+    const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
+
+    // Send data to server.
+
+    fetch("/player-action", {
+
+        // Select "POST" (i.e. Sending info).
+
+        method: "POST",
+
+        // Build a pseudo "PlayerAction" class to be deserialized.
+
+        body: JSON.stringify( {
+            "playerId": localPlayerId,
             "keys_pressed": currentAction
         })
     })
 }
 
-// == INPUT LISTENERS =============================
-
-// listen for button PRESS
-document.addEventListener("keydown", function (event) {
-
-    // debugging purposes
-    // console.log("key pressed: " + event.key);
-    
-    // check which key was pressed (for optimization can ignore this if the key is the same as the previous but whatever)
-    switch (event.key) {
-
-        // left
-        case "a":
-        case "A":    
-            keys_pressed.left = true;
-            break;
-
-        // right    
-        case "d":
-        case "D": // using a "fall-through" technique to catch multiple inputs under 1    
-            keys_pressed.right = true;
-            break;    
-
-        // up (jump)    
-        case "w":
-        case " ":    
-
-            // check if the user has exceeded the 
-//            if (numJumps < NUM_CONSECUTIVE_JUMPS) {
-//                velocity[Y] = -JUMP_FORCE; // apply jump force; gravity will take care of coming down.
-//                                           // negative because top-bottom pixel number INCREASES, since we're going up, we need to go NEGATIVE.
-//                                            // gravity maxes out at -MAX_VELOCITY
-//                isJumping = true;
-//                numJumps++; // update jump tracker
-//            }
-            keys_pressed.up = true;
-            break;
-
-        // down (crouch?)    
-        case "s":
-        case "Shift":
-        keys_pressed.down = true;
-            isCrouching = true;
-            break;
-    }
-});
-
-// listen for button RELEASE
-document.addEventListener("keyup", function (event) {
-    
-    // switch the pressed key; pretty self-explanatory
-    switch (event.key) {
-        case "a":
-        case "A":    
-            keys_pressed.left = false;
-            break;
-        case "d":
-        case "D":    
-            keys_pressed.right = false;
-            break;
-        case "w":
-        case " ":    
-            keys_pressed.up = false;
-            break;
-        case "s":
-        case "Shift":
-        keys_pressed.down = false;
-            isCrouching = false;
-            break;
-    }
-});
-
-// == METHODS =============================
-
-// PIXELS TO INT AND VICE VERSA
-
-// helps with simple conversion for css to update position 
-function pxToInt(str_px) {
-    return parseInt(str_px.replace("px", ""));
-}
-
-function intToPx(int_px) {
-    return (int_px + "px");
-}
-
-// UPDATE POSITION (key (super important) looping method)
-
-let currentGameData = null;
-
-function getGameData() {
-    fetch("/gamedata", { method: "GET" })
-        .then(response => response.json())
-        .then(json => {
-            if (JSON.stringify(currentGameData) === JSON.stringify(json)) return; // Skip if data is the same
-            currentGameData = json; // Store game data
-            clearGameWindow();
-            renderPlayers(currentGameData.players); // Render only if there's new data
-        })
-}
-
-
 function updatePosition() {
-    getGameData(); // Get the latest game data
-//    requestAnimationFrame(updatePosition); // Continue the game loop
+
+    // Request the data itself from the server.
+
+    fetch("/gamedata", {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(json => {
+
+        // Check that the data is not repeated and/or identical to the previous.
+        // (This is done for optimization's sake.)
+
+        if (JSON.stringify(currentGameData) === JSON.stringify(json)) {
+            return;
+        }
+
+        // If something is new, update currentGameData, and update renders of the players.
+
+        currentGameData = json;
+        renderPlayers(currentGameData.players);
+    })
 }
 
-function clearGameWindow() {
-    document.getElementById("game-window").innerHTML = "";
+
+// == FUNCTIONS [UTILITY] ==================================
+
+
+function addPlayer() {
+
+    // TODO: Get username.
+
+    // Send the request to make a new player.
+
+    fetch ("/add-player", {
+
+        method: "POST"
+        // body: { username: ... }
+
+    })
+    .then((response) => response.text())
+    .then((playerId) => {
+
+        // After receiving the unique id for this page, save it.
+
+        localPlayerId = parseInt(playerId);
+    })
 }
 
 function renderPlayers(players) {
-    if (!players || players.length === 0) return; // Prevent errors on empty data
+
+    // Check that everything is initialized properly.
+
+    if (!players || players.length === 0) return;
+
+    // Iterate through each player.
 
     players.forEach(player => {
-        let playerBox = document.getElementById(`player-${player.id}`);
+
+        // Try to locate an existing render for this user.
+
+        let playerBox = document.getElementById("box-" + player.id);
+
+        // If none found, make one.
 
         if (!playerBox) {
-            // Create a new div if it doesn't exist
+
+            // Create the div.
+
             playerBox = document.createElement("div");
-            playerBox.id = `player-${player.id}`;
+
+            // Assign it an id so that next time we don't reconstruct this.
+
+            playerBox.id = "box-" + player.id;
             playerBox.className = "box";
+
+            // Check class (character), set sprites accordingly.
+
+            // TODO: Do colors to register different characters (to test select screen).
             playerBox.style.backgroundColor = "red";
+
+            // Add the div to the game window.
+
             document.getElementById("game-window").appendChild(playerBox);
         }
 
-        // Update position
+        // Update box's position to fit that of the game data.
+
         playerBox.style.left = intToPx(player.position[X]);
+
+        // Vertical position depends on if the player is crouching.
 
         if (player.isCrouching) {
             playerBox.style.height = "50px";
@@ -219,50 +248,48 @@ function renderPlayers(players) {
     });
 }
 
-//setInterval(sendPlayerAction, 5);
-//setInterval(updatePosition, 10);
-
-
-let localPlayerId;
-
-function addPlayer() {
-    console.log("add player called");
-    fetch ("/add-player", {
-
-        method: "POST"
-
-    })
-    .then((response) => response.text()) // Read the response as text
-    .then((playerId) => {
-        localID = parseInt(playerId); // Store the received ID
-        console.log("Assigned localID:", localID);
-    })
-}
-
 function startGame() {
-    console.log("game should start (called)");
-    fetch("/start-game", { method: "POST" }); // Tells the server to start the game
-}
 
-let gameStarted = false;
+    // Just tell the server to start the game.
+
+    fetch("/start-game", {
+        method: "POST"
+    });
+}
 
 function hasTheGameStarted() {
-    fetch("/start-game", { method: "GET" })
-        .then(response => response.text())
-        .then(text => {
-            if (text === "true") {
-                gameStarted = true;
-                console.log("STARTED");
-                clearInterval(checkInterval); // Stop checking when the game starts
-                setInterval(sendPlayerAction, 10); // Send actions every 50ms (20 times per second)
-                setInterval(updatePosition, 10); // Update game state every 100ms (10 times per second)
-            }
-        });
+
+    // Check for if the game has started yet.
+
+    fetch("/start-game", {
+        method: "GET"
+    })
+    .then(response => response.text())
+    .then(text => {
+
+        if (text === "true") {
+
+            // If the game HAS started, set variable to true to stop constantly checking.
+
+            gameStarted = true;
+            clearInterval(checkInterval);
+
+            // Start the repeating processes (sending data and updating screen).
+
+            setInterval(sendPlayerAction, (1000 / FPS));
+            setInterval(updatePosition, (1000 / FPS));
+        }
+    });
 }
 
-const checkInterval = setInterval(() => {
-    if (!gameStarted) {
-        console.log("NOT STARTED");
-        hasTheGameStarted();
-    }
-}, 10);
+
+// == FUNCTIONS [LOCAL] ====================================
+
+
+function pxToInt(str_px) {
+    return parseInt(str_px.replace("px", ""));
+}
+
+function intToPx(int_px) {
+    return (int_px + "px");
+}

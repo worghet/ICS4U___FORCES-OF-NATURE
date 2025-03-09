@@ -1,8 +1,13 @@
+package player;
 
 public class Player {
 
     public static final int X = 0;
     public static final int Y = 1;
+
+    // PLAYER (CHARACTER) STATS
+    // TODO: Remove static from variables below.
+
     public static final int MAX_ATTACK_COOLDOWN = 10;
     public static final int MAX_X_POSITION = 1000;
     public static final int MAX_VELOCITY = 10;

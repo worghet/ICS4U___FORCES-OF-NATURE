@@ -1,3 +1,5 @@
+package player;
+
 public class Angler extends Player {
 
     public Angler(String username){
@@ -6,12 +8,14 @@ public class Angler extends Player {
 
     }
 
+    // ovverride "melee" attack from Player?
     public void bite(){
         double[] pos = this.getPosition();
         
 
     }//close attack
 
+    // ovverride "range" attack from Player?
     public void spit(){
 
     }
