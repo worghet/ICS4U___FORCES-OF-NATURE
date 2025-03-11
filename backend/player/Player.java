@@ -1,45 +1,55 @@
 package player;
+import java.util.ArrayList;
 
 public class Player {
 
-    public static final int X = 0;
-    public static final int Y = 1;
+    protected static final int X = 0;
+    protected static final int Y = 1;
 
     // PLAYER (CHARACTER) STATS
     // TODO: Remove static from variables below.
 
-    public static final int MAX_ATTACK_COOLDOWN = 10;
-    public static final int MAX_X_POSITION = 1000;
-    public static final int MAX_VELOCITY = 10;
-    public static final int MAX_CROUCH_VELOCITY = 4;
-    public static final double CROUCH_FRICTION = 0.2;
-    public static final int CROUCH_GRAVITY = 15;
-    public static final double ACCELERATION = 0.5;
+    protected static final int MAX_PROJECTILE_COOLDOWN = 10;
+    protected static final int MAX_MELEE_COOLDOWN = 2;
+    protected static final int MAX_X_POSITION = 1000;
+    protected static final int MAX_VELOCITY = 10;
+    protected static final int MAX_CROUCH_VELOCITY = 4;
+    protected static final double CROUCH_FRICTION = 0.2;
+    protected static final int CROUCH_GRAVITY = 15;
+    protected static final double ACCELERATION = 0.5;
     protected static double FRICTION = 0.55;
     protected static double GRAVITY = 0.55;
     protected static int JUMP_FORCE = 12;
     protected static int GROUNDY = 400;
     protected static int MAX_CONSECUTIVE_JUMPS = 3;
 
-    private static int numUsers = 0;
+    protected static int numUsers = 0;
 
-    private String username;
-    private int id;
+    protected String username;
+    protected int id;
 
-    private boolean previouslyJumped = false;
-    private PlayerAction latestActionPerformed = new PlayerAction();
+    protected boolean previouslyJumped = false;
+    protected PlayerAction latestActionPerformed = new PlayerAction();
 
-    private double[] position;
-    private double[] velocity;
+    protected double[] position;
+    protected double[] velocity;
+    
+    protected int lives;
+    protected int numJumps; // jumps remaining
+    protected boolean isCrouching;
+    protected boolean isJumping;
+    protected boolean isAttacking;
+    protected int projectileCooldown; //only applies to projectile attacks
+    protected int meleeCooldown; //only applies to melee attacks
+    protected boolean direction; // true for right, false for left
 
-    private int health;
-    private int lives;
-    private int numJumps; // jumps remaining
-    private boolean isCrouching;
-    private boolean isJumping;
-    private boolean isAttacking;
-    private int attackCooldown;
-    private boolean direction; // true for right, false for left
+    //charcter stats
+    protected int health;
+    protected int maxHealth;
+    protected double speedMultiplier;
+    protected static final int DEFAULT_MELEE_WIDTH = 30; //default hitbox width for melee attacks
+    protected static final int DEFAULT_MELEE_HEIGHT = 20; //could be changed depending on the character
+    protected static final int DEFAULT_MELEE_DAMAGE = 10; //all constant for now
 
     public Player(int startX) {
         this.position = new double[]{startX, GROUNDY};
@@ -50,7 +60,8 @@ public class Player {
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
-        this.attackCooldown = 0;
+        this.projectileCooldown = 0;
+        this.meleeCooldown = 0;
         this.direction = true;
 
         numUsers++;
@@ -67,7 +78,8 @@ public class Player {
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
-        this.attackCooldown = 0;
+        this.projectileCooldown = 0;
+        this.meleeCooldown = 0;
         this.direction = true;
 
 
@@ -85,7 +97,8 @@ public class Player {
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
-        this.attackCooldown = 0;
+        this.projectileCooldown = 0;
+        this.meleeCooldown = 0;
         this.direction = true;
 
 
@@ -136,11 +149,17 @@ public class Player {
     public boolean getIsAttacking() {
         return isAttacking;
     }
-    public int getAttackCooldown() {
-        return attackCooldown;
+    public int getProjectileCooldown() {
+        return projectileCooldown;
+    }
+    public int getMeleeCooldown() {
+        return meleeCooldown;
     }
     public boolean getDirection() {
         return direction;
+    }
+    public double getSpeedMultiplier() {
+        return speedMultiplier;
     }
     public void setPosition(double[] position) {
         if (position[Y] > GROUNDY) {
@@ -152,7 +171,7 @@ public class Player {
         }
         this.position = position;
     }
-    public void setVelocity() {
+    public void setVelocity(double[] velocity) {
         if (isCrouching) {
             if (velocity[X] > MAX_CROUCH_VELOCITY) {
                 velocity[X] = MAX_CROUCH_VELOCITY;
@@ -177,8 +196,8 @@ public class Player {
         this.velocity = velocity;
     }
     public void setHealth(int health) {
-        if (health > 100) {
-            health = 100;
+        if (health > maxHealth) {
+            health = maxHealth;
         } else if (health < 0) {
             health = 0;
         }
@@ -209,25 +228,36 @@ public class Player {
     public void setAttacking(boolean isAttacking) {
         this.isAttacking = isAttacking;
     }
-    public void setAttackCooldown(int attackCooldown) {
-        if (attackCooldown < 0) {
-            attackCooldown = 0;
-        } else if (attackCooldown > MAX_ATTACK_COOLDOWN) {
-            attackCooldown = MAX_ATTACK_COOLDOWN;
+    public void setProjectileCooldown(int projectileCooldown) {
+        if (projectileCooldown < 0) {
+            projectileCooldown = 0;
+        } else if (projectileCooldown > MAX_PROJECTILE_COOLDOWN) {
+            projectileCooldown = MAX_PROJECTILE_COOLDOWN;
         }
-        this.attackCooldown = attackCooldown;
+        this.projectileCooldown = projectileCooldown;
+    }
+    public void setMeleeCooldown(int meleeCooldown) {
+        if (meleeCooldown < 0) {
+            meleeCooldown = 0;
+        } else if (meleeCooldown > MAX_MELEE_COOLDOWN) {
+            meleeCooldown = MAX_MELEE_COOLDOWN;
+        }
+        this.meleeCooldown = meleeCooldown;
     }
     public  void setDirection(boolean direction) {
         this.direction = direction;
     }
+    public void setSpeedMultiplier(double speedMultiplier) {
+        this.speedMultiplier = speedMultiplier;
+    }
 
     // Methods
     public void moveLeft() {
-        this.velocity[X] -= ACCELERATION;
+        this.velocity[X] -= ACCELERATION * speedMultiplier;
         this.direction = false;
     }
     public void moveRight() {
-        this.velocity[X] += ACCELERATION;
+        this.velocity[X] += ACCELERATION * speedMultiplier;
         this.direction = true;
     }
     public void crouch() {
@@ -265,7 +295,41 @@ public class Player {
         this.isCrouching = false;
         this.isJumping = false;
         this.isAttacking = false;
-        this.attackCooldown = 0;
+        this.projectileCooldown = 0;
+        this.meleeCooldown = 0;
+        this.direction = true;
+    }
+    public void meleeAttack(ArrayList<Player> players) {
+        if (!isAttacking && meleeCooldown <= 0) { //ensure the player isn't already attacking
+            this.isAttacking = true;
+            this.meleeCooldown = MAX_MELEE_COOLDOWN;
+            System.out.println("Melee Attack!");
+
+            //calculate the attack area based on the player's direction
+            double attackStartX = position[X]; //start of the attack hitbox(X position)
+            double attackEndX = position[X] + (direction ? DEFAULT_MELEE_WIDTH : -DEFAULT_MELEE_WIDTH); //end of the attack hitbox(X position)
+
+            for (Player temp : players) {
+                if (temp != this) { //ensure the player isn't attacking themselves
+                    double[] tempPos = temp.getPosition();
+                    boolean withinHorizontalRange = (direction && tempPos[X] >= attackStartX && tempPos[X] <= attackEndX) || (!direction && tempPos[X] <= attackStartX && tempPos[X] >= attackEndX); //first check for if facing right, then if facing left
+                    boolean withinVerticalRange = Math.abs(tempPos[Y] - position[Y]) < DEFAULT_MELEE_HEIGHT; //vertical check
+                    if (withinHorizontalRange && withinVerticalRange) {
+                        temp.takeDamage(10); //deal damage to the player if they are within the attack range
+                        System.out.println("Hit " + temp.getUsername() + " for 10 damage!");
+                    }
+                }
+            }
+        }
+    }
+    public void projectileAttack(ArrayList<Projectile> projectiles) {
+        if (!isAttacking && projectileCooldown <= 0) {
+            this.isAttacking = true;
+            this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
+            System.out.println("Default Projectile Attack!");
+            Projectile projectile = new Projectile(this, 5, 10, "projectile");
+            projectiles.add(projectile);
+        }
     }
     public void updatePosition() {
         boolean[] keys_pressed = latestActionPerformed.getKeys_Pressed();
@@ -289,11 +353,7 @@ public class Player {
             previouslyJumped = false;
         }
 
-        if (keys_pressed[PlayerAction.DOWN]) {
-            isCrouching = true;
-        } else {
-            isCrouching = false;
-        }
+        isCrouching = keys_pressed[PlayerAction.DOWN];
 
         // -- GRAVITY --------------------------------------
         if (isCrouching) {
@@ -313,7 +373,7 @@ public class Player {
         position[X] += velocity[X];
         position[Y] += velocity[Y];
 
-        setVelocity();
+        setVelocity(velocity);
 
         // Check if player has landed
         checkLanded();
@@ -326,12 +386,13 @@ public class Player {
 //        renderCharacter(pixelX, pixelY);
 
         // Update attack cooldown
-        if (this.attackCooldown > 0) {
-            this.attackCooldown--;
+        if (this.projectileCooldown > 0 || this.meleeCooldown > 0) {
+            this.meleeCooldown--;
+            this.projectileCooldown--;
         }
 
         // Reset attacking state after attack is complete
-        if (this.isAttacking && this.attackCooldown <= 0) {
+        if (this.isAttacking && this.projectileCooldown <= 0 && this.meleeCooldown <= 0) {
             this.isAttacking = false;
         }
     }
