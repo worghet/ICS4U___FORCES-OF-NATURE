@@ -70,7 +70,7 @@ public class Game {
             //if player is long range attacking, creates projectile
             if(temp.getIsAttacking()){
                 //will move this in the character subclasses i think
-                Projectile shot = new Projectile(temp);//inputs player obj that attacked to get x,y, & type (ex. Player.Welder)
+//                Projectile shot = new Projectile(temp);//inputs player obj that attacked to get x,y, & type (ex. Player.Welder)
 
                 //bad will stop the loop that checks for other characters movements??
 //                while(shot.getActive()){
@@ -111,18 +111,25 @@ public class Game {
         players.add(newPlayer);
     }
 
-    public void removePlayer(int playerId) {
+    public Player removePlayer(int playerId) {
 
         // Use id to remove the player (as indexes
         // are unreliable when people can come and
         // leave in a single server instance).
 
+        Player returnableCopy = null;
+        
         for (Player player : players) {
             if (player.getId() == playerId) {
+                
+                returnableCopy = player;
                 players.remove(player);
                 break;
             }
         }
+        
+        return returnableCopy;
+        
     }
 
     public void resetGame() {

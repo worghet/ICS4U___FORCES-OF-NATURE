@@ -28,13 +28,8 @@ let currentGameData = null;
 // ======================== PROGRAM ===========================
 
 
-// Pretty much just wait for the game to start.
-
-const checkInterval = setInterval(() => {
-    if (!gameStarted) {
-        hasTheGameStarted();
-    }
-}, (1000 / FPS));
+setInterval(sendPlayerAction, (1000 / FPS));
+setInterval(updatePosition, (1000 / FPS));
 
 
 // ======================== PROGRAM ===========================
@@ -42,6 +37,38 @@ const checkInterval = setInterval(() => {
 
 
 // == INPUT LISTENERS ======================================
+window.onload = function() {
+    const playerId = sessionStorage.getItem("playerId");
+
+    if (playerId === null) {
+        window.location.href = "/forces-of-nature";
+    } else {
+        console.log("Player Id:", playerId);
+        localPlayerId = playerId;
+    }
+};
+
+window.addEventListener("beforeunload", (event) => {
+
+    // remove player trace
+
+    const playerId = sessionStorage.getItem("playerId");
+
+    if (playerID) {
+        fetch("/remove-player", {
+            method: "POST",
+            body: playerId
+        }).then(() => {
+
+            // TODO: remove storage session tag and box
+
+            document.getElementById("box-" + playerId).remove;
+
+            sessionStorage.removeItem("playerId");
+        });
+    }
+});
+
 
 // Input listener for when key is PRESSED.
 document.addEventListener("keydown", function (event) {
@@ -125,6 +152,8 @@ document.addEventListener("keyup", function (event) {
 
 function sendPlayerAction() {
 
+       console.log()
+
     // Build keys_pressed into a legible array.
 
     const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
@@ -172,28 +201,6 @@ function updatePosition() {
 
 
 // == FUNCTIONS [UTILITY] ==================================
-
-
-function addPlayer() {
-
-    // TODO: Get username.
-
-    // Send the request to make a new player.
-
-    fetch ("/add-player", {
-
-        method: "POST"
-        // body: { username: ... }
-
-    })
-    .then((response) => response.text())
-    .then((playerId) => {
-
-        // After receiving the unique id for this page, save it.
-
-        localPlayerId = parseInt(playerId);
-    })
-}
 
 function renderPlayers(players) {
 
@@ -248,39 +255,6 @@ function renderPlayers(players) {
     });
 }
 
-function startGame() {
-
-    // Just tell the server to start the game.
-
-    fetch("/start-game", {
-        method: "POST"
-    });
-}
-
-function hasTheGameStarted() {
-
-    // Check for if the game has started yet.
-
-    fetch("/start-game", {
-        method: "GET"
-    })
-    .then(response => response.text())
-    .then(text => {
-
-        if (text === "true") {
-
-            // If the game HAS started, set variable to true to stop constantly checking.
-
-            gameStarted = true;
-            clearInterval(checkInterval);
-
-            // Start the repeating processes (sending data and updating screen).
-
-            setInterval(sendPlayerAction, (1000 / FPS));
-            setInterval(updatePosition, (1000 / FPS));
-        }
-    });
-}
 
 
 // == FUNCTIONS [LOCAL] ====================================

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FON - Waitroom</title>
+</head>
+<body>
+<h1>
+    Welcome to the waitroom!
+</h1>
+<p>
+    Choose a character, see who is here now, and get ready to play!
+</p>
+
+<h1>
+    PLAYERS ONLINE:
+</h1>
+
+<ol id="player-list">
+
+</ol>
+
+<button onclick="backToMain()">
+    Go back (leave lobby)
+</button>
+
+<button>
+    Angler
+</button>
+
+<button>
+    Welder
+</button>
+
+<button>
+    Golem
+</button>
+
+<button onclick="startGame()">
+    Start game
+</button>
+
+<script>
+
+    // variables
+    let gameStarted = false;
+    const playerList = document.getElementById("player-list");
+
+
+    // actual program:
+
+
+    const checkInterval = setInterval(() => {
+        if (!gameStarted) {
+            hasTheGameStarted();
+
+            // manage players in the table
+            // refreshOnlinePlayers();
+
+            console.log("Game not started yet");
+        } else {
+            window.location.href = "/forces-of-nature/gameplay";
+            console.log("Game started!!");
+
+        }
+    }, 1000);
+
+
+
+
+    // functions
+    function hasTheGameStarted() {
+        // Check for if the game has started yet
+        fetch("/start-game", {
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+            if (response.gameActive) {
+                // If the game HAS started, set variable to true to stop constantly checking.
+                gameStarted = true;
+                clearInterval(checkInterval);
+                // Start the repeating processes (sending data and updating screen).
+                window.location.href = "/forces-of-nature/gameplay";
+            }
+            else {
+
+                // game hasnt started yet; update the table of players
+                updatePlayerList(response.playersOnline);
+
+            }
+        });
+    }
+
+    function updatePlayerList(players) {
+        //        const playerCount = document.getElementById("playerCount");
+
+        // Clear the existing list
+        playerList.innerHTML = "";
+
+        // Add each player to the list
+        players.forEach(player => {
+            const listItem = document.createElement("li");
+            listItem.textContent = player.username + " (put selected character here)";
+            playerList.appendChild(listItem);
+        });
+
+        // playerCount.textContent = players.length;
+    }
+
+
+    function backToMain() {
+        window.location.href = "/forces-of-nature";
+    }
+
+    function startGame() {
+
+        fetch("/start-game", {
+
+            method: "POST"
+
+        });
+
+        gameStarted = true;
+    }
+
+    window.onload = function() {
+        // Get THIS player's id
+        const playerId = sessionStorage.getItem("playerId");
+
+        if (!playerId) {
+            console.log("No Player ID found! Redirecting...");
+            window.location.href = "/forces-of-nature"; // Redirect if no ID
+        } else {
+            console.log("Player ID:", playerId);
+        }
+    };
+
+    window.addEventListener("beforeunload", (event) => {
+        console.log("User is leaving the page!");
+
+        // Directly compare pathname to check if it's the gameplay page
+        if (gameStarted) {
+            console.log("User is going to the gameplay page, skipping cleanup.");
+            return; // Exempt cleanup from happening
+        }
+
+        const playerID = sessionStorage.getItem("playerId");
+
+        if (playerID) {
+            fetch("/remove-player", {
+                method: "POST",
+                body: playerID
+            });
+
+            sessionStorage.removeItem("playerId");
+        }
+    });
+
+</script>
+
+</body>
+</html>

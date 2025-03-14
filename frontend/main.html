@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forces of Nature</title>
+</head>
+    <body>
+        <h1>This is the main screen!</h1>
+
+        <button onclick="openInfo()">
+            Click me for info!
+        </button>
+
+<!--        WHAT FONT TO USE? -->
+
+
+<!--        the text field and button combo! -->
+        <div style="margin-top: 5px;">
+            <input type="text" placeholder="username.." id="username-field">
+            <button onclick="openWaitroom()">ENTER LOBBY</button>
+        </div>
+
+        <script>
+
+            function openInfo() {
+                window.location.href = "/forces-of-nature/info";
+            }
+
+            function openWaitroom() {
+
+                registerPlayer(document.getElementById("username-field").value);
+
+                window.location.href = "/forces-of-nature/waitroom";
+            }
+
+
+            // moved this from functionality.js
+            function registerPlayer(requestedUsername) {
+
+                // Send the request to make a new player.
+
+                fetch ("/add-player", {
+
+                    method: "POST",
+
+                    body: requestedUsername
+
+
+                    // body: { username: ... }
+
+                })
+                .then((response) => response.text())
+                .then((playerId) => {
+
+                    // After receiving the unique id for this page, save it to session (will reset if tab is closed; like cookies but simpler and less capable).
+
+                    playerId = parseInt(playerId);
+                    sessionStorage.setItem("playerId", playerId); // Store player ID in session storage
+
+                    console.log("made player with username: " + requestedUsername);
+
+                })
+            }
+
+        </script>
+
+    </body>
+</html>

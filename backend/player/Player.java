@@ -1,7 +1,15 @@
 package player;
+
 import java.util.ArrayList;
 
 public class Player {
+
+
+    String colour;
+
+
+
+
 
     protected static final int X = 0;
     protected static final int Y = 1;
@@ -19,7 +27,8 @@ public class Player {
     protected static final double ACCELERATION = 0.5;
     protected static double FRICTION = 0.55;
     protected static double GRAVITY = 0.55;
-    protected static int JUMP_FORCE = 12;
+    protected static int JUMP_FORCE = 15;
+    protected static double AIR_FRICTION = 0.97;
     protected static int GROUNDY = 400;
     protected static int MAX_CONSECUTIVE_JUMPS = 3;
 
@@ -81,7 +90,7 @@ public class Player {
         this.projectileCooldown = 0;
         this.meleeCooldown = 0;
         this.direction = true;
-
+        speedMultiplier = 1.0;
 
         numUsers++;
         id = numUsers;
@@ -100,7 +109,7 @@ public class Player {
         this.projectileCooldown = 0;
         this.meleeCooldown = 0;
         this.direction = true;
-
+        speedMultiplier = 1.0;
 
         numUsers++;
         id = numUsers;
@@ -171,29 +180,34 @@ public class Player {
         }
         this.position = position;
     }
-    public void setVelocity(double[] velocity) {
+    public void capVelocity() {
         if (isCrouching) {
             if (velocity[X] > MAX_CROUCH_VELOCITY) {
                 velocity[X] = MAX_CROUCH_VELOCITY;
             } else if (velocity[X] < -MAX_CROUCH_VELOCITY) {
                 velocity[X] = -MAX_CROUCH_VELOCITY;
-            } else if (velocity[Y] > MAX_CROUCH_VELOCITY) {
-                velocity[Y] = MAX_CROUCH_VELOCITY;
-            } else if (velocity[Y] < -MAX_CROUCH_VELOCITY) {
-                velocity[Y] = -MAX_CROUCH_VELOCITY;
             }
+
+//            COMMENTED THIS: IT PREVENTS "SLAMS"
+//            if (velocity[Y] > MAX_CROUCH_VELOCITY) {
+//                velocity[Y] = MAX_CROUCH_VELOCITY;
+//            } else if (velocity[Y] < -MAX_CROUCH_VELOCITY) {
+//                velocity[Y] = -MAX_CROUCH_VELOCITY;
+//            }
         } else {
             if (velocity[X] > MAX_VELOCITY) {
                 velocity[X] = MAX_VELOCITY;
             } else if (velocity[X] < -MAX_VELOCITY) {
                 velocity[X] = -MAX_VELOCITY;
-            } else if (velocity[Y] > MAX_VELOCITY) {
+            }
+            // CHANGED - else if is not suitable in combining these velocities.
+            // we check X velocities and Y velocities individually.
+            if (velocity[Y] > MAX_VELOCITY) {
                 velocity[Y] = MAX_VELOCITY;
             } else if (velocity[Y] < -MAX_VELOCITY) {
                 velocity[Y] = -MAX_VELOCITY;
             }
         }
-        this.velocity = velocity;
     }
     public void setHealth(int health) {
         if (health > maxHealth) {
@@ -268,6 +282,7 @@ public class Player {
             this.velocity[Y] = -JUMP_FORCE;
             this.numJumps--;
         }
+        isJumping = true;
     }
     public void takeDamage(int damage) {
         this.health -= damage;
@@ -356,24 +371,39 @@ public class Player {
         isCrouching = keys_pressed[PlayerAction.DOWN];
 
         // -- GRAVITY --------------------------------------
+
         if (isCrouching) {
             velocity[Y] += CROUCH_GRAVITY;  // Apply crouch gravity
-            if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
-                velocity[X] *= CROUCH_FRICTION;  // Apply crouch friction
-                //change the frame of the player, halve its height
-            }
+
         } else {
             velocity[Y] += GRAVITY;  // Apply normal gravity
+        }
+
+        // -- FRICTION -----------------------
+
+        if (isJumping) {
             if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
-                velocity[X] *= FRICTION;  // Apply normal friction
-                //change the frame of the player, halve its height
+                velocity[X] *= AIR_FRICTION;
             }
         }
-        // Update position based on velocity
+        else if (isCrouching) {
+            if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
+                velocity[X] *= CROUCH_FRICTION;  // Apply crouch friction
+            }
+        }
+        else {
+            if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
+                velocity[X] *= FRICTION;  // Apply crouch friction
+            }
+        }
+
+
+        // -- UPDATE POSITION THROUGH VELOCITY ------------
+
         position[X] += velocity[X];
         position[Y] += velocity[Y];
 
-        setVelocity(velocity);
+        capVelocity();
 
         // Check if player has landed
         checkLanded();
