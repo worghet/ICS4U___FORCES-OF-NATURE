@@ -1,21 +1,15 @@
 package game;
 
 // == IMPORTS =============================
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-
 import java.nio.charset.StandardCharsets;
-
 import com.google.gson.Gson;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import player.PlayerAction;
 import player.Player;
-
 import java.util.*;
 import java.net.*;
 import java.io.*;
@@ -35,19 +29,34 @@ public class GameServer {
 
     // == API CONSTANTS [FOR READABILITY] ======================
 
-
-    // TODO: add "info-page" / reconfigure indexes.
+    // Used for the multipurpose nature of page handler.
     static private final int MAIN_MENU_PAGE = 0;
     static private final int INFO_PAGE = 1;
     static private final int WAITROOM_PAGE = 2;
     static private final int GAMEPLAY_PAGE = 3;
 
+    // Return menu page.
+    static private final String MAIN_MENU_API = "/forces-of-nature";
+    static private final String INFO_MENU_API = "/forces-of-nature/info";
+    static private final String WAITROOM_MENU_API = "/forces-of-nature/waitroom";
+    static private final String GAMEPLAY_SCREEN_API = "/forces-of-nature/gameplay";
+
+    // Manipulate / receive game data.
+    static private final String GAMEDATA_API = "/gamedata";
+    static private final String PLAYER_ACTION_API = "/player-action";
+    static private final String ADD_PLAYER_API = "/add-player";
+    static private final String REMOVE_PLAYER_API = "/remove-player";
+    static private final String START_GAME_API = "/start-game";
+
+
     // == CONSOLE CONSTANTS [FOR READABILITY] ==================
+
 
     static public final int ERROR = 0;
     static public final int OKAY = 1;
     static public final int MESSAGE = 2;
     static public final int INTERESTING = 3;
+
 
     // == STATIC GSON [SERIALIZATION / DESERIALIZATION] ========
 
@@ -120,18 +129,18 @@ public class GameServer {
 
             // Assign page APIs (give webpages; technically can be combined with previous as html is a static file).
 
-            httpServer.createContext("/forces-of-nature", new WebpageHandler(MAIN_MENU_PAGE));
-            httpServer.createContext("/forces-of-nature/info", new WebpageHandler(INFO_PAGE));
-            httpServer.createContext("/forces-of-nature/waitroom", new WebpageHandler(WAITROOM_PAGE));
-            httpServer.createContext("/forces-of-nature/gameplay", new WebpageHandler(GAMEPLAY_PAGE));
+            httpServer.createContext(MAIN_MENU_API, new WebpageHandler(MAIN_MENU_PAGE));
+            httpServer.createContext(INFO_MENU_API, new WebpageHandler(INFO_PAGE));
+            httpServer.createContext(WAITROOM_MENU_API, new WebpageHandler(WAITROOM_PAGE));
+            httpServer.createContext(GAMEPLAY_SCREEN_API, new WebpageHandler(GAMEPLAY_PAGE));
 
             // Assign game data APIs (different actions associated with game logic).
 
-            httpServer.createContext("/gamedata", new GameHandler(game));
-            httpServer.createContext("/player-action", new PlayerActionHandler(game));
-            httpServer.createContext("/add-player", new AddPlayerHandler(game));
-            httpServer.createContext("/remove-player", new RemovePlayerHandler(game));
-            httpServer.createContext("/start-game", new GameStartupHandler(game));
+            httpServer.createContext(GAMEDATA_API, new GameHandler(game));
+            httpServer.createContext(PLAYER_ACTION_API, new PlayerActionHandler(game));
+            httpServer.createContext(ADD_PLAYER_API, new AddPlayerHandler(game));
+            httpServer.createContext(REMOVE_PLAYER_API, new RemovePlayerHandler(game));
+            httpServer.createContext(START_GAME_API, new GameStartupHandler(game));
 
             // Not exactly sure what this is; guy on stack overflow had it here.
 
@@ -143,8 +152,6 @@ public class GameServer {
             System.out.print("║ SERVER STATUS | ");
             httpServer.start();
             System.out.println("\u001B[32mSTARTED\u001B[0m");
-
-            // TODO: Change the link to connect to the primary page (main menu).
             System.out.println("║ http://" + hostAddress + ":" + serverPort + "/forces-of-nature");
 
             // Add some more information on how to use (given different problems encountered.
@@ -382,13 +389,11 @@ public class GameServer {
                     }
                 }
 
-                // Tell the client that we (the back end) got the information.
+                // Let client know all is OK!
 
-                String response = "OK";
-                httpExchange.sendResponseHeaders(200, response.length());
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(response.getBytes(StandardCharsets.UTF_8));
-                os.close();
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().close();
+
             }
         }
     }
@@ -431,18 +436,27 @@ public class GameServer {
         }
 
         private Player getPlayer(HttpExchange httpExchange) throws IOException {
+
+            // Read content from the request; should read:
+            // - (String) requested username.
+
             InputStream inputStream = httpExchange.getRequestBody();
             String requestedUsername = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
-            // check that username dont already exist
+            // Check that the requested username isn't blank; give "player-X" if anything.
+            // This can still be cheesed though...
 
             if (requestedUsername.isEmpty()) {
-                // if user though they were slick putting in nothing
-                requestedUsername = "nameless";
+                requestedUsername = "player-" + (Player.getPlayerCount() + 1);
             }
 
-            // check if already exists
+            // Check if the name already exists.
+
             for (Player player : game.getPlayers()) {
+
+                // If someone is already using this name,
+                // just put "fake-" in front of it to differentiate users.
+
                 if (player.getUsername().equals(requestedUsername)) {
                     requestedUsername = "fake-" + requestedUsername;
                     // will repeat the "fake-" until the end.
@@ -470,20 +484,28 @@ public class GameServer {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
 
+            // Should technically only be post; but just to be safe we check.
+
             if ("POST".equals(httpExchange.getRequestMethod())) {
+
+                // Read the ID of the player who is going to be removed.
 
                 InputStream inputStream = httpExchange.getRequestBody();
                 String playerId = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
+                // Cast the input to an int, then remove them from the game.
+                // * Keeping the player object locally to report data after.
+
                 Player removedPlayer = game.removePlayer(Integer.parseInt(playerId));
+
+                // Report player removal to console.
 
                 reportToConsole("REMOVED PLAYER (ID: " + removedPlayer.getId() + " | USERNAME: " + removedPlayer.getUsername() + ").", INTERESTING);
 
-                String response = "OK";
-                httpExchange.sendResponseHeaders(200, response.length());
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(response.getBytes(StandardCharsets.UTF_8));
-                os.close();
+                // Let client know all is OK!
+
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().close();
             }
 
         }
@@ -516,23 +538,21 @@ public class GameServer {
                     reportToConsole("GAME ALREADY RUNNING", ERROR);
                 }
 
-                // Send message back to client that all is good now.
+                // Let client know all is OK!
 
-                String response = "OK";
-                httpExchange.sendResponseHeaders(200, response.length()); // Correct length
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(response.getBytes(StandardCharsets.UTF_8)); // Send as UTF-8 string
-                os.close();
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().close();
+
             }
 
             // If the player wants to check whether the game has started or not.
             else if ("GET".equals(httpExchange.getRequestMethod())) {
 
-                // Just get the boolean "isRunning" from the game object.
+                // Just get the boolean "isRunning" & "players" from the game object.
                 WaitroomData currentWaitroomData = new WaitroomData(game);
                 String response = gson.toJson(currentWaitroomData);
 
-                // Send that to the client.
+                // Send the data to the client.
 
                 httpExchange.sendResponseHeaders(200, response.length()); // Correct length
                 OutputStream os = httpExchange.getResponseBody();

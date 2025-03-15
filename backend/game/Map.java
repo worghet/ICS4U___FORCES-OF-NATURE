@@ -1,15 +1,16 @@
 package game;
 
+// == MAP ========
 public class Map {
 
-    // png or gif for background
 
-    // array of possible spawn points
+    // == INSTANCE VARIABLES [FIELDS] ==========================
 
-    // GROUNDY
-
-    // array of Island objects? (for collision checking etc)
-
-    // track (music file) if we get to it
+    // TODO:
+    // 1. png or gif for background.
+    // 2. ground Y (if its not just islands).
+    // 3. array of coordinates (possible spawn points).
+    // 4. array of Island objects (for collision checking).
+    // 5. track (music file) if we get to it.
 
 }

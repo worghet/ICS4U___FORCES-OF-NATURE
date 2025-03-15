@@ -14,7 +14,7 @@ public class Game {
     // == INSTANCE VARIABLES [FIELDS] ==========================
 
 
-    private ArrayList<Player> players = new ArrayList<Player>();
+    private final ArrayList<Player> players = new ArrayList<>();
     private boolean gameRunning;
 
 
@@ -44,6 +44,20 @@ public class Game {
             @Override
             public void run() {
 
+                // Check if the game had stopped.
+                if (!gameRunning) {
+
+                    // Reset game data.
+                    resetGame();
+
+                    // Cancel the task, and the timer.
+                    this.cancel(); // "this" is technically unnecessary.
+                    timer.cancel();
+
+                    // Prevent the method from running further.
+                    return;
+                }
+
                 // -- REPLACE WITH MATT'S UPDATE METHOD -----
 
                 for (Player aPlayer : players) {
@@ -57,18 +71,19 @@ public class Game {
 
         // After having defined the task, start it.
         timer.scheduleAtFixedRate(gameLoop, delay, period);
+
     }
 
     // * Matt's method; not commenting / touching it. *
-    public void performLoop(){
-        for(int i = 0; i< players.size(); i++){
+    public void performLoop() {
+        for (int i = 0; i < players.size(); i++) {
 
             Player temp = players.get(i);
 //            temp.update();//checks if player has moved, updates
             //temp.getLatestActionPerformed();
 
             //if player is long range attacking, creates projectile
-            if(temp.getIsAttacking()){
+            if (temp.getIsAttacking()) {
                 //will move this in the character subclasses i think
 //                Projectile shot = new Projectile(temp);//inputs player obj that attacked to get x,y, & type (ex. Player.Welder)
 
@@ -111,6 +126,7 @@ public class Game {
         players.add(newPlayer);
     }
 
+    // Returns copy of the player deleted; useful for server reporting.
     public Player removePlayer(int playerId) {
 
         // Use id to remove the player (as indexes
@@ -118,23 +134,33 @@ public class Game {
         // leave in a single server instance).
 
         Player returnableCopy = null;
-        
+
         for (Player player : players) {
             if (player.getId() == playerId) {
-                
+
                 returnableCopy = player;
                 players.remove(player);
                 break;
             }
         }
-        
+
         return returnableCopy;
-        
+
     }
 
     public void resetGame() {
-        this.gameRunning = false;
-        // clear all players / reset ID status --> set static thing to 0.
+
+        // TODO (Finish the following in method)
+
+        // 1. Clear all players from game (assuming just going to send players to main menu)
+        players.clear();
+
+        // 2. Clear map preference.
+        // map = null; // or just a default one idk
+
+        // 3. reset player IDs.
+        Player.resetPlayerCount();
+
     }
 
 

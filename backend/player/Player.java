@@ -5,118 +5,124 @@ import java.util.ArrayList;
 public class Player {
 
 
-    String colour;
+    // == CLASS / TRACKER VARIABLES (+ RELATED METHODS) ========
 
 
+    private static int numUsers = 0;
+
+    public static void resetPlayerCount() {
+        numUsers = 0;
+    }
+
+    public static int getPlayerCount() {
+        return numUsers;
+    }
 
 
+    // == CONSTANTS ============================================
 
+
+    // Constants for position and velocity.
     protected static final int X = 0;
     protected static final int Y = 1;
 
-    // PLAYER (CHARACTER) STATS
-    // TODO: Remove static from variables below.
 
-    protected static final int MAX_PROJECTILE_COOLDOWN = 10;
-    protected static final int MAX_MELEE_COOLDOWN = 2;
-    protected static final int MAX_X_POSITION = 1000;
-    protected static final int MAX_VELOCITY = 10;
-    protected static final int MAX_CROUCH_VELOCITY = 4;
-    protected static final double CROUCH_FRICTION = 0.2;
-    protected static final int CROUCH_GRAVITY = 15;
-    protected static final double ACCELERATION = 0.5;
-    protected static double FRICTION = 0.55;
-    protected static double GRAVITY = 0.55;
-    protected static int JUMP_FORCE = 15;
-    protected static double AIR_FRICTION = 0.97;
-    protected static int GROUNDY = 400;
-    protected static int MAX_CONSECUTIVE_JUMPS = 3;
+    // == PLAYER RELATED DATA ==================================
 
-    protected static int numUsers = 0;
 
     protected String username;
     protected int id;
-
-    protected boolean previouslyJumped = false;
-    protected PlayerAction latestActionPerformed = new PlayerAction();
-
-    protected double[] position;
-    protected double[] velocity;
-    
     protected int lives;
-    protected int numJumps; // jumps remaining
-    protected boolean isCrouching;
-    protected boolean isJumping;
-    protected boolean isAttacking;
-    protected int projectileCooldown; //only applies to projectile attacks
-    protected int meleeCooldown; //only applies to melee attacks
-    protected boolean direction; // true for right, false for left
-
-    //charcter stats
     protected int health;
     protected int maxHealth;
     protected double speedMultiplier;
+    protected PlayerAction latestActionPerformed = new PlayerAction();
+
+
+    // == CONTROL-BASED VARIABLES ==============================
+
+
+    // Default player stats; are configured in each character individually.
+    // TODO: These are NOT all static. Configure them and update in each character's class accordingly.
+    // TODO: I think protected is unnecessary here.
+
+    // Physical constants (static final); might be moved to Map object.
+    protected static final double GRAVITY = 0.55;
+    protected static final double ACCELERATION = 0.5;
+    protected double[] position;
+    protected double[] velocity;
+    protected boolean direction; // If you insist on using direction instead of velocity, make constants LEFT = false, RIGHT = true
+
+    // Default movement variables (not crouched or jumped).
+    protected static final int MAX_VELOCITY = 10;
+    protected static double FRICTION = 0.55;
+
+    // Default crouched variables (active when crouched).
+    protected static final double CROUCH_FRICTION = 0.2;
+    protected static final int MAX_CROUCH_VELOCITY = 4;
+    protected static final int CROUCH_GRAVITY = 15;
+    protected boolean isCrouching;
+
+    // Default jump-related variables.
+    protected static int JUMP_FORCE = 15;
+    protected static double AIR_FRICTION = 0.97;
+    protected static int MAX_CONSECUTIVE_JUMPS = 3;
+    protected boolean previouslyJumped = false;
+    protected boolean isJumping;
+    protected int numJumps; // jumps remaining
+
+    // Default attack-based variables.
+    protected static final int MAX_PROJECTILE_COOLDOWN = 10;
+    protected static final int MAX_MELEE_COOLDOWN = 2;
     protected static final int DEFAULT_MELEE_WIDTH = 30; //default hitbox width for melee attacks
     protected static final int DEFAULT_MELEE_HEIGHT = 20; //could be changed depending on the character
     protected static final int DEFAULT_MELEE_DAMAGE = 10; //all constant for now
+    protected int projectileCooldown; //only applies to projectile attacks
+    protected int meleeCooldown; //only applies to melee attacks
+    protected boolean isAttacking;
 
-    public Player(int startX) {
-        this.position = new double[]{startX, GROUNDY};
-        this.velocity = new double[]{0, 0};
-        this.health = 100;
-        this.lives = 3;
-        this.numJumps = 3;
-        this.isCrouching = false;
-        this.isJumping = false;
-        this.isAttacking = false;
-        this.projectileCooldown = 0;
-        this.meleeCooldown = 0;
-        this.direction = true;
 
-        numUsers++;
-        id = numUsers;
-    }
+    // == CONSTRUCTOR ==========================================
 
+
+    // Character classes will override this constructor,
+    // and manipulate the movement / damage variables.
+    // THIS CONSTRUCTS A DEFAULT CHARACTER.
     public Player(String username) {
+
+        // Increment player count, set ID.
+        numUsers++;
+        id = numUsers;
+
+        // Set username.
         this.username = username;
-        this.position = new double[] {0, 0};
-        this.velocity = new double[] {0, 0};
-        this.health = 100;
-        this.lives = 3;
-        this.numJumps = 3;
-        this.isCrouching = false;
-        this.isJumping = false;
-        this.isAttacking = false;
-        this.projectileCooldown = 0;
-        this.meleeCooldown = 0;
-        this.direction = true;
-        speedMultiplier = 1.0;
 
-        numUsers++;
-        id = numUsers;
+        // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
+
+        // Initialize position; will set to random when map loads.
+        position = new double[] {0, 0};
+        velocity = new double[] {0, 0};
+
+        // Vital variables.
+        lives = 3;
+        health = 100;
+
+        // Movement-based variables
+        numJumps = 3;
+        isCrouching = false;
+        isJumping = false;
+        isAttacking = false;
+        speedMultiplier = 1.0;
+        direction = true;
+
+        // Attack-based variables.
+        projectileCooldown = 0;
+        meleeCooldown = 0;
     }
 
-    public Player() {
-        this.username = "unset";
-        this.position = new double[] {0, 0};
-        this.velocity = new double[] {0, 0};
-        this.health = 100;
-        this.lives = 3;
-        this.numJumps = 3;
-        this.isCrouching = false;
-        this.isJumping = false;
-        this.isAttacking = false;
-        this.projectileCooldown = 0;
-        this.meleeCooldown = 0;
-        this.direction = true;
-        speedMultiplier = 1.0;
 
-        numUsers++;
-        id = numUsers;
+    // == GETTER AND SETTERS ===================================
 
-    }
-
-    //getters and setters
 
     public PlayerAction getLatestActionPerformed() {
         return latestActionPerformed;
@@ -171,14 +177,18 @@ public class Player {
         return speedMultiplier;
     }
     public void setPosition(double[] position) {
-        if (position[Y] > GROUNDY) {
-            position[Y] = GROUNDY;
+
+        // TODO reconfigure for map oriented collisions
+
+        if (position[Y] > 400) {
+            position[Y] = 400;
         } else if (position[X] < 0) {
             position[X] = 0;
-        } else if (position[X] > MAX_X_POSITION) {
-            position[X] = MAX_X_POSITION;
         }
-        this.position = position;
+//        } if (position[X] > MAX_X_POSITION) {
+//            position[X] = MAX_X_POSITION;
+//        }
+        // this.position = position;
     }
     public void capVelocity() {
         if (isCrouching) {
@@ -295,8 +305,11 @@ public class Player {
         return this.lives <= 0;
     }
     public void checkLanded() { // checks for ground collision
-        if (this.position[Y] >= GROUNDY) {
-            this.position[Y] = GROUNDY;
+
+        // TODO reconfig ground
+
+        if (this.position[Y] >= 400) {
+            this.position[Y] = 400;
             this.velocity[Y] = 0;
             this.numJumps = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
             isJumping = false;

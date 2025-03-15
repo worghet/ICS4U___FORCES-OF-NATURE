@@ -56,9 +56,11 @@ public class Projectile {
 
         somethingHit(players);
         //deactivate projectile if it goes off-screen
-        if (position[0] < 0 || position[0] > Player.MAX_X_POSITION || position[1] < 0 || position[1] > Player.GROUNDY) {
-            isActive = false;
-        }
+
+            // todo reconfigure for map
+//        if (position[0] < 0 || position[0] > Player.MAX_X_POSITION || position[1] < 0 || position[1] > Player.GROUNDY) {
+//            isActive = false;
+//        }
 
         if(player.getProjectileCooldown() <= 0) {
             isActive = false;
