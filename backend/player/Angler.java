@@ -5,12 +5,29 @@ public class Angler extends Player {
 
 
     public Angler(Player player){
+
         super();
+
+        // keep casting integrity
+
         id = player.getId();
         username = player.getUsername();
+
+        // change health stats
+
         this.maxHealth = 75; //lower than base player
         this.health = maxHealth;
-        this.speedMultiplier = 1.25; //higher than base player
+
+        // movement stuffz
+        this.speedMultiplier = 3; //higher than base player
+        MAX_X_VELOCITY = 14;
+        MAX_Y_VELOCITY = 12;
+        JUMP_FORCE = 14;
+        FRICTION = 0.9; // slippery
+        CROUCH_FRICTION = 0.95;
+        MAX_CROUCH_VELOCITY = 25;
+
+        // sprite sheet / color change
         colour = "aqua";
         //quicker with less health
     }

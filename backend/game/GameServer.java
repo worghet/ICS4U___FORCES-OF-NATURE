@@ -174,6 +174,7 @@ public class GameServer {
             System.out.println("║ \u001B[37m> CHROME OS (W/ VIRTUAL MACHINE): TOGGLE PORT FORWARDING.\u001B[0m");
             System.out.println("║ \u001B[37m> AVOID USING FIREFOX OR SAFARI.. STICK TO CHROME!\u001B[0m");
             System.out.println("║ \u001B[37m> DIFFERENT IDES RESULT MAY REDUCE SPEEDS; INTELLIJ IS THE BEST.\u001B[0m");
+            System.out.println("║ \u001B[37m> MAKE SURE TO DELETE OLD TABS.. THEY STILL HAUNT THE SERVER..\u001B[0m");
             System.out.println("║");
             System.out.println("╚══ SERVER OUTPUT BEGINS ====================================");
 

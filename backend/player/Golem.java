@@ -6,11 +6,25 @@ public class Golem extends Player {
     
     public Golem(Player player){
         super();
+
         id = player.getId();
         username = player.getUsername();
+
         this.maxHealth = 150; //higher than base player
         this.health = maxHealth;
         this.speedMultiplier = 0.75; //lower than base player
+
+
+        // movement stuffz
+        this.speedMultiplier = 1; //higher than base player
+        MAX_X_VELOCITY = 4;
+        MAX_Y_VELOCITY = 13;
+        JUMP_FORCE = 20;
+        FRICTION = 0.2; // slippery
+        CROUCH_FRICTION = 0.05;
+        MAX_CROUCH_VELOCITY = 1;
+        MAX_CONSECUTIVE_JUMPS = 2;
+
         colour = "saddlebrown";
         //slower with more health
     }

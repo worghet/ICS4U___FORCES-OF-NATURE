@@ -59,29 +59,30 @@ public class Player {
     protected boolean direction; // If you insist on using direction instead of velocity, make constants LEFT = false, RIGHT = true
 
     // Default movement variables (not crouched or jumped).
-    protected static final int MAX_VELOCITY = 10;
-    protected static double FRICTION = 0.55;
+    protected int MAX_X_VELOCITY;
+    protected double FRICTION;
 
     // Default crouched variables (active when crouched).
-    protected static final double CROUCH_FRICTION = 0.2;
-    protected static final int MAX_CROUCH_VELOCITY = 4;
+    protected double CROUCH_FRICTION;
+    protected int MAX_CROUCH_VELOCITY;
     protected static final int CROUCH_GRAVITY = 15;
     protected boolean isCrouching;
 
     // Default jump-related variables.
-    protected static int JUMP_FORCE = 15;
+    protected int JUMP_FORCE;
     protected static double AIR_FRICTION = 0.97;
-    protected static int MAX_CONSECUTIVE_JUMPS = 3;
+    protected double MAX_Y_VELOCITY;
+    protected int MAX_CONSECUTIVE_JUMPS;
     protected boolean previouslyJumped = false;
     protected boolean isJumping;
     protected int numJumpsRemaining; // jumps remaining
 
     // Default attack-based variables.
-    protected static final int MAX_PROJECTILE_COOLDOWN = 10;
-    protected static final int MAX_MELEE_COOLDOWN = 2;
-    protected static final int DEFAULT_MELEE_WIDTH = 30; //default hitbox width for melee attacks
-    protected static final int DEFAULT_MELEE_HEIGHT = 20; //could be changed depending on the character
-    protected static final int DEFAULT_MELEE_DAMAGE = 10; //all constant for now
+    protected final int MAX_PROJECTILE_COOLDOWN;
+    protected final int MAX_MELEE_COOLDOWN;
+    protected final int DEFAULT_MELEE_WIDTH; //default hitbox width for melee attacks
+    protected final int DEFAULT_MELEE_HEIGHT; //could be changed depending on the character
+    protected final int DEFAULT_MELEE_DAMAGE; //all constant for now
     protected int projectileCooldown; //only applies to projectile attacks
     protected int meleeCooldown; //only applies to melee attacks
     protected boolean isAttacking;
@@ -101,6 +102,22 @@ public class Player {
 
         // Set username.
         this.username = username;
+
+        MAX_X_VELOCITY = 10;
+        MAX_Y_VELOCITY = 10;
+        FRICTION = 0.55;
+        CROUCH_FRICTION = 0.2;
+        MAX_CROUCH_VELOCITY = 4;
+        JUMP_FORCE = 15;
+        MAX_CONSECUTIVE_JUMPS = 3;
+        MAX_PROJECTILE_COOLDOWN = 10;
+        MAX_MELEE_COOLDOWN = 2;
+        DEFAULT_MELEE_WIDTH = 30;
+        DEFAULT_MELEE_HEIGHT = 20;
+        DEFAULT_MELEE_DAMAGE = 10;
+
+        // TECHNICALLY WHAT IS BELOW IS NOT NEEDED..
+
         colour = "grey";
 
         // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
@@ -127,6 +144,20 @@ public class Player {
     }
 
     public Player() {
+
+        MAX_X_VELOCITY = 10;
+        MAX_Y_VELOCITY = 10;
+        FRICTION = 0.55;
+        CROUCH_FRICTION = 0.2;
+        MAX_CROUCH_VELOCITY = 4;
+        JUMP_FORCE = 15;
+        MAX_CONSECUTIVE_JUMPS = 3;
+        MAX_PROJECTILE_COOLDOWN = 10;
+        MAX_MELEE_COOLDOWN = 2;
+        DEFAULT_MELEE_WIDTH = 30;
+        DEFAULT_MELEE_HEIGHT = 20;
+        DEFAULT_MELEE_DAMAGE = 10;
+
         // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
 
         // Initialize position; will set to random when map loads.
@@ -370,21 +401,21 @@ public class Player {
         else {
 
             // Cap X velocity.
-            if (velocity[X] > MAX_VELOCITY) {
-                velocity[X] = MAX_VELOCITY;
+            if (velocity[X] > MAX_X_VELOCITY) {
+                velocity[X] = MAX_X_VELOCITY;
             }
-            else if (velocity[X] < -MAX_VELOCITY) {
-                velocity[X] = -MAX_VELOCITY;
+            else if (velocity[X] < -MAX_X_VELOCITY) {
+                velocity[X] = -MAX_X_VELOCITY;
             }
 
             // CHANGED - else if is not suitable in combining these velocities.
             // we check X velocities and Y velocities individually.
 
             // Cap Y velocity.
-            if (velocity[Y] > MAX_VELOCITY) {
-                velocity[Y] = MAX_VELOCITY;
-            } else if (velocity[Y] < -MAX_VELOCITY) {
-                velocity[Y] = -MAX_VELOCITY;
+            if (velocity[Y] > MAX_Y_VELOCITY) {
+                velocity[Y] = MAX_Y_VELOCITY;
+            } else if (velocity[Y] < -MAX_Y_VELOCITY) {
+                velocity[Y] = -MAX_Y_VELOCITY;
             }
         }
     }
