@@ -32,6 +32,9 @@ public class Player {
     // == PLAYER RELATED DATA ==================================
 
 
+    // temporary
+    String colour;
+
     protected String username;
     protected int id;
     protected int lives;
@@ -98,6 +101,7 @@ public class Player {
 
         // Set username.
         this.username = username;
+        colour = "grey";
 
         // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
 
@@ -122,6 +126,31 @@ public class Player {
         meleeCooldown = 0;
     }
 
+    public Player() {
+        // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
+
+        // Initialize position; will set to random when map loads.
+        position = new double[] {0, 0};
+        velocity = new double[] {0, 0};
+
+        // Vital variables.
+        lives = 3;
+        health = 100;
+
+        // Movement-based variables
+        numJumpsRemaining = 3;
+        isCrouching = false;
+        isJumping = false;
+        isAttacking = false;
+        speedMultiplier = 1;
+        direction = true;
+
+        // Attack-based variables.
+        projectileCooldown = 0;
+        meleeCooldown = 0;
+
+
+    }
 
     // == UPDATER METHOD =======================================
 
@@ -506,6 +535,10 @@ public class Player {
 
     public void setSpeedMultiplier(double speedMultiplier) {
         this.speedMultiplier = speedMultiplier;
+    }
+
+    public String getColour() {
+        return colour;
     }
 
 }

@@ -1,15 +1,21 @@
 package game;
 
 // == IMPORTS =============================
+
+import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
 import java.nio.charset.StandardCharsets;
+
 import com.google.gson.Gson;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import player.PlayerAction;
-import player.Player;
+
+import player.*;
+
 import java.util.*;
 import java.net.*;
 import java.io.*;
@@ -35,6 +41,11 @@ public class GameServer {
     static private final int WAITROOM_PAGE = 2;
     static private final int GAMEPLAY_PAGE = 3;
 
+    // Used for the multipurpose nature of character select handler.
+    static private final int ANGLER_INDEX = 0;
+    static private final int GOLEM_INDEX = 1;
+    static private final int WELDER_INDEX = 2;
+
     // Return menu page.
     static private final String MAIN_MENU_API = "/forces-of-nature";
     static private final String INFO_MENU_API = "/forces-of-nature/info";
@@ -46,6 +57,7 @@ public class GameServer {
     static private final String PLAYER_ACTION_API = "/player-action";
     static private final String ADD_PLAYER_API = "/add-player";
     static private final String REMOVE_PLAYER_API = "/remove-player";
+    static private final String CHARACTER_SELECT_API = "/character-select";
     static private final String START_GAME_API = "/start-game";
 
 
@@ -141,6 +153,7 @@ public class GameServer {
             httpServer.createContext(ADD_PLAYER_API, new AddPlayerHandler(game));
             httpServer.createContext(REMOVE_PLAYER_API, new RemovePlayerHandler(game));
             httpServer.createContext(START_GAME_API, new GameStartupHandler(game));
+            httpServer.createContext(CHARACTER_SELECT_API, new CharacterSelectHandler(game));
 
             // Not exactly sure what this is; guy on stack overflow had it here.
 
@@ -383,11 +396,7 @@ public class GameServer {
 
                 // Locate the player with said id, and update their latestActionPerformed.
 
-                for (Player player : game.getPlayers()) {
-                    if (player.getId() == requestedPlayerId) {
-                        player.setLatestPlayerActionPerformed(playerAction);
-                    }
-                }
+                game.getPlayerById(requestedPlayerId).setLatestPlayerActionPerformed(playerAction);
 
                 // Let client know all is OK!
 
@@ -512,7 +521,69 @@ public class GameServer {
     }
 
 
-    // == API [GAME STARTUP - HELPS WITH GAME STARTING =========
+    // == API [CHARACTER SELECT - CHANGES CHARACTER] ===========
+    static class CharacterSelectHandler implements HttpHandler {
+
+        private Game game;
+
+        public CharacterSelectHandler(Game game) {
+            this.game = game;
+        }
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            if ("POST".equals(httpExchange.getRequestMethod())) {
+
+                // Read the request body.
+
+                InputStream inputStream = httpExchange.getRequestBody();
+                String requestBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
+                // Get an object (was too lazy to make custom)
+
+                JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
+
+                // get the important variables.
+
+                int playerId = Integer.parseInt(jsonObject.get("id").getAsString());
+                int desiredCharacterIndex = Integer.parseInt(jsonObject.get("character").getAsString());
+
+                // get the specific player that were "casting"
+
+                Player player = game.getPlayerById(playerId);
+
+                // understand which character is the desired switch
+                // if we really wanted to optimize, we could save as string and do it when the game loads but whatever
+
+                switch (desiredCharacterIndex) {
+
+                    case ANGLER_INDEX:
+                        game.setPlayerTo(playerId, Angler.castTo(player));
+                        reportToConsole("CHARACTER SELECTED (ID: " + playerId + " | " + player.getUsername() + " changed to ANGLER).", INTERESTING);
+                        break;
+                    case GOLEM_INDEX:
+                        game.setPlayerTo(playerId, Golem.castTo(player));
+                        reportToConsole("CHARACTER SELECTED (ID: " + playerId + " | " + player.getUsername() + " changed to GOLEM).", INTERESTING);
+                        break;
+                    case WELDER_INDEX:
+                        game.setPlayerTo(playerId, Welder.castTo(player));
+                        reportToConsole("CHARACTER SELECTED (ID: " + playerId + " | " + player.getUsername() + " changed to WELDER).", INTERESTING);
+                        break;
+
+                }
+
+            }
+
+            // Tell client we all good!
+
+            httpExchange.sendResponseHeaders(200, 0);
+            httpExchange.getResponseBody().close();
+        }
+
+    }
+
+
+    // == API [GAME STARTUP - HELPS WITH GAME STARTING] ========
 
 
     static class GameStartupHandler implements HttpHandler {

@@ -4,14 +4,21 @@ import java.util.ArrayList;
 
 public class Golem extends Player {
     
-    public Golem(String username){
-        super(username);
+    public Golem(Player player){
+        super();
+        id = player.getId();
+        username = player.getUsername();
         this.maxHealth = 150; //higher than base player
         this.health = maxHealth;
         this.speedMultiplier = 0.75; //lower than base player
+        colour = "saddlebrown";
         //slower with more health
     }
-    
+
+    public static Golem castTo(Player player) {
+        return new Golem(player);
+    }
+
     @Override
     public void meleeAttack(ArrayList<Player> players) {
         if (!isAttacking || meleeCooldown <= 0) { //ensure the player isn't already attacking

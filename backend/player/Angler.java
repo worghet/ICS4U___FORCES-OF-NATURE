@@ -3,13 +3,22 @@ import java.util.ArrayList;
 
 public class Angler extends Player {
 
-    public Angler(String username){
-        super(username);
+
+    public Angler(Player player){
+        super();
+        id = player.getId();
+        username = player.getUsername();
         this.maxHealth = 75; //lower than base player
         this.health = maxHealth;
         this.speedMultiplier = 1.25; //higher than base player
+        colour = "aqua";
         //quicker with less health
     }
+
+    public static Angler castTo(Player player) {
+        return new Angler(player);
+    }
+
 
     @Override
     public void meleeAttack(ArrayList<Player> players) {

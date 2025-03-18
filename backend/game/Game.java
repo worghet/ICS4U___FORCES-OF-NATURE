@@ -166,6 +166,23 @@ public class Game {
 
     // == GETTER METHODS =======================================
 
+    public void setPlayerTo(int id, Player newPlayerObject) {
+        for (int playerIndex = 0; playerIndex < players.size(); playerIndex++) {
+            if (players.get(playerIndex).getId() == id) {
+                players.set(playerIndex, newPlayerObject);
+                break;
+            }
+        }
+    }
+
+    public Player getPlayerById(int requestedPlayerId) {
+        for (Player player: players) {
+            if (player.getId() == requestedPlayerId) {
+                return player;
+            }
+        }
+        return null;
+    }
 
     public boolean isGameRunning() {
         return gameRunning;

@@ -204,6 +204,8 @@ function updatePosition() {
 
 function renderPlayers(players) {
 
+    console.log(players);
+
     // Check that players array is initialized properly.
     if (!players || players.length === 0) return;
 
@@ -221,6 +223,7 @@ function renderPlayers(players) {
             playerBox = document.createElement("div");
             playerBox.id = "box-" + player.id;
             playerBox.className = "box";
+            playerBox.style.backgroundColor = player.colour;
 
             // Create the player tag (+ set tag contents to player username).
             playerTag = document.createElement("div");
@@ -232,6 +235,10 @@ function renderPlayers(players) {
             document.getElementById("game-window").appendChild(playerBox);
             document.getElementById("game-window").appendChild(playerTag);
         }
+
+        // show health, temp for now
+        playerBox.innerHTML = player.health;
+
 
         // Update box's position based on the player's position.
         playerBox.style.left = intToPx(player.position[X]);
