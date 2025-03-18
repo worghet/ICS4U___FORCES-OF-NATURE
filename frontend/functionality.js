@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 30;
+const FPS = 50;
 
 
 // == IMPORTANT VARIABLES ==================================
@@ -46,6 +46,11 @@ window.onload = function() {
         console.log("Playing as player with id:", playerId);
         localPlayerId = playerId;
     }
+
+    // load map
+
+    // fetch "/current-map" GET
+
 };
 
 window.addEventListener("beforeunload", (event) => {
@@ -204,8 +209,6 @@ function updatePosition() {
 
 function renderPlayers(players) {
 
-    console.log(players);
-
     // Check that players array is initialized properly.
     if (!players || players.length === 0) return;
 
@@ -236,8 +239,13 @@ function renderPlayers(players) {
             document.getElementById("game-window").appendChild(playerTag);
         }
 
+
+
+        //animation
+        // playerBox.style.backgroundImage = url(...);
+
         // show health, temp for now
-        playerBox.innerHTML = player.health;
+        playerBox.innerHTML = player.health + " / " + player.maxHealth;
 
 
         // Update box's position based on the player's position.

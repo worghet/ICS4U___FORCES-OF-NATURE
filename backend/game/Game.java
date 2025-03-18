@@ -2,6 +2,7 @@ package game;
 
 // == IMPORTS =============
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.TimerTask;
 import player.Projectile;
 import java.util.Timer;
@@ -16,6 +17,7 @@ public class Game {
 
     private final ArrayList<Player> players = new ArrayList<>();
     private boolean gameRunning;
+    private Map currentMap;
 
 
     // == CONSTRUCTOR ==========================================
@@ -31,6 +33,7 @@ public class Game {
 
         // Set game true (since game should be running now).
         gameRunning = true;
+        currentMap = Map.loadMap(new Random().nextInt(3));
 
         // Use a timer to assign a timed task (game loop).
         Timer timer = new Timer();
@@ -62,6 +65,8 @@ public class Game {
 
                 for (Player aPlayer : players) {
                     aPlayer.updatePosition();
+                    aPlayer.checkMapCollisions(currentMap);
+                    // check attacks
                 }
 
                 // -- REPLACE WITH MATT'S UPDATE METHOD -----

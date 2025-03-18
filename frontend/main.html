@@ -2,9 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Forces of Nature</title>
-
+    <<<<<<< HEAD
     <style>
       body {
         margin: 0;
@@ -99,9 +98,10 @@
   </head>
   <body>
     <h1>FORCES OF NATURE</h1>
+    =======
+    <button onclick="openInfo()">Click me for info!</button>
 
-    <!--        WHAT FONT TO USE? -->
-
+    >>>>>>> e292caf1681dc108808d97dd8a27a9675250991a <<<<<<< HEAD
     <!--        the text field and button combo! -->
     <div>
       <input type="text" placeholder="username.." id="username-field" />
@@ -122,68 +122,103 @@
     </div>
 
     <script>
-      const backgroundImages = [
-        "../images/main_background_tsunami.gif",
-        "../images/main_background_field_breeze.gif",
-        "../images/main_background_rain_forest.gif",
-        "../images/main_background_tornado.gif",
-        "../images/main_background_waterfall.gif",
-      ];
+            const backgroundImages = [
+              "../images/main_background_tsunami.gif",
+              "../images/main_background_field_breeze.gif",
+              "../images/main_background_rain_forest.gif",
+              "../images/main_background_tornado.gif",
+              "../images/main_background_waterfall.gif",
+            ];
 
-      //function to select a random background image
-      function setRandomBackground() {
-        const randomIndex = Math.floor(Math.random() * backgroundImages.length);
-        const randomImage = backgroundImages[randomIndex];
-        document.body.style.backgroundImage = `url(${randomImage})`;
-      }
+            //function to select a random background image
+            function setRandomBackground() {
+              const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+              const randomImage = backgroundImages[randomIndex];
+              document.body.style.backgroundImage = `url(${randomImage})`;
+            }
 
-      //set a random background when the page loads
-      setRandomBackground();
+            //set a random background when the page loads
+            setRandomBackground();
 
-      function openControls() {
-        const controlsPopup = document.getElementById("controlsPopup");
-        controlsPopup.style.display = "flex"; // show the popup
-      }
+            function openControls() {
+              const controlsPopup = document.getElementById("controlsPopup");
+              controlsPopup.style.display = "flex"; // show the popup
+            }
 
-      function closeControls() {
-        const controlsPopup = document.getElementById("controlsPopup");
-        controlsPopup.style.display = "none"; // hide the popup
-      }
+            function closeControls() {
+              const controlsPopup = document.getElementById("controlsPopup");
+              controlsPopup.style.display = "none"; // hide the popup
+            }
 
-      window.onclick = function (event) {
-        const controlsPopup = document.getElementById("controlsPopup");
-        if (event.target === controlsPopup) {
-          closeControls();
-        }
-      };
+            window.onclick = function (event) {
+              const controlsPopup = document.getElementById("controlsPopup");
+              if (event.target === controlsPopup) {
+                closeControls();
+              }
+            };
 
-      function openWaitroom() {
-        registerPlayer(document.getElementById("username-field").value);
+            function openWaitroom() {
+              registerPlayer(document.getElementById("username-field").value);
+      =======
+      <!--        WHAT FONT TO USE? -->
 
-        window.location.href = "/forces-of-nature/waitroom";
-      }
 
-      // moved this from functionality.js
-      function registerPlayer(requestedUsername) {
-        // Send the request to make a new player.
+      <!--        the text field and button combo! -->
+              <div style="margin-top: 5px;">
+                  <input type="text" placeholder="username.." id="username-field">
+                  <button onclick="openWaitroom()">ENTER LOBBY</button>
+              </div>
+      >>>>>>> e292caf1681dc108808d97dd8a27a9675250991a
 
-        fetch("/add-player", {
-          method: "POST",
 
-          body: requestedUsername,
 
-          // body: { username: ... }
-        })
-          .then((response) => response.text())
-          .then((playerId) => {
-            // After receiving the unique id for this page, save it to session (will reset if tab is closed; like cookies but simpler and less capable).
 
-            playerId = parseInt(playerId);
-            sessionStorage.setItem("playerId", playerId); // Store player ID in session storage
 
-            console.log("made player with username: " + requestedUsername);
-          });
-      }
+
+
+
+
+              <script>
+
+                  function openInfo() {
+                      window.location.href = "/forces-of-nature/info";
+                  }
+
+                  function openWaitroom() {
+
+                      registerPlayer(document.getElementById("username-field").value);
+
+                      window.location.href = "/forces-of-nature/waitroom";
+                  }
+
+
+                  // moved this from functionality.js
+                  function registerPlayer(requestedUsername) {
+
+                      // Send the request to make a new player.
+
+                      fetch ("/add-player", {
+
+                          method: "POST",
+
+                          body: requestedUsername
+
+
+                          // body: { username: ... }
+
+                      })
+                      .then((response) => response.text())
+                      .then((playerId) => {
+
+                          // After receiving the unique id for this page, save it to session (will reset if tab is closed; like cookies but simpler and less capable).
+
+                          playerId = parseInt(playerId);
+                          sessionStorage.setItem("playerId", playerId); // Store player ID in session storage
+
+                          console.log("made player with username: " + requestedUsername);
+
+                      })
+                  }
     </script>
   </body>
 </html>

@@ -26,7 +26,7 @@ public class Projectile {
         this.damage = damage;
         this.type = type;
         this.isActive = true;
-        player.setProjectileCooldown(Player.MAX_PROJECTILE_COOLDOWN);
+        player.setProjectileCooldown(player.MAX_PROJECTILE_COOLDOWN);
     }
 
     public void somethingHit(ArrayList<Player> players) { //check if projectile hit a player
