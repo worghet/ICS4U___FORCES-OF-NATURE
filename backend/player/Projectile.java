@@ -37,13 +37,9 @@ public class Projectile {
             double distance = Math.sqrt(Math.pow(tempPos[0] - this.position[0], 2) + Math.pow(tempPos[1] - this.position[1], 2)); //find distance between projectile and player
             if(distance < (projectileRadius + tempRadius)) { //if hitboxes overlap
                 temp.takeDamage(damage); //receive if damage hit
+                this.player.setDamageDealt(this.player.getDamageDealt() + damage);
                 isActive = false; //projectile is no longer active
                 break; //leave loop since projectile can only hit one player
-//<<<<<<< HEAD
-//                Player.Projectile.this.active = false;
-//
-//=======
-//>>>>>>> 39f4fc30d0e0d4164f93f559fcf6113aa7829aa4
             }
             
         }

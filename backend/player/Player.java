@@ -3,7 +3,6 @@ package player;
 // == IMPORTS =============
 import game.Island;
 import game.Map;
-
 import java.util.ArrayList;
 
 // == PLAYER ========
@@ -89,6 +88,7 @@ public class Player {
     protected int projectileCooldown; //only applies to projectile attacks
     protected int meleeCooldown; //only applies to melee attacks
     protected boolean isAttacking;
+    protected int damageDealt;
 
 
     // == CONSTRUCTOR ==========================================
@@ -144,6 +144,7 @@ public class Player {
         // Attack-based variables.
         projectileCooldown = 0;
         meleeCooldown = 0;
+        damageDealt = 0;
     }
 
     public Player() {
@@ -182,8 +183,7 @@ public class Player {
         // Attack-based variables.
         projectileCooldown = 0;
         meleeCooldown = 0;
-
-
+        damageDealt = 0;
     }
 
     // == UPDATER METHOD =======================================
@@ -342,6 +342,22 @@ public class Player {
         this.projectileCooldown = 0;
         this.meleeCooldown = 0;
         this.direction = true;
+        this.lives = 3;
+        this.damageDealt = 0;
+    }
+
+    public void respawn() {
+        this.position = new double[]{500, 0};
+        this.velocity = new double[]{0, 0};
+        this.health = 100;
+        this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;
+        this.isCrouching = false;
+        this.isJumping = false;
+        this.isAttacking = false;
+        this.projectileCooldown = 0;
+        this.meleeCooldown = 0;
+        this.direction = true;
+        this.lives-=1;
     }
 
     public void meleeAttack(ArrayList<Player> players) {
@@ -361,6 +377,7 @@ public class Player {
                     boolean withinVerticalRange = Math.abs(tempPos[Y] - position[Y]) < DEFAULT_MELEE_HEIGHT; //vertical check
                     if (withinHorizontalRange && withinVerticalRange) {
                         temp.takeDamage(10); //deal damage to the player if they are within the attack range
+                        this.damageDealt += 10;
                         System.out.println("Hit " + temp.getUsername() + " for 10 damage!");
                     }
                 }
@@ -373,7 +390,7 @@ public class Player {
             this.isAttacking = true;
             this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
             System.out.println("Default Projectile Attack!");
-            Projectile projectile = new Projectile(this, 5, 10, "projectile");
+            Projectile projectile = new Projectile(this, 5, 20, "projectile");
             projectiles.add(projectile);
         }
     }
@@ -492,6 +509,10 @@ public class Player {
         return meleeCooldown;
     }
 
+    public int getDamageDealt() {
+        return damageDealt;
+    }
+
     public boolean getDirection() {
         return direction;
     }
@@ -570,6 +591,10 @@ public class Player {
             meleeCooldown = MAX_MELEE_COOLDOWN;
         }
         this.meleeCooldown = meleeCooldown;
+    }
+
+    public void setDamageDealt(int damageDealt) {
+        this.damageDealt = damageDealt;
     }
 
     public  void setDirection(boolean direction) {
