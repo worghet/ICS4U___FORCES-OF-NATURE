@@ -234,6 +234,11 @@ function renderPlayers(players) {
             document.getElementById("game-window").appendChild(playerTag);
         }
 
+
+
+        //animation
+        // playerBox.style.backgroundImage = url(...);
+
         // show health, temp for now
         playerBox.innerHTML = player.health + " / " + player.maxHealth;
 
