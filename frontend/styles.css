@@ -25,3 +25,13 @@ body {
     top: 0px;
     left: 0px;
 }
+
+.tag {
+    background-color: rgba(0, 0, 0,0.6);
+    padding: 5px 9px;
+    min-width: 80px;
+    text-align: center;
+    color:white;
+    position: absolute;
+    font-size:12px;
+}

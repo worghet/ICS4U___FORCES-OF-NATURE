@@ -57,7 +57,6 @@
             // manage players in the table
             // refreshOnlinePlayers();
 
-            console.log("Game not started yet");
         } else {
             window.location.href = "/forces-of-nature/gameplay";
             console.log("Game started!!");
@@ -133,17 +132,15 @@
             console.log("No Player ID found! Redirecting...");
             window.location.href = "/forces-of-nature"; // Redirect if no ID
         } else {
-            console.log("Player ID:", playerId);
+          console.log("Playing as player with id:", playerId);
         }
     };
 
     window.addEventListener("beforeunload", (event) => {
-        console.log("User is leaving the page!");
 
         // Directly compare pathname to check if it's the gameplay page
         if (gameStarted) {
-            console.log("User is going to the gameplay page, skipping cleanup.");
-            return; // Exempt cleanup from happening
+            return;
         }
 
         const playerID = sessionStorage.getItem("playerId");
