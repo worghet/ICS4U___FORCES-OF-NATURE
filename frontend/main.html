@@ -6,22 +6,27 @@
     <title>Forces of Nature</title>
 
     <style>
-      /* Ensure the body takes up the full height of the page */
       body {
         margin: 0;
         height: 100vh;
-        position: relative; /* Establish positioning context */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-size: cover;
+        backdrop-filter: blur(2px);
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      h1 {
+        font-size: 3.5em;
+        color: black;
+        text-shadow: 2px 2px 4px black;
+        margin-bottom: 20px;
       }
 
-      /* Style the button container */
-      .backToMainButton {
-        position: absolute;
-        top: 0px;
-        right: 10px;
-      }
-
-      /* Style the button */
-      .backToMainButton button {
+      .controlsButton button {
+        width: 300px;
         background-color: darkgray;
         color: black;
         border: none;
@@ -30,33 +35,127 @@
         border-radius: 5px;
       }
 
-      .backToMainButton button img {
-        width: 20px;
-        height: 20px;
+      /* Style the username field and button */
+      #username-field {
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin-right: -4px;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        background-color: darkgray;
+        color: black;
+        cursor: pointer;
+      }
+
+      .controls-popup {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        justify-content: center;
+        align-items: center;
+      }
+
+      .controls-content {
+        background-color: transparent; /* Remove white background */
+        padding: 0; /* Remove padding */
+        border-radius: 10px;
+        text-align: center;
+        position: relative; /* For positioning the close button */
+      }
+
+      .controls-content img {
+        max-width: 90vw; /* Ensure the image fits within the screen */
+        max-height: 90vh; /* Ensure the image fits within the screen */
+        border-radius: 10px; /* Rounded corners for the image */
+      }
+
+      .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 24px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .close-button:hover {
+        color: red;
       }
     </style>
   </head>
   <body>
-    <h1>This is the main screen!</h1>
-
-    <div class="backToMainButton">
-      <button onclick="openInfo()">
-        <img src="../images/settings_image.png" alt="Info" />
-      </button>
-    </div>
+    <h1>FORCES OF NATURE</h1>
 
     <!--        WHAT FONT TO USE? -->
 
     <!--        the text field and button combo! -->
-    <div style="margin-top: 5px">
+    <div>
       <input type="text" placeholder="username.." id="username-field" />
-      <button onclick="openWaitroom()">ENTER LOBBY</button>
+      <button onclick="openWaitroom()">Join Lobby</button>
+    </div>
+
+    <!--        the controls button -->
+    <div class="controlsButton" style="margin-top: 5px">
+      <button onclick="openControls()">Controls</button>
+    </div>
+
+    <!-- The controls popup -->
+    <div id="controlsPopup" class="controls-popup">
+      <div class="controls-content">
+        <span class="close-button" onclick="closeControls()">&times;</span>
+        <img src="../images/controls.png" alt="Controls" />
+      </div>
     </div>
 
     <script>
-      function openInfo() {
-        window.location.href = "/forces-of-nature/info";
+      const backgroundImages = [
+        "../images/main_background_tsunami.gif",
+        "../images/main_background_field_breeze.gif",
+        "../images/main_background_rain_forest.gif",
+        "../images/main_background_tornado.gif",
+        "../images/main_background_waterfall.gif",
+      ];
+
+      //function to select a random background image
+      function setRandomBackground() {
+        const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+        const randomImage = backgroundImages[randomIndex];
+        document.body.style.backgroundImage = `url(${randomImage})`;
       }
+
+      //set a random background when the page loads
+      setRandomBackground();
+
+      function openControls() {
+        const controlsPopup = document.getElementById("controlsPopup");
+        controlsPopup.style.display = "flex"; // show the popup
+      }
+
+      function closeControls() {
+        const controlsPopup = document.getElementById("controlsPopup");
+        controlsPopup.style.display = "none"; // hide the popup
+      }
+
+      window.onclick = function (event) {
+        const controlsPopup = document.getElementById("controlsPopup");
+        if (event.target === controlsPopup) {
+          closeControls();
+        }
+      };
 
       function openWaitroom() {
         registerPlayer(document.getElementById("username-field").value);
