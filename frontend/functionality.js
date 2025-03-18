@@ -46,6 +46,11 @@ window.onload = function() {
         console.log("Playing as player with id:", playerId);
         localPlayerId = playerId;
     }
+
+    // load map
+
+    // fetch "/current-map" GET
+
 };
 
 window.addEventListener("beforeunload", (event) => {

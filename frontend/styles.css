@@ -55,3 +55,13 @@ h1 {
     padding: 10px 20px;
     border-radius: 5px;
   }
+
+.island {
+    position:absolute;
+    top: 390px;
+    left 200px;
+    background-color: black;
+    border: none;
+    width:200px;
+    height: 20px;
+}

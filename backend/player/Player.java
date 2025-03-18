@@ -1,6 +1,9 @@
 package player;
 
 // == IMPORTS =============
+import game.Island;
+import game.Map;
+
 import java.util.ArrayList;
 
 // == PLAYER ========
@@ -372,6 +375,15 @@ public class Player {
             System.out.println("Default Projectile Attack!");
             Projectile projectile = new Projectile(this, 5, 10, "projectile");
             projectiles.add(projectile);
+        }
+    }
+
+    public void checkMapCollisions(Map map) {
+        for (Island island : map.getIslands()) {
+            if (position[X] >= island.getTopLeftX() && position[X] <= island.getBottomRightX()) {
+
+            }
+//            if ()
         }
     }
 
