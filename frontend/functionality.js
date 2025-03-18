@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 30;
+const FPS = 50;
 
 
 // == IMPORTANT VARIABLES ==================================
@@ -43,7 +43,7 @@ window.onload = function() {
     if (playerId === null) {
         window.location.href = "/forces-of-nature";
     } else {
-        console.log("Player Id:", playerId);
+        console.log("Playing as player with id:", playerId);
         localPlayerId = playerId;
     }
 };
@@ -204,57 +204,65 @@ function updatePosition() {
 
 function renderPlayers(players) {
 
-    // Check that everything is initialized properly.
-
+    // Check that players array is initialized properly.
     if (!players || players.length === 0) return;
 
     // Iterate through each player.
-
     players.forEach(player => {
 
         // Try to locate an existing render for this user.
-
         let playerBox = document.getElementById("box-" + player.id);
+        let playerTag = document.getElementById("tag-" + player.id);
 
-        // If none found, make one.
+        // If none found, create them.
+        if (!playerBox && !playerTag) {
 
-        if (!playerBox) {
-
-            // Create the div.
-
+            // Create the actual box.
             playerBox = document.createElement("div");
-
-            // Assign it an id so that next time we don't reconstruct this.
-
             playerBox.id = "box-" + player.id;
             playerBox.className = "box";
+            playerBox.style.backgroundColor = player.colour;
 
-            // Check class (character), set sprites accordingly.
+            // Create the player tag (+ set tag contents to player username).
+            playerTag = document.createElement("div");
+            playerTag.id = "tag-" + player.id;
+            playerTag.className = "tag";
+            playerTag.innerHTML = player.username;
 
-            // TODO: Do colors to register different characters (to test select screen).
-            playerBox.style.backgroundColor = "red";
-
-            // Add the div to the game window.
-
+            // Add box and tag to game window.
             document.getElementById("game-window").appendChild(playerBox);
+            document.getElementById("game-window").appendChild(playerTag);
         }
 
-        // Update box's position to fit that of the game data.
+        // show health, temp for now
+        playerBox.innerHTML = player.health + " / " + player.maxHealth;
 
+
+        // Update box's position based on the player's position.
         playerBox.style.left = intToPx(player.position[X]);
 
-        // Vertical position depends on if the player is crouching.
-
+        // If crouching, move everything down 50 pixels.
         if (player.isCrouching) {
             playerBox.style.height = "50px";
             playerBox.style.top = intToPx(player.position[Y] + 50);
-        } else {
+
+            // Maintain 40 pixel height separation when crouched.
+            playerTag.style.top = intToPx(player.position[Y] + 10);
+        }
+
+        // Otherwise, keep the positioning same as the computed one.
+        else {
             playerBox.style.height = "100px";
             playerBox.style.top = intToPx(player.position[Y]);
+
+            // Have the tag hover 40 pixels above the box.
+            playerTag.style.top = intToPx(player.position[Y] - 40);
         }
+
+        // Center the tag based on the player's box position and width.
+        playerTag.style.left = intToPx(playerBox.offsetLeft + (playerBox.offsetWidth / 2) - (playerTag.offsetWidth / 2));
     });
 }
-
 
 
 // == FUNCTIONS [LOCAL] ====================================

@@ -24,16 +24,17 @@
     Go back (leave lobby)
 </button>
 
-<button>
+<button id="anglerButton" onclick="characterSelected(0)">
     Angler
 </button>
 
-<button>
-    Welder
+<button id="golemButton" onclick="characterSelected(1)">
+    Golem
 </button>
 
-<button>
-    Golem
+<button id="welderButton" onclick="characterSelected(2)">
+    Welder
+
 </button>
 
 <button onclick="startGame()">
@@ -47,7 +48,54 @@
     const playerList = document.getElementById("player-list");
 
 
+    const ANGLER_INDEX = 0;
+    const GOLEM_INDEX = 1;
+    const WELDER_INDEX = 2;
+
     // actual program:
+
+    function characterSelected(characterIndex) {
+
+        resetButtons();
+
+        if (characterIndex == ANGLER_INDEX) {
+            console.log("angler selected");
+            document.getElementById("anglerButton").style.backgroundColor = "aqua";
+            document.getElementById("anglerButton").disabled = true;
+        }
+        else if (characterIndex == GOLEM_INDEX) {
+            console.log("golem selected");
+            document.getElementById("golemButton").style.backgroundColor = "saddlebrown";
+            document.getElementById("golemButton").disabled = true;
+        }
+        // welder selected
+        else {
+            console.log("welder selected");
+            document.getElementById("welderButton").style.backgroundColor = "red";
+            document.getElementById("welderButton").disabled = true;
+        }
+
+        fetch("/character-select", {
+
+            method: "POST",
+            body: JSON.stringify({
+                id: sessionStorage.getItem("playerId"),
+                character: characterIndex
+            })
+
+        });
+
+    }
+
+    function resetButtons() {
+        document.getElementById("anglerButton").style.backgroundColor = "grey";
+        document.getElementById("golemButton").style.backgroundColor = "grey";
+        document.getElementById("welderButton").style.backgroundColor = "grey";
+
+        document.getElementById("anglerButton").disabled = false;
+        document.getElementById("golemButton").disabled = false;
+        document.getElementById("welderButton").disabled = false;
+    }
 
 
     const checkInterval = setInterval(() => {
@@ -57,7 +105,6 @@
             // manage players in the table
             // refreshOnlinePlayers();
 
-            console.log("Game not started yet");
         } else {
             window.location.href = "/forces-of-nature/gameplay";
             console.log("Game started!!");
@@ -133,17 +180,15 @@
             console.log("No Player ID found! Redirecting...");
             window.location.href = "/forces-of-nature"; // Redirect if no ID
         } else {
-            console.log("Player ID:", playerId);
+          console.log("Playing as player with id:", playerId);
         }
     };
 
     window.addEventListener("beforeunload", (event) => {
-        console.log("User is leaving the page!");
 
         // Directly compare pathname to check if it's the gameplay page
         if (gameStarted) {
-            console.log("User is going to the gameplay page, skipping cleanup.");
-            return; // Exempt cleanup from happening
+            return;
         }
 
         const playerID = sessionStorage.getItem("playerId");

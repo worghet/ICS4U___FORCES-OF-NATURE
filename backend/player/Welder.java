@@ -4,12 +4,34 @@ import java.util.ArrayList;
 
 public class Welder extends Player {
 
-    public Welder(String username){
-        super(username);
+    public Welder(Player player){
+        super();
+
+        username = player.getUsername();
+        id = player.getId();
+
+
         this.maxHealth = 100;
         this.health = maxHealth;
+
+
+        // movement stuffz
         this.speedMultiplier = 1.0;
+        this.speedMultiplier = 1.3; //higher than base player
+        MAX_X_VELOCITY = 10;
+        MAX_Y_VELOCITY = 11;
+        JUMP_FORCE = 13;
+        FRICTION = 0.7;
+        CROUCH_FRICTION = 0.85; // slide
+        MAX_CROUCH_VELOCITY = 12;
+
+
+        colour = "red";
         //stats are all same as base player
+    }
+
+    public static Welder castTo(Player player) {
+        return new Welder(player);
     }
 
     @Override
