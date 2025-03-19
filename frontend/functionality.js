@@ -268,6 +268,8 @@ function renderPlayers(players) {
 
 
         //animation
+        const spriteSheet = new Image();
+        spriteSheet.src = "./images/Unfinished Sprites.png";
         // playerBox.style.backgroundImage = url(...);
 
         // show health, temp for now
