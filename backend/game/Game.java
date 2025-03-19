@@ -165,7 +165,7 @@ public class Game {
     }
 
     public void generateMap() {
-        currentMap = GameMap.loadMap(0); //new Random().nextInt(3)
+        currentMap = GameMap.loadMap(new Random().nextInt(3));
     }
 
     public void resetGame() {
