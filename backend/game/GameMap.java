@@ -51,12 +51,52 @@ public class GameMap {
             case 1: // CAVE
                 desiredMap.backgroundIndex = CAVE;
                 System.out.println("loading cave");
-//                desiredMap.islands = new Island[1];
+                desiredMap.groundY = 500;
+
+                desiredMap.islands = new Island[3]; // how many islands here
+                desiredMap.islands[0] = new Island(1000, 400, 300);
+                desiredMap.islands[1] = new Island(300, 500, 400);
+                desiredMap.islands[2] = new Island(600, 200, 150);
+
+
+                desiredMap.spawnPoints = new double[1][2];
+                desiredMap.spawnPoints[0][0] = 1150;
+                desiredMap.spawnPoints[0][1] = 400;
+
+                desiredMap.spawnPoints = new double[2][2];
+                desiredMap.spawnPoints[0][0] = 500;
+                desiredMap.spawnPoints[0][1] = 600;
+
+                desiredMap.spawnPoints = new double[3][2];
+                desiredMap.spawnPoints[0][0] = 700;
+                desiredMap.spawnPoints[0][1] = 300;
+
 
 
                 break;
             case 2: // INDUSTRY
                 desiredMap.backgroundIndex = INDUSTRY;
+                desiredMap.groundY = 500;
+
+                desiredMap.islands = new Island[3]; // how many islands here
+                desiredMap.islands[0] = new Island(1000, 400, 300);
+                desiredMap.islands[1] = new Island(300, 500, 400);
+                desiredMap.islands[2] = new Island(600, 200, 150);
+
+
+                desiredMap.spawnPoints = new double[1][2];
+                desiredMap.spawnPoints[0][0] = 1150;
+                desiredMap.spawnPoints[0][1] = 400;
+
+                desiredMap.spawnPoints = new double[2][2];
+                desiredMap.spawnPoints[0][0] = 500;
+                desiredMap.spawnPoints[0][1] = 600;
+
+                desiredMap.spawnPoints = new double[3][2];
+                desiredMap.spawnPoints[0][0] = 700;
+                desiredMap.spawnPoints[0][1] = 300;
+
+
                 System.out.println("loading industry");
                 break;
             default:

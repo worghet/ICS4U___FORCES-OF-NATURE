@@ -6,191 +6,203 @@
     <title>Forces of Nature</title>
 
     <style>
-      body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background-size: cover;
-        backdrop-filter: blur(6px);
-        background-repeat: no-repeat;
-        background-position: center;
-      }
-      h1 {
-        font-size: 4.5em;
-        color: black;
-        text-shadow: 2px 2px 4px black;
-        margin-bottom: 20px;
+      @font-face {
+          font-family: 'RusticShine';
+          src: url('/libraries/RusticShine.ttf') format('truetype');
+          font-weight: noraml;
+          font-style: normal;
       }
 
-      .controlsButton button {
-        width: 300px;
-        background-color: darkgray;
-        color: black;
-        border: none;
-        cursor: pointer;
-        padding: 10px;
-        border-radius: 5px;
-      }
+            body {
+              margin: 0;
+              height: 100vh;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              background-size: cover;
+              backdrop-filter: blur(6px);
+              background-repeat: no-repeat;
+              background-position: center;
+            }
+            h1 {
+            font-family: 'RusticShine', Arial;
+              font-size: 4.5em;
+              letter-spacing: 0.1em;
+              color: white;
+              text-shadow: 2px 2px 4px black;
+              margin-bottom: 20px;
+            }
 
-      /* Style the username field and button */
-      #username-field {
-        padding: 10px;
-        border: 0px solid #ccc;
-        margin-right: -4px;
-        border-radius: 5px 0px 0px 5px;
-      }
+            .controlsButton button {
+              width: 300px;
+              background-color: darkgray;
+              color: black;
+              border: none;
+              cursor: pointer;
+              padding: 10px;
+              border-radius: 5px;
+            }
 
-      button {
-        padding: 10px 20px;
-        border-radius: 0px 5px 5px 0px;
-        border: none;
-        background-color: darkgray;
-        color: black;
-        cursor: pointer;
-        transition: all 0.25s;
-      }
+            /* Style the username field and button */
+            #username-field {
+              padding: 10px;
+              border: 0px solid #ccc;
+              font-family: 'RusticShine', Arial;
+              margin-right: -4px;
+              border-radius: 5px 0px 0px 5px;
+            }
 
-      button:hover {
-        background-color: rgb(110, 110, 110);
-      }
+            button {
+              padding: 10px 20px;
+              border-radius: 0px 5px 5px 0px;
+              border: none;
+                            font-family: 'RusticShine', Arial;
 
-      .controls-popup {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
+              background-color: darkgray;
+              color: black;
+              cursor: pointer;
+              transition: all 0.25s;
+            }
 
-      .controls-content {
-        background-color: transparent; /* Remove white background */
-        padding: 0; /* Remove padding */
-        border-radius: 10px;
-        text-align: center;
-        position: relative; /* For positioning the close button */
-      }
+            button:hover {
+              background-color: rgb(110, 110, 110);
+            }
 
-      .controls-content img {
-        max-width: 90vw; /* Ensure the image fits within the screen */
-        max-height: 90vh; /* Ensure the image fits within the screen */
-        border-radius: 10px; /* Rounded corners for the image */
-      }
+            .controls-popup {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+              justify-content: center;
+              align-items: center;
+              z-index: 1000;
+            }
 
-      .close-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
-        font-size: 24px;
-        color: white;
-        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
+            .controls-content {
+              background-color: transparent; /* Remove white background */
+              padding: 0; /* Remove padding */
+              border-radius: 10px;
+              text-align: center;
+              position: relative; /* For positioning the close button */
+            }
 
-      .close-button:hover {
-        color: red;
-      }
+            .controls-content img {
+              max-width: 90vw; /* Ensure the image fits within the screen */
+              max-height: 90vh; /* Ensure the image fits within the screen */
+              border-radius: 10px; /* Rounded corners for the image */
+            }
 
-      /* Add the Join Lobby button styles */
-      .btn-blue {
-        border: none;
-        z-index: 1;
-        position: relative;
-        padding: 10px;
-        cursor: pointer;
-        border-radius: 0px 5px 5px 0px;
-        color: #000;
-        overflow: hidden;
-        display: inline-block;
-      }
+            .close-button {
+              position: absolute;
+              top: 10px;
+              right: 10px;
+              cursor: pointer;
+              font-size: 24px;
+              color: white;
+              background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+              border-radius: 50%;
+              width: 30px;
+              height: 30px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
 
-      .btn-blue:after {
-        position: absolute;
-        content: "";
-        width: 100%;
-        height: 0;
-        bottom: 0;
-        left: 0;
-        z-index: -1;
-        border-radius: 0px 5px 5px 0px;
-        background-color: #4dccc6;
-        background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
-        box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9,
-          7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
-        transition: all 0.3s ease;
-      }
+            .close-button:hover {
+              color: red;
+            }
 
-      .btn-blue:hover {
-        color: #000;
-      }
+            /* Add the Join Lobby button styles */
+            .btn-blue {
+              border: none;
+              z-index: 1;
+              position: relative;
+              padding: 10px;
+              cursor: pointer;
+              border-radius: 0px 5px 5px 0px;
+              color: #000;
+              overflow: hidden;
+              display: inline-block;
+            }
 
-      .btn-blue:hover:after {
-        top: 0;
-        bottom: auto;
-        height: 100%;
-      }
+            .btn-blue:after {
+              position: absolute;
+              content: "";
+              width: 100%;
+              height: 0;
+              bottom: 0;
+              left: 0;
+              z-index: -1;
+              border-radius: 0px 5px 5px 0px;
+              background-color: #4dccc6;
+              background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
+              box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9,
+                7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
+              transition: all 0.3s ease;
+            }
 
-      .btn-blue:active {
-        top: 2px;
-      }
+            .btn-blue:hover {
+              color: #000;
+            }
 
-      /* Add the controls button styles */
-      .btn-orange {
-        border: none;
-        z-index: 1;
-        position: relative;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        width: 300px;
-        border-radius: 5px;
-        color: #000;
-        overflow: hidden;
-      }
+            .btn-blue:hover:after {
+              top: 0;
+              bottom: auto;
+              height: 100%;
+            }
 
-      .btn-orange:after {
-        position: absolute;
-        content: "";
-        width: 100%;
-        height: 0;
-        top: 0;
-        left: 0;
-        z-index: -1;
-        border-radius: 5px;
-        background-color: #eaf818;
-        background-image: linear-gradient(315deg, #eaf818 0%, #f6fc9c 74%);
-        box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-          7px 7px 20px 0px rgba(0, 0, 0, 0.1),
-          4px 4px 5px 0px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-      }
+            .btn-blue:active {
+              top: 2px;
+            }
 
-      .btn-orange:hover {
-        color: #000;
-      }
+            /* Add the controls button styles */
+            .btn-orange {
+              border: none;
+              z-index: 1;
+              position: relative;
+              padding: 10px 20px;
+              font-size: 16px;
+              cursor: pointer;
+              width: 300px;
+              border-radius: 5px;
+              color: #000;
+              overflow: hidden;
+            }
 
-      .btn-orange:hover:after {
-        top: auto;
-        bottom: 0;
-        height: 100%;
-      }
+            .btn-orange:after {
+              position: absolute;
+              content: "";
+              width: 100%;
+              height: 0;
+              top: 0;
+              left: 0;
+              z-index: -1;
+              border-radius: 5px;
+              background-color: #eaf818;
+              background-image: linear-gradient(315deg, #eaf818 0%, #f6fc9c 74%);
+              box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+                7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+                4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            }
 
-      .btn-orange:active {
-        top: 2px;
-      }
+            .btn-orange:hover {
+              color: #000;
+            }
+
+            .btn-orange:hover:after {
+              top: auto;
+              bottom: 0;
+              height: 100%;
+            }
+
+            .btn-orange:active {
+              top: 2px;
+            }
     </style>
   </head>
   <body>
@@ -201,19 +213,19 @@
     <!-- Username field and Join button -->
     <div>
       <input type="text" placeholder="username.." id="username-field" />
-      <button class="btn-blue" onclick="openWaitroom()">Join Lobby</button>
+      <button class="btn-blue" onclick="openWaitroom()">ENTER WAITROOM</button>
     </div>
 
     <!-- Controls button -->
     <div class="controlsButton" style="margin-top: 5px">
-      <button class="btn-orange" onclick="openControls()">Controls</button>
+      <button class="btn-blue" onclick="openControls()">GAME CONTROLS</button>
     </div>
 
     <!-- The controls popup -->
     <div id="controlsPopup" class="controls-popup">
       <div class="controls-content">
         <span class="close-button" onclick="closeControls()">&times;</span>
-        <img src="../images/controls.png" alt="Controls" />
+        <img src="/images/controls.png" alt="Controls" />
       </div>
     </div>
 

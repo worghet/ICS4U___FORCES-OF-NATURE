@@ -60,31 +60,69 @@ window.onload = function() {
 
         case 0:
             console.log("welcome to deepsea");
-            document.body.style.backgroundImage = `url("/images/gameplay_background_water.gif")`;
+            document.body.style.backgroundImage = `url("/images/deepsea.gif")`;
+
+
+            mapData.islands.forEach((island) => {
+                const islandDiv = document.createElement("div");
+                islandDiv.className = "island";
+                islandDiv.style.left = intToPx(island.topLeftX);
+                islandDiv.style.top = intToPx(island.topLeftY);
+                islandDiv.style.width = intToPx(island.width);
+
+                islandDiv.style.backgroundImage = `url("/images/sand_island_texture.jpg")`;
+                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
+                islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
+
+                document.body.appendChild(islandDiv);
+            });
+
             break;
         case 1:
             console.log("welcome to caves")
             document.body.style.backgroundImage = `url("/images/gameplay_background_earth.gif")`;
+
+                     mapData.islands.forEach((island) => {
+                            const islandDiv = document.createElement("div");
+                            islandDiv.className = "island";
+                            islandDiv.style.left = intToPx(island.topLeftX);
+                            islandDiv.style.top = intToPx(island.topLeftY);
+                            islandDiv.style.width = intToPx(island.width);
+
+                                        islandDiv.style.backgroundImage = `url("/images/ground_island_texture.jpg")`;
+                                        islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
+                                        islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
+                            document.body.appendChild(islandDiv);
+                        });
+
+
+
             break;
         case 2:
             console.log("welcome to industry")
             document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
+
+                     mapData.islands.forEach((island) => {
+                            const islandDiv = document.createElement("div");
+                            islandDiv.className = "island";
+                            islandDiv.style.left = intToPx(island.topLeftX);
+                            islandDiv.style.top = intToPx(island.topLeftY);
+                            islandDiv.style.width = intToPx(island.width);
+
+                            document.body.appendChild(islandDiv);
+
+                islandDiv.style.backgroundImage = `url("/images/steel_island_texture.jpg")`;
+                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
+                islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
+
+
+                        });
+
+
+
             break;
 
      }
-
-    mapData.islands.forEach((island) => {
-        const islandDiv = document.createElement("div");
-        islandDiv.className = "island";
-        islandDiv.style.left = intToPx(island.topLeftX);
-        islandDiv.style.top = intToPx(island.topLeftY);
-        islandDiv.style.width = intToPx(island.width);
-
-        document.body.appendChild(islandDiv);
-    });
-
-
-
 
    });
 
