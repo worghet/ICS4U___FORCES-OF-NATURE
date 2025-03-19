@@ -396,12 +396,12 @@ public class Player {
     }
 
     public void checkMapCollisions(Map map) {
-        for (Island island : map.getIslands()) {
-            if (position[X] >= island.getTopLeftX() && position[X] <= island.getBottomRightX()) {
-
-            }
-//            if ()
-        }
+//        for (Island island : map.getIslands()) {
+//            if (position[X] >= island.getTopLeftX() && position[X] <= island.getBottomRightX()) {
+//
+//            }
+////            if ()
+//        }
     }
 
     public void capVelocity() {

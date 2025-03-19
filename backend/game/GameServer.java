@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import com.google.gson.Gson;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import player.*;
@@ -135,8 +136,11 @@ public class GameServer {
 
             // Assign static resource APIs (give resources like images, and other files).
 
-            httpServer.createContext("/styles.css", new StaticFileHandler("frontend/styles.css", "text/css"));
-            httpServer.createContext("/functionality.js", new StaticFileHandler("frontend/functionality.js", "frontend/javascript"));
+            httpServer.createContext("/styles.css", new StaticFileHandler("frontend", "text/css"));
+            httpServer.createContext("/functionality.js", new StaticFileHandler("frontend", "frontend/javascript"));
+            httpServer.createContext("/images", new StaticFileHandler("images", "image/gif"));
+
+
             // TODO: Add "animation-frame" getters, etc. (Unless that will be in the player object to load from.)
 
             // Assign page APIs (give webpages; technically can be combined with previous as html is a static file).
@@ -308,11 +312,11 @@ public class GameServer {
 
     static class StaticFileHandler implements HttpHandler {
 
-        private final String filePath;
+        private final String rootPath;
         private final String contentType;
 
-        public StaticFileHandler(String filePath, String contentType) {
-            this.filePath = filePath;
+        public StaticFileHandler(String rootPath, String contentType) {
+            this.rootPath = rootPath;
             this.contentType = contentType;
         }
 
@@ -320,14 +324,27 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
-                // Convert and send the file over to the client.
+                // Get the requested file path (relative to the rootPath).
+                String requestedPath = httpExchange.getRequestURI().getPath().replace("/images", "");
+                Path filePath = Paths.get(rootPath, requestedPath);
 
-                byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-                httpExchange.getResponseHeaders().set("Content-Type", contentType);
-                httpExchange.sendResponseHeaders(200, fileBytes.length);
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(fileBytes);
-                os.close();
+                System.out.println("trtyna send over " + requestedPath);
+
+                // Convert and send the file over to the client if it exists.
+                if (Files.exists(filePath)) {
+                    byte[] fileBytes = Files.readAllBytes(filePath);
+                    httpExchange.getResponseHeaders().set("Content-Type", contentType);
+                    httpExchange.sendResponseHeaders(200, fileBytes.length);
+                    OutputStream os = httpExchange.getResponseBody();
+                    os.write(fileBytes);
+                    os.close();
+                } else
+                {
+                    System.out.println("file don exist");
+                    // If the file doesn't exist, return a 404.
+                    httpExchange.sendResponseHeaders(404, 0);
+                    httpExchange.getResponseBody().close();
+                }
             }
         }
     }
@@ -348,6 +365,8 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
+
+                System.out.println("game bein sent");
                 // Serialize game data into JSON.
 
                 String jsonResponse = gson.toJson(game);
