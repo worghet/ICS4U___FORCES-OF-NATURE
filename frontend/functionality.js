@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 40;
+const FPS = 30;
 
 
 // == IMPORTANT VARIABLES ==================================
@@ -28,8 +28,9 @@ let currentGameData = null;
 // ======================== PROGRAM ===========================
 
 
-setInterval(sendPlayerAction, (1000 / FPS));
-setInterval(updatePosition, (1000 / FPS));
+
+    setInterval(sendPlayerAction, (1000 / FPS));
+    setInterval(updatePosition, (1000 / FPS));
 
 
 // ======================== PROGRAM ===========================
@@ -41,7 +42,7 @@ window.onload = function() {
     const playerId = sessionStorage.getItem("playerId");
 
     if (playerId === null) {
-        window.location.href = "/forces-of-nature";
+        window.location.href = "forces-of-nature";
     } else {
         console.log("Playing as player with id:", playerId);
         localPlayerId = playerId;
@@ -71,6 +72,18 @@ window.onload = function() {
             break;
 
      }
+
+    mapData.islands.forEach((island) => {
+        const islandDiv = document.createElement("div");
+        islandDiv.className = "island";
+        islandDiv.style.left = intToPx(island.topLeftX);
+        islandDiv.style.top = intToPx(island.topLeftY);
+        islandDiv.style.width = intToPx(island.width);
+
+        document.body.appendChild(islandDiv);
+    });
+
+
 
 
    });
@@ -127,6 +140,7 @@ document.addEventListener("keydown", function (event) {
 
         case "w":
         case " ":
+        case "W":
             keys_pressed.up = true;
             break;
 
@@ -134,6 +148,7 @@ document.addEventListener("keydown", function (event) {
 
         case "s":
         case "Shift":
+        case "S":
             keys_pressed.down = true;
             break;
     }
@@ -165,6 +180,7 @@ document.addEventListener("keyup", function (event) {
 
         case "w":
         case " ":
+        case "W":
             keys_pressed.up = false;
             break;
 
@@ -172,6 +188,7 @@ document.addEventListener("keyup", function (event) {
 
         case "s":
         case "Shift":
+        case "S":
         keys_pressed.down = false;
             break;
     }

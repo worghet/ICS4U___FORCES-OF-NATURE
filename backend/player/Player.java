@@ -2,6 +2,8 @@ package player;
 
 // == IMPORTS =============
 import game.GameMap;
+import game.Island;
+
 import java.util.ArrayList;
 
 // == PLAYER ========
@@ -225,12 +227,15 @@ public class Player {
 
         // Apply gravity based on user's movement state (crouched or standing or air).
 
-        if (isCrouching) {
-            velocity[Y] += CROUCH_GRAVITY;
+//        if (isJumping) {
 
-        } else {
-            velocity[Y] += GRAVITY;
-        }
+            if (isCrouching) {
+                velocity[Y] += CROUCH_GRAVITY;
+
+            } else {
+                velocity[Y] += GRAVITY;
+            }
+//        }
 
         // Apply friction (again, based on movement state).
 
@@ -263,8 +268,6 @@ public class Player {
 
         // Check if player has landed
         // TODO: Check collisions from game (where we can pass map through).
-
-        checkLanded();
 
         // Update attack cooldown
 
@@ -316,18 +319,6 @@ public class Player {
 
     public boolean isDead() {
         return this.lives <= 0;
-    }
-
-    public void checkLanded() {
-        // checks for ground collision
-        // TODO reconfig ground
-
-        if (this.position[Y] >= 700) {
-            this.position[Y] = 700;
-            this.velocity[Y] = 0;
-            this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
-            isJumping = false;
-        }
     }
 
     public void reset() {
@@ -395,13 +386,52 @@ public class Player {
     }
 
     public void checkMapCollisions(GameMap map) {
-//        for (Island island : map.getIslands()) {
-//            if (position[X] >= island.getTopLeftX() && position[X] <= island.getBottomRightX()) {
-//
-//            }
-////            if ()
-//        }
+
+        // Check if the player is on the ground (this part could be generalized to handle any type of surface).
+        if (this.position[Y] >= map.getGroundY() + 10) {
+            this.position[Y] = map.getGroundY() + 10;  // Keep the player on top of the ground
+            this.velocity[Y] = 0;  // Stop falling
+            this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;  // Reset jump count
+            isJumping = false;  // Player is no longer in the air
+        }
+
+        // Check for collision with islands (or any other platforms in the map)
+        for (Island island : map.getIslands()) {
+
+            // Check if the player is within the horizontal bounds of the island
+            if (position[X] + 70 >= island.getTopLeftX() && position[X] <= island.getBottomRightX()) {
+
+                // Check if the player is falling (velocity[Y] > 0) and within the vertical bounds of the island
+                if (position[Y] + 70 >= island.getTopLeftY() &&  velocity[Y] > 0) {
+                    // Player is falling and above the island, they should land
+//                    System.out.println("Landing on the island...");
+
+                    // Adjust Y position to the top of the island
+                    position[Y] = island.getTopLeftY() - 70;  // 70 could be adjusted based on player height
+
+                    // Stop downward velocity and prevent further falling
+                    velocity[Y] = 0;
+
+                    // Reset jump count since the player is on solid ground
+                    numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;
+                    isJumping = false;  // Player is no longer jumping
+
+                    // Output to confirm the player has landed on the island
+//                    System.out.println("ON AN ISLAND --> " + topIslandCounter);
+                    topIslandCounter++;
+                } else
+                {
+                    if (position[Y] + 70 > island.getTopLeftY()  && position[Y] < island.getBottomRightY()) {
+                        position[Y] = island.getTopLeftY() - 70;
+                        velocity[Y] = 0;
+                    }
+                }
+            }
+        }
     }
+
+    static int topIslandCounter = 0;
+    static int islandCounter = 0;
 
     public void capVelocity() {
 
@@ -522,17 +552,9 @@ public class Player {
 
     public void setPosition(double[] position) {
 
-        // TODO reconfigure for map oriented collisions
+        this.position[X] = position[X];
+        this.position[Y] = position[Y];
 
-        if (position[Y] > 700) {
-            position[Y] = 700;
-        } else if (position[X] < 0) {
-            position[X] = 0;
-        }
-//        } if (position[X] > MAX_X_POSITION) {
-//            position[X] = MAX_X_POSITION;
-//        }
-        // this.position = position;
     }
 
     public void setHealth(int health) {

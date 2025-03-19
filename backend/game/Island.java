@@ -16,13 +16,13 @@ public class Island {
 
     private int width;
 
-    public Island(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY, int width) {
+    public Island(int topLeftX, int topLeftY, int width) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
-        this.midlineY = (topLeftY + bottomRightY) / 2;
-        this.bottomRightX = bottomRightX;
-        this.bottomRightY = bottomRightY;
         this.width = width;
+        this.bottomRightX = topLeftX + width;
+        this.bottomRightY = bottomRightY + 30;
+        this.midlineY = (topLeftY + bottomRightY) / 2;
     }
 
     public int getMidlineY() {

@@ -653,6 +653,8 @@ public class GameServer {
                 // Start the game (loop) in the game object.
 
                 if (!game.isGameRunning()) {
+                    game.generateMap();
+                    game.setSpawnPoints();
                     game.startGame();
                     reportToConsole("GAME HAS BEGUN", OKAY);
                 } else {

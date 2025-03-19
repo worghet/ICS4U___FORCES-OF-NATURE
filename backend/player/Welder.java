@@ -16,14 +16,13 @@ public class Welder extends Player {
 
 
         // movement stuffz
-        this.speedMultiplier = 1.0;
         this.speedMultiplier = 1.3; //higher than base player
         MAX_X_VELOCITY = 10;
         MAX_Y_VELOCITY = 11;
         JUMP_FORCE = 13;
         FRICTION = 0.7;
-        CROUCH_FRICTION = 0.85; // slide
-        MAX_CROUCH_VELOCITY = 12;
+        CROUCH_FRICTION = 0.9; // slide
+        MAX_CROUCH_VELOCITY = 14;
 
 
         colour = "red";
