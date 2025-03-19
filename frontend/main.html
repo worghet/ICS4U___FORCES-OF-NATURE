@@ -6,7 +6,36 @@
     <title>Forces of Nature</title>
 
     <style>
+      @font-face {
+          font-family: 'RusticShine';
+          src: url('/libraries/RusticShine.ttf') format('truetype');
+          font-weight: noraml;
+          font-style: normal;
+      }
+
+            body {
+              position: relative;
+              margin: 0;
+              height: 100vh;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              background-size: cover;
+              backdrop-filter: blur(6px);
+              background-repeat: no-repeat;
+              background-position: center;
+            }
+            h1 {
+            font-family: 'RusticShine', Arial;
+              font-size: 4.5em;
+              letter-spacing: 0.1em;
+              color: white;
+              text-shadow: 2px 2px 4px black;
+              margin-bottom: 20px;
+            }
       body {
+        position: relative;
         margin: 0;
         height: 100vh;
         display: flex;
@@ -60,54 +89,57 @@
               background-color: rgb(110, 110, 110);
             }
 
-      .controls-popup {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
+            .popup {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+              justify-content: center;
+              align-items: center;
+              z-index: 1000;
+            }
 
-      .controls-content {
+      .popup-content {
         background-color: transparent; /* Remove white background */
         padding: 0; /* Remove padding */
         border-radius: 10px;
         text-align: center;
         position: relative; /* For positioning the close button */
+        max-width: 80vh; /* Ensure the popup fits within the screen */
+        max-height: 80vh; /* Ensure the popup fits within the screen */
+        overflow-y: auto; /* Enable vertical scrolling */
       }
 
-      .controls-content img {
-        max-width: 90vw; /* Ensure the image fits within the screen */
-        max-height: 90vh; /* Ensure the image fits within the screen */
+      .popup-content img {
+        max-width: 100%; /* Ensure the image fits within the screen */
         border-radius: 10px; /* Rounded corners for the image */
+        overflow-y: auto; /* Enable vertical scrolling */
       }
 
-            .close-button {
-              position: absolute;
-              top: 10px;
-              right: 10px;
-              cursor: pointer;
-              font-size: 24px;
-              color: white;
-              background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-              border-radius: 50%;
-              width: 30px;
-              height: 30px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            }
+      .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 24px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-            .close-button:hover {
-              color: red;
-            }
+      .close-button:hover {
+        color: red;
+      }
 
-            /* Add the Join Lobby button styles */
+      /* Add the Join Lobby button styles */
             .btn-blue {
               border: none;
               z-index: 1;
@@ -193,6 +225,49 @@
 
       .btn-orange:active {
         top: 2px;
+      }
+
+      .lore-button {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        padding: 10px 20px;
+        background-color: #4dccc6;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+
+      .lore-button img {
+        transition: opacity 0.3s ease;
+      }
+
+      .lore-button:hover img {
+        opacity: 0; /* Hide the wizard on hover */
+      }
+
+      .lore-button::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 5px;
+        background-color: #4dccc6;
+        width: 100%;
+        height: 100%;
+        background-image: url(../images/main_wizard_hover.png); /* Hover image */
+        background-size: contain;
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat;
+        opacity: 0; /* Initially hidden */
+        transition: opacity 0.3s ease; /* Smooth transition for hover effect */
+      }
+
+      .lore-button:hover::after {
+        opacity: 1; /* Show the hover image */
       }
     </style>
   </head>
