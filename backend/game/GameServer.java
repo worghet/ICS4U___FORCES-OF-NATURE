@@ -140,7 +140,7 @@ public class GameServer {
             httpServer.createContext("/styles.css", new StaticFileHandler("frontend", "text/css"));
             httpServer.createContext("/functionality.js", new StaticFileHandler("frontend", "frontend/javascript"));
             httpServer.createContext("/images", new StaticFileHandler("images", "image/gif"));
-            httpServer.createContext("/libraries", new StaticFileHandler("libraries", "font/ttf"));
+            httpServer.createContext("/libraries", new StaticFileHandler("libraries", "font/otf"));
 
             // TODO: Add "animation-frame" getters, etc. (Unless that will be in the player object to load from.)
 

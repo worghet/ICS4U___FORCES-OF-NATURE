@@ -7,10 +7,8 @@
 
     <style>
       @font-face {
-        font-family: "RusticShine";
-        src: url("/libraries/RusticShine.ttf") format("truetype");
-        font-weight: noraml;
-        font-style: normal;
+        font-family: "KeyanCoffee";
+        src: url("/libraries/KeyanCoffee.otf") format("opentype");
       }
 
       body {
@@ -28,8 +26,8 @@
       }
 
       h1 {
-        font-family: "RusticShine", Arial;
-        font-size: 4.5em;
+        font-family: "KeyanCoffee";
+        font-size: 6.5em;
         letter-spacing: 0.1em;
         color: white;
         text-shadow: 2px 2px 4px black;
@@ -50,18 +48,20 @@
       #username-field {
         padding: 10px;
         border: 0px solid #ccc;
-        font-family: "RusticShine", Arial;
+        font-size: 1.5em;
+        font-family: "KeyanCoffee", Arial;
         margin-right: -4px;
         border-radius: 5px 0px 0px 5px;
+        width: 550px;
       }
 
       button {
         padding: 10px 20px;
         border-radius: 0px 5px 5px 0px;
         border: none;
-        font-family: "RusticShine", Arial;
+        font-size: 1.5em;
+        font-family: "KeyanCoffee", Arial;
         background-color: darkgray;
-        color: black;
         cursor: pointer;
         transition: all 0.25s;
       }
@@ -263,8 +263,8 @@
     </div>
 
     <!-- Controls button -->
-    <div class="controlsButton" style="margin-top: 5px">
-      <button class="btn-blue" onclick="openControls()">GAME CONTROLS</button>
+    <div class="controlsButton" style="margin-top: 10px;">
+      <button class="btn-blue" style="width: 712px;" onclick="openControls()">GAME CONTROLS</button>
     </div>
 
     <!-- Controls popup -->
