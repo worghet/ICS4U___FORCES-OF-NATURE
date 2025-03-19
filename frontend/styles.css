@@ -1,9 +1,16 @@
 body {
+    margin: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    background-color: aqua;
+    background-size: cover;
+    backdrop-filter: blur(6px);
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .game-window {
@@ -19,8 +26,8 @@ body {
 
 .box {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     background-color: red;
     top: 0px;
     left: 0px;
@@ -37,7 +44,7 @@ h1 {
 .tag {
     background-color: rgba(0, 0, 0,0.6);
     padding: 5px 9px;
-    min-width: 80px;
+    min-width: 50px;
     text-align: center;
     color:white;
     position: absolute;

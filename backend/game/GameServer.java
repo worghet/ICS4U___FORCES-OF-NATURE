@@ -55,6 +55,7 @@ public class GameServer {
 
     // Manipulate / receive game data.
     static private final String GAMEDATA_API = "/gamedata";
+    static private final String GAMEMAP_API = "/game-map";
     static private final String PLAYER_ACTION_API = "/player-action";
     static private final String ADD_PLAYER_API = "/add-player";
     static private final String REMOVE_PLAYER_API = "/remove-player";
@@ -153,6 +154,7 @@ public class GameServer {
             // Assign game data APIs (different actions associated with game logic).
 
             httpServer.createContext(GAMEDATA_API, new GameHandler(game));
+            httpServer.createContext(GAMEMAP_API, new GameMapHandler(game));
             httpServer.createContext(PLAYER_ACTION_API, new PlayerActionHandler(game));
             httpServer.createContext(ADD_PLAYER_API, new AddPlayerHandler(game));
             httpServer.createContext(REMOVE_PLAYER_API, new RemovePlayerHandler(game));
@@ -328,7 +330,7 @@ public class GameServer {
                 String requestedPath = httpExchange.getRequestURI().getPath().replace("/images", "");
                 Path filePath = Paths.get(rootPath, requestedPath);
 
-                System.out.println("trtyna send over " + requestedPath);
+                System.out.println(filePath);
 
                 // Convert and send the file over to the client if it exists.
                 if (Files.exists(filePath)) {
@@ -340,7 +342,6 @@ public class GameServer {
                     os.close();
                 } else
                 {
-                    System.out.println("file don exist");
                     // If the file doesn't exist, return a 404.
                     httpExchange.sendResponseHeaders(404, 0);
                     httpExchange.getResponseBody().close();
@@ -366,7 +367,6 @@ public class GameServer {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
 
-                System.out.println("game bein sent");
                 // Serialize game data into JSON.
 
                 String jsonResponse = gson.toJson(game);
@@ -382,6 +382,36 @@ public class GameServer {
             }
         }
     }
+
+
+
+    static class GameMapHandler implements HttpHandler {
+
+        private Game game;
+
+        public GameMapHandler(Game game) {
+            this.game = game;
+        }
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            if ("GET".equals(httpExchange.getRequestMethod())) {
+
+                String response = gson.toJson(game.getCurrentMap());
+
+                httpExchange.sendResponseHeaders(200, response.length());
+                OutputStream os = httpExchange.getResponseBody();
+                os.write(response.getBytes(StandardCharsets.UTF_8));
+                os.close();
+
+            }
+        }
+    }
+
+
+
+
+
 
 
     // == API [PLAYER ACTION - GETS THE KEYBOARD INPUT] ========

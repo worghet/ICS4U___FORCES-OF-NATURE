@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 50;
+const FPS = 40;
 
 
 // == IMPORTANT VARIABLES ==================================
@@ -47,9 +47,35 @@ window.onload = function() {
         localPlayerId = playerId;
     }
 
-    // load map
+   fetch("/game-map", {
+       method: "GET"
+   })
+   .then(response => response.json())
+   .then(mapData => {
+     const backgroundIndex = mapData.backgroundIndex;
+     console.log("Background Index: ", backgroundIndex);
 
-    // fetch "/current-map" GET
+     switch (backgroundIndex) {
+
+        case 0:
+            console.log("welcome to deepsea");
+            document.body.style.backgroundImage = `url("/images/gameplay_background_water.gif")`;
+            break;
+        case 1:
+            console.log("welcome to caves")
+            document.body.style.backgroundImage = `url("/images/gameplay_background_earth.gif")`;
+            break;
+        case 2:
+            console.log("welcome to industry")
+            document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
+            break;
+
+     }
+
+
+   });
+
+   // do countdown (wavy text "welcome to ...")
 
 };
 
@@ -253,16 +279,16 @@ function renderPlayers(players) {
 
         // If crouching, move everything down 50 pixels.
         if (player.isCrouching) {
-            playerBox.style.height = "50px";
-            playerBox.style.top = intToPx(player.position[Y] + 50);
+            playerBox.style.height = "35px";
+            playerBox.style.top = intToPx(player.position[Y] + 35);
 
             // Maintain 40 pixel height separation when crouched.
-            playerTag.style.top = intToPx(player.position[Y] + 10);
+            playerTag.style.top = intToPx(player.position[Y] - 5);
         }
 
         // Otherwise, keep the positioning same as the computed one.
         else {
-            playerBox.style.height = "100px";
+            playerBox.style.height = "70px";
             playerBox.style.top = intToPx(player.position[Y]);
 
             // Have the tag hover 40 pixels above the box.

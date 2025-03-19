@@ -17,7 +17,7 @@ public class Game {
 
     private final ArrayList<Player> players = new ArrayList<>();
     private boolean gameRunning;
-//    private Map currentMap;
+    private GameMap currentMap;
 
 
     // == CONSTRUCTOR ==========================================
@@ -33,7 +33,7 @@ public class Game {
 
         // Set game true (since game should be running now).
         gameRunning = true;
-//        currentMap = Map.loadMap(new Random().nextInt(3));
+        currentMap = GameMap.loadMap(2); //new Random().nextInt(3)
 
         // Use a timer to assign a timed task (game loop).
         Timer timer = new Timer();
@@ -126,6 +126,9 @@ public class Game {
 
     // == MUTATOR METHODS ======================================
 
+    public GameMap getCurrentMap() {
+        return currentMap;
+    }
 
     public void addPlayer(Player newPlayer) {
         players.add(newPlayer);

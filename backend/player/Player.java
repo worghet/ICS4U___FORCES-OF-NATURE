@@ -1,8 +1,7 @@
 package player;
 
 // == IMPORTS =============
-import game.Island;
-import game.Map;
+import game.GameMap;
 import java.util.ArrayList;
 
 // == PLAYER ========
@@ -323,8 +322,8 @@ public class Player {
         // checks for ground collision
         // TODO reconfig ground
 
-        if (this.position[Y] >= 400) {
-            this.position[Y] = 400;
+        if (this.position[Y] >= 700) {
+            this.position[Y] = 700;
             this.velocity[Y] = 0;
             this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS; // reset jumps when on the ground
             isJumping = false;
@@ -395,7 +394,7 @@ public class Player {
         }
     }
 
-    public void checkMapCollisions(Map map) {
+    public void checkMapCollisions(GameMap map) {
 //        for (Island island : map.getIslands()) {
 //            if (position[X] >= island.getTopLeftX() && position[X] <= island.getBottomRightX()) {
 //
@@ -525,8 +524,8 @@ public class Player {
 
         // TODO reconfigure for map oriented collisions
 
-        if (position[Y] > 400) {
-            position[Y] = 400;
+        if (position[Y] > 700) {
+            position[Y] = 700;
         } else if (position[X] < 0) {
             position[X] = 0;
         }
