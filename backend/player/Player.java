@@ -1,7 +1,9 @@
 package player;
 
 // == IMPORTS =============
+import game.Game;
 import game.GameMap;
+import game.GameServer;
 import game.Island;
 
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class Player {
     protected static final double ACCELERATION = 0.5;
     protected double[] position;
     protected double[] velocity;
-    protected boolean direction; // If you insist on using direction instead of velocity, make constants LEFT = false, RIGHT = true
+    protected boolean direction;
 
     // Default movement variables (not crouched or jumped).
     protected int MAX_X_VELOCITY;
@@ -86,6 +88,7 @@ public class Player {
     protected final int DEFAULT_MELEE_WIDTH; //default hitbox width for melee attacks
     protected final int DEFAULT_MELEE_HEIGHT; //could be changed depending on the character
     protected final int DEFAULT_MELEE_DAMAGE; //all constant for now
+    protected boolean previouslyPressedMeleeAttack = false;
     protected int projectileCooldown; //only applies to projectile attacks
     protected int meleeCooldown; //only applies to melee attacks
     protected boolean isAttacking;
@@ -115,10 +118,10 @@ public class Player {
         JUMP_FORCE = 15;
         MAX_CONSECUTIVE_JUMPS = 3;
         MAX_PROJECTILE_COOLDOWN = 10;
-        MAX_MELEE_COOLDOWN = 2;
-        DEFAULT_MELEE_WIDTH = 30;
+        MAX_MELEE_COOLDOWN = 10;
+        DEFAULT_MELEE_WIDTH = 70;
         DEFAULT_MELEE_HEIGHT = 20;
-        DEFAULT_MELEE_DAMAGE = 10;
+        DEFAULT_MELEE_DAMAGE = 15;
 
         // TECHNICALLY WHAT IS BELOW IS NOT NEEDED..
 
@@ -158,10 +161,10 @@ public class Player {
         JUMP_FORCE = 15;
         MAX_CONSECUTIVE_JUMPS = 3;
         MAX_PROJECTILE_COOLDOWN = 10;
-        MAX_MELEE_COOLDOWN = 2;
-        DEFAULT_MELEE_WIDTH = 30;
+        MAX_MELEE_COOLDOWN = 10;
+        DEFAULT_MELEE_WIDTH = 70;
         DEFAULT_MELEE_HEIGHT = 20;
-        DEFAULT_MELEE_DAMAGE = 10;
+        DEFAULT_MELEE_DAMAGE = 15;
 
         // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
 
@@ -283,6 +286,19 @@ public class Player {
         }
     }
 
+    public void registerDamage(ArrayList<Player> players) {
+        if (latestActionPerformed.getKeysPressed()[PlayerAction.MELEE]) {
+            if (!previouslyPressedMeleeAttack) {
+                meleeAttack(players);
+                previouslyPressedMeleeAttack = true;
+
+            }
+//            System.out.println("called melee in updatePlayers");
+        }
+        else {
+            previouslyPressedMeleeAttack = false;
+        }
+    }
 
     // == MOVEMENT / ATTACK METHODS ============================
 
@@ -310,15 +326,18 @@ public class Player {
     }
 
     public void takeDamage(int damage) {
-        this.health -= damage;
-        if(this.health <= 0) {
-            this.health = 0;
-            this.lives--;
+
+        if (health - damage <= 0) {
+            health = 0;
         }
+        else {
+            health -= damage;
+        }
+
     }
 
     public boolean isDead() {
-        return this.lives <= 0;
+        return lives == 0;
     }
 
     public void reset() {
@@ -339,7 +358,7 @@ public class Player {
     public void respawn() {
         this.position = new double[]{500, 0};
         this.velocity = new double[]{0, 0};
-        this.health = 100;
+        this.health = maxHealth;
         this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;
         this.isCrouching = false;
         this.isJumping = false;
@@ -347,11 +366,10 @@ public class Player {
         this.projectileCooldown = 0;
         this.meleeCooldown = 0;
         this.direction = true;
-        this.lives-=1;
     }
 
     public void meleeAttack(ArrayList<Player> players) {
-        if (!isAttacking && meleeCooldown <= 0) { //ensure the player isn't already attacking
+        if (!isAttacking && meleeCooldown >= 0) { //ensure the player isn't already attacking
             this.isAttacking = true;
             this.meleeCooldown = MAX_MELEE_COOLDOWN;
             System.out.println("Melee Attack!");
@@ -360,19 +378,50 @@ public class Player {
             double attackStartX = position[X]; //start of the attack hitbox(X position)
             double attackEndX = position[X] + (direction ? DEFAULT_MELEE_WIDTH : -DEFAULT_MELEE_WIDTH); //end of the attack hitbox(X position)
 
+//            if (direction) {
+//                System.out.println("movin right");
+//                position[X] += ((double) DEFAULT_MELEE_WIDTH / 2); // move player forward a bit
+//            }
+//            else {
+//                System.out.println("movin left");
+//                position[X] -= ((double) DEFAULT_MELEE_WIDTH / 2); // move player forward a bit
+//
+//            }
+
             for (Player temp : players) {
                 if (temp != this) { //ensure the player isn't attacking themselves
                     double[] tempPos = temp.getPosition();
                     boolean withinHorizontalRange = (direction && tempPos[X] >= attackStartX && tempPos[X] <= attackEndX) || (!direction && tempPos[X] <= attackStartX && tempPos[X] >= attackEndX); //first check for if facing right, then if facing left
                     boolean withinVerticalRange = Math.abs(tempPos[Y] - position[Y]) < DEFAULT_MELEE_HEIGHT; //vertical check
+
+
+
                     if (withinHorizontalRange && withinVerticalRange) {
-                        temp.takeDamage(10); //deal damage to the player if they are within the attack range
+                        temp.takeDamage(DEFAULT_MELEE_DAMAGE); //deal damage to the player if they are within the attack range
                         this.damageDealt += 10;
                         System.out.println("Hit " + temp.getUsername() + " for 10 damage!");
+
+                        if (temp.getHealth() == 0) {
+                            temp.setLives(temp.getLives() - 1);
+                            if (temp.getLives() > 0) {
+                                temp.respawn();
+                            }
+                            else {
+                                GameServer.reportToConsole(temp.getUsername() + "is Dead!!", GameServer.INTERESTING);
+                            }
+                        }
+
                     }
                 }
             }
         }
+        else if (meleeCooldown == 0) {
+            isAttacking = false;
+        }
+        else {
+            meleeCooldown -= 1;
+        }
+
     }
 
     public void projectileAttack(ArrayList<Projectile> projectiles) {

@@ -4,7 +4,6 @@ package game;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.TimerTask;
-import player.Projectile;
 import java.util.Timer;
 import player.Player;
 
@@ -63,8 +62,10 @@ public class Game {
                 // -- REPLACE WITH MATT'S UPDATE METHOD -----
 
                 for (Player aPlayer : players) {
+
                     aPlayer.updatePosition();
                     aPlayer.checkMapCollisions(currentMap);
+                    aPlayer.registerDamage(players);
                     // check attacks
                 }
 

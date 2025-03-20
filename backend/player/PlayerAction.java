@@ -9,8 +9,7 @@ public class PlayerAction {
 
     private int playerId;
 
-    // TODO: Add "melee attack key" and "ranged attack" key
-    private boolean[] keys_pressed = new boolean[] {false, false, false, false}; // left, right, down, up
+    private boolean[] keys_pressed = new boolean[] {false, false, false, false, false, false}; // left, right, down, up
 
 
     // == CONSTANTS [FOR READABILITY] ==========================
@@ -20,6 +19,8 @@ public class PlayerAction {
     public static final int RIGHT = 1;
     public static final int DOWN = 2;
     public static final int UP = 3;
+    public static final int PROJECTILE = 4;
+    public static final int MELEE = 5;
 
 
     // == GETTERS ==============================================
