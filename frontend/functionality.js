@@ -12,14 +12,12 @@ const spriteSheet = new Image();
 spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
 //will finish sprite sheet, & organize it
 
-const FPS = 30;
-
 
 // == IMPORTANT VARIABLES ==================================
 
 
 // This holds the keyboard inputs sent to the back end.
-var keys_pressed = {left: false, right: false, up: false, down: false};
+var keys_pressed = {left: false, right: false, up: false, down: false, melee: false, projectile: false};
 
 // These help with user identification / messaging.
 let localPlayerId;
@@ -48,7 +46,8 @@ window.onload = function() {
     const playerId = sessionStorage.getItem("playerId");
 
     if (playerId === null) {
-        window.location.href = "forces-of-nature";
+        console.log("invalid player id")
+        window.location.href = "/forces-of-nature";
     } else {
         console.log("Playing as player with id:", playerId);
         localPlayerId = playerId;
@@ -66,7 +65,7 @@ window.onload = function() {
 
         case 0:
             console.log("welcome to deepsea");
-            document.body.style.backgroundImage = `url("/images/deepsea.gif")`;
+            document.body.style.backgroundImage = `url("/images/gameplay_background_water.gif")`;
 
 
             mapData.islands.forEach((island) => {
@@ -76,9 +75,9 @@ window.onload = function() {
                 islandDiv.style.top = intToPx(island.topLeftY);
                 islandDiv.style.width = intToPx(island.width);
 
-                islandDiv.style.backgroundImage = `url("/images/sand_island_texture.jpg")`;
-                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
-                islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
+//                islandDiv.style.backgroundImage = `url("/images/sand_island_texture.jpg")`;
+//                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
+//                islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
 
                 document.body.appendChild(islandDiv);
             });
@@ -95,9 +94,9 @@ window.onload = function() {
                             islandDiv.style.top = intToPx(island.topLeftY);
                             islandDiv.style.width = intToPx(island.width);
 
-                                        islandDiv.style.backgroundImage = `url("/images/ground_island_texture.jpg")`;
-                                        islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
-                                        islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
+//                                        islandDiv.style.backgroundImage = `url("/images/ground_island_texture.jpg")`;
+//                                        islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
+//                                        islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
                             document.body.appendChild(islandDiv);
                         });
 
@@ -117,9 +116,9 @@ window.onload = function() {
 
                             document.body.appendChild(islandDiv);
 
-                islandDiv.style.backgroundImage = `url("/images/steel_island_texture.jpg")`;
-                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
-                islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
+//                islandDiv.style.backgroundImage = `url("/images/steel_island_texture.jpg")`;
+//                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
+//                islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
 
 
                         });
@@ -195,6 +194,16 @@ document.addEventListener("keydown", function (event) {
         case "S":
             keys_pressed.down = true;
             break;
+
+        case "p":
+        case "P":
+            keys_pressed.projectile = true;
+            break;
+
+        case "o":
+        case "O":
+            keys_pressed.melee = true;
+            break;
     }
 });
 
@@ -235,6 +244,17 @@ document.addEventListener("keyup", function (event) {
         case "S":
         keys_pressed.down = false;
             break;
+
+
+        case "p":
+        case "P":
+            keys_pressed.projectile = false;
+            break;
+
+        case "o":
+        case "O":
+            keys_pressed.melee = false;
+            break;
     }
 });
 
@@ -244,11 +264,10 @@ document.addEventListener("keyup", function (event) {
 
 function sendPlayerAction() {
 
-       console.log()
 
     // Build keys_pressed into a legible array.
 
-    const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up];
+    const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up, keys_pressed.projectile, keys_pressed.melee];
 
     // Send data to server.
 
@@ -313,7 +332,7 @@ function renderPlayers(players) {
             playerBox = document.createElement("div");
             playerBox.id = "box-" + player.id;
             playerBox.className = "box";
-            playerBox.style.backgroundColor = player.colour; 
+            playerBox.style.backgroundColor = player.colour;
 
             // Create the player tag (+ set tag contents to player username).
             playerTag = document.createElement("div");
@@ -334,7 +353,7 @@ function renderPlayers(players) {
         */
 
         // show health, temp for now
-        playerBox.innerHTML = player.health + " / " + player.maxHealth;
+        playerBox.innerHTML = player.health + " / " + player.maxHealth + "   |   LIVES: " + player.lives;
 
 
         // Update box's position based on the player's position.

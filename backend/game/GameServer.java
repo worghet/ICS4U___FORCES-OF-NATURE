@@ -326,16 +326,12 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
-                System.out.println(contentType);
-                System.out.println();
 
                 // Get the requested file path (relative to the rootPath).
                 String requestedPath = httpExchange.getRequestURI().getPath();
                 requestedPath = requestedPath.replace("/images", "");
                 requestedPath = requestedPath.replace("/libraries", "");
                 Path filePath = Paths.get(rootPath, requestedPath);
-
-                System.out.println(filePath);
 
                 // Convert and send the file over to the client if it exists.
                 if (Files.exists(filePath)) {
@@ -444,6 +440,8 @@ public class GameServer {
                 // Deserialize JSON to the pre-made PlayerAction object;
 
                 PlayerAction playerAction = gson.fromJson(requestBody, PlayerAction.class);
+//                System.out.println("projectile " + playerAction.getKeysPressed()[PlayerAction.PROJECTILE]);
+//                System.out.println("melee " + playerAction.getKeysPressed()[PlayerAction.MELEE]);
 
                 // Extract playerId from the object.
 
