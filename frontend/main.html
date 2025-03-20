@@ -6,7 +6,13 @@
     <title>Forces of Nature</title>
 
     <style>
+      @font-face {
+        font-family: "KeyanCoffee";
+        src: url("/libraries/KeyanCoffee.otf") format("opentype");
+      }
+
       body {
+        position: relative;
         margin: 0;
         height: 100vh;
         display: flex;
@@ -18,9 +24,12 @@
         background-repeat: no-repeat;
         background-position: center;
       }
+
       h1 {
-        font-size: 3.5em;
-        color: black;
+        font-family: "KeyanCoffee";
+        font-size: 6.5em;
+        letter-spacing: 0.1em;
+        color: white;
         text-shadow: 2px 2px 4px black;
         margin-bottom: 20px;
       }
@@ -39,16 +48,20 @@
       #username-field {
         padding: 10px;
         border: 0px solid #ccc;
+        font-size: 1.5em;
+        font-family: "KeyanCoffee", Arial;
         margin-right: -4px;
         border-radius: 5px 0px 0px 5px;
+        width: 550px;
       }
 
       button {
         padding: 10px 20px;
         border-radius: 0px 5px 5px 0px;
         border: none;
+        font-size: 1.5em;
+        font-family: "KeyanCoffee", Arial;
         background-color: darkgray;
-        color: black;
         cursor: pointer;
         transition: all 0.25s;
       }
@@ -57,7 +70,7 @@
         background-color: rgb(110, 110, 110);
       }
 
-      .controls-popup {
+      .popup {
         display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         left: 0;
@@ -67,20 +80,24 @@
         background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
         justify-content: center;
         align-items: center;
+        z-index: 1000;
       }
 
-      .controls-content {
+      .popup-content {
         background-color: transparent; /* Remove white background */
         padding: 0; /* Remove padding */
         border-radius: 10px;
         text-align: center;
         position: relative; /* For positioning the close button */
+        max-width: 80vh; /* Ensure the popup fits within the screen */
+        max-height: 80vh; /* Ensure the popup fits within the screen */
+        overflow-y: auto; /* Enable vertical scrolling */
       }
 
-      .controls-content img {
-        max-width: 90vw; /* Ensure the image fits within the screen */
-        max-height: 90vh; /* Ensure the image fits within the screen */
+      .popup-content img {
+        max-width: 100%; /* Ensure the image fits within the screen */
         border-radius: 10px; /* Rounded corners for the image */
+        overflow-y: auto; /* Enable vertical scrolling */
       }
 
       .close-button {
@@ -103,28 +120,171 @@
         color: red;
       }
 
+      /* Add the Join Lobby button styles */
+      .btn-blue {
+        border: none;
+        z-index: 1;
+        position: relative;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 0px 5px 5px 0px;
+        color: #000;
+        overflow: hidden;
+        display: inline-block;
+      }
 
+      .btn-blue:after {
+        position: absolute;
+        content: "";
+        width: 100%;
+        height: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        border-radius: 0px 5px 5px 0px;
+        background-color: #4dccc6;
+        background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
+        box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9,
+          7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
+        transition: all 0.3s ease;
+      }
+
+      .btn-blue:hover {
+        color: #000;
+      }
+
+      .btn-blue:hover:after {
+        top: 0;
+        bottom: auto;
+        height: 100%;
+      }
+
+      .btn-blue:active {
+        top: 2px;
+      }
+
+      /* Add the controls button styles */
+      .btn-orange {
+        border: none;
+        z-index: 1;
+        position: relative;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 300px;
+        border-radius: 5px;
+        color: #000;
+        overflow: hidden;
+      }
+
+      .btn-orange:after {
+        position: absolute;
+        content: "";
+        width: 100%;
+        height: 0;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        border-radius: 5px;
+        background-color: #eaf818;
+        background-image: linear-gradient(315deg, #eaf818 0%, #f6fc9c 74%);
+        box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+          7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+          4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .btn-orange:hover {
+        color: #000;
+      }
+
+      .btn-orange:hover:after {
+        top: auto;
+        bottom: 0;
+        height: 100%;
+      }
+
+      .btn-orange:active {
+        top: 2px;
+      }
+
+      .lore-button {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        padding: 10px 20px;
+        background-color: #4dccc6;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+
+      .lore-button img {
+        transition: opacity 0.3s ease;
+      }
+
+      .lore-button:hover img {
+        opacity: 0; /* Hide the wizard on hover */
+      }
+
+      .lore-button::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 5px;
+        background-color: #4dccc6;
+        width: 100%;
+        height: 100%;
+        background-image: url(../images/main_wizard_hover.png); /* Hover image */
+        background-size: contain;
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat;
+        opacity: 0; /* Initially hidden */
+        transition: opacity 0.3s ease; /* Smooth transition for hover effect */
+      }
+
+      .lore-button:hover::after {
+        opacity: 1; /* Show the hover image */
+      }
     </style>
   </head>
   <body>
+    <!-- Main title -->
     <h1>FORCES OF NATURE</h1>
 
     <!-- Username field and Join button -->
     <div>
       <input type="text" placeholder="username.." id="username-field" />
-      <button onclick="openWaitroom()">Join Lobby</button>
+      <button class="btn-blue" onclick="openWaitroom()">ENTER WAITROOM</button>
     </div>
 
     <!-- Controls button -->
-    <div class="controlsButton" style="margin-top: 5px">
-      <button onclick="openControls()">Controls</button>
+    <div class="controlsButton" style="margin-top: 10px;">
+      <button class="btn-blue" style="width: 712px;" onclick="openControls()">GAME CONTROLS</button>
     </div>
 
-    <!-- The controls popup -->
-    <div id="controlsPopup" class="controls-popup">
-      <div class="controls-content">
+    <!-- Controls popup -->
+    <div id="controlsPopup" class="popup">
+      <div class="popup-content">
         <span class="close-button" onclick="closeControls()">&times;</span>
-        <img src="../images/controls.png" alt="Controls" />
+        <img src="/images/controls.png" alt="Controls" />
+      </div>
+    </div>
+
+    <!-- Lore button -->
+    <button class="lore-button" onclick="openLore()">
+      <img src="../images/main_wizard.png" alt="Lore" />
+    </button>
+
+    <!-- Lore popup-->
+    <div id="lorePopup" class="popup">
+      <div class="popup-content">
+        <span class="close-button" onclick="closeLore()">&times;</span>
+        <img src="../images/testlore.gif" alt="Lore" />
       </div>
     </div>
 
@@ -156,6 +316,16 @@
       function closeControls() {
         const controlsPopup = document.getElementById("controlsPopup");
         controlsPopup.style.display = "none"; //hide the popup
+      }
+
+      function openLore() {
+        const lorePopup = document.getElementById("lorePopup");
+        lorePopup.style.display = "flex"; //show the popup
+      }
+
+      function closeLore() {
+        const lorePopup = document.getElementById("lorePopup");
+        lorePopup.style.display = "none"; //hide the popup
       }
 
       window.onclick = function (event) {

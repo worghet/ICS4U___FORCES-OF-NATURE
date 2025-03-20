@@ -140,7 +140,7 @@ public class GameServer {
             httpServer.createContext("/styles.css", new StaticFileHandler("frontend", "text/css"));
             httpServer.createContext("/functionality.js", new StaticFileHandler("frontend", "frontend/javascript"));
             httpServer.createContext("/images", new StaticFileHandler("images", "image/gif"));
-
+            httpServer.createContext("/libraries", new StaticFileHandler("libraries", "font/otf"));
 
             // TODO: Add "animation-frame" getters, etc. (Unless that will be in the player object to load from.)
 
@@ -326,8 +326,13 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
+                System.out.println(contentType);
+                System.out.println();
+
                 // Get the requested file path (relative to the rootPath).
-                String requestedPath = httpExchange.getRequestURI().getPath().replace("/images", "");
+                String requestedPath = httpExchange.getRequestURI().getPath();
+                requestedPath = requestedPath.replace("/images", "");
+                requestedPath = requestedPath.replace("/libraries", "");
                 Path filePath = Paths.get(rootPath, requestedPath);
 
                 System.out.println(filePath);
@@ -653,6 +658,8 @@ public class GameServer {
                 // Start the game (loop) in the game object.
 
                 if (!game.isGameRunning()) {
+                    game.generateMap();
+                    game.setSpawnPoints();
                     game.startGame();
                     reportToConsole("GAME HAS BEGUN", OKAY);
                 } else {

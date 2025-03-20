@@ -33,7 +33,6 @@ public class Game {
 
         // Set game true (since game should be running now).
         gameRunning = true;
-        currentMap = GameMap.loadMap(2); //new Random().nextInt(3)
 
         // Use a timer to assign a timed task (game loop).
         Timer timer = new Timer();
@@ -65,7 +64,7 @@ public class Game {
 
                 for (Player aPlayer : players) {
                     aPlayer.updatePosition();
-//                    aPlayer.checkMapCollisions(currentMap);
+                    aPlayer.checkMapCollisions(currentMap);
                     // check attacks
                 }
 
@@ -126,6 +125,15 @@ public class Game {
 
     // == MUTATOR METHODS ======================================
 
+    public void setSpawnPoints() {
+        for (Player player : players) {
+
+            player.setPosition(currentMap.getSpawnPoint());
+            System.out.println("set " + player.getUsername() + "spawn to [" + player.getPosition()[0] + ", " + player.getPosition()[1] + ")");
+
+        }
+    }
+
     public GameMap getCurrentMap() {
         return currentMap;
     }
@@ -154,6 +162,10 @@ public class Game {
 
         return returnableCopy;
 
+    }
+
+    public void generateMap() {
+        currentMap = GameMap.loadMap(new Random().nextInt(3));
     }
 
     public void resetGame() {
