@@ -20,17 +20,18 @@ public class GameMap {
     // Load the map based on the given index
     public static GameMap loadMap(int MAP_INDEX) {
 
+        MAP_INDEX = 0;
         GameMap desiredMap = new GameMap();
 
         switch (MAP_INDEX) {
             case 0: // DEEPSEA
                 desiredMap.backgroundIndex = DEEPSEA;
-                desiredMap.groundY = 500;
+                desiredMap.groundY = 500; // + 70 for player
 
                 desiredMap.islands = new Island[3]; // how many islands here
-                desiredMap.islands[0] = new Island(1000, 400, 300);
-                desiredMap.islands[1] = new Island(300, 500, 400);
-                desiredMap.islands[2] = new Island(600, 200, 150);
+                desiredMap.islands[0] = new Island(100, 400, 500);
+                desiredMap.islands[1] = new Island(800, 400, 500);
+                desiredMap.islands[2] = new Island(450, 200, 500);
 
 
                 desiredMap.spawnPoints = new double[1][2];
