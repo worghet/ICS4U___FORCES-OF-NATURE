@@ -371,6 +371,17 @@ function renderPlayers(players) {
                 playerBox.className = "box";
                 playerBox.style.backgroundColor = player.colour;
 
+                //displaying sprite
+                playerBox.style.backgroundImage = 'url("/images/main_wizard.png")'
+                // playerBox.style.backgroundSize = "525px 525px"; // Adjust based on sprite sheet size
+                playerBox.style.backgroundPosition = "0px 0px"; // X and Y offset to select a portion*/
+                playerBox.style.backgroundSize =  "contain";
+
+                // playerBox.style.width = "35px"; // Size of cropped portion
+                // playerBox.style.height = "35px"; // Size of cropped portion
+                playerBox.style.backgroundRepeat = "no-repeat";
+                
+
                 // Create the player tag (+ set tag contents to player username).
                 playerTag = document.createElement("div");
                 playerTag.id = "tag-" + player.id;
@@ -401,10 +412,7 @@ function renderPlayers(players) {
                 return;
             }
 
-           /*
-            characterSprite = new animation(spriteSheet, 0, 0, 35, 35, 3, 1, false, true);
-            // playerBox.style.backgroundImage = url(...);
-            */
+           
 
             // show health, temp for now
             playerBox.innerHTML = player.health + " / " + player.maxHealth + "   |   LIVES: " + player.lives;
