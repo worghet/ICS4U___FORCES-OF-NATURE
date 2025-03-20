@@ -1,210 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/images/favicon.png">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/images/favicon.png" />
     <title>Forces of Nature - Waitroom</title>
-</head>
-<body>
-<h1>
-    Welcome to the waitroom!
-</h1>
-<p>
-    Choose a character, see who is here now, and get ready to play!
-</p>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #1e1e2f; /* primary background colour */
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Left + Middle combined, Right */
+        grid-template-rows: auto 1fr;
+        gap: 10px;
+        padding: 10px;
+      }
 
-<h1>
-    PLAYERS ONLINE:
-</h1>
+      h1 {
+        color: #00bcd4;
+        margin: 0;
+      }
 
-<ol id="player-list">
+      p {
+        color: #b3b3b3;
+        margin: 0;
+      }
 
-</ol>
+      /* Left + Middle Section */
+      .left-middle {
+        grid-column: 1 / 2;
+        display: flex;
+        flex-direction: column;
+        gap: 120px;
+      }
 
-<button onclick="backToMain()">
-    Go back (leave lobby)
-</button>
+      /* Waitroom Header */
+      .waitroom-header {
+        text-align: center;
+        padding: 10px;
+        background-color: #2c2c3a; /* secondary background colour */
+        border-radius: 5px;
+      }
 
-<button id="anglerButton" onclick="characterSelected(0)">
-    Angler
-</button>
+      /* Character Selection */
+      .character-selection {
+        display: flex;
+        justify-content: space-around;
+        gap: 30px;
+        margin-top: -80px;
+        margin-bottom: -40px;
+      }
 
-<button id="golemButton" onclick="characterSelected(1)">
-    Golem
-</button>
+      .character-selection img {
+        width: 200px;
+        height: 200px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
 
-<button id="welderButton" onclick="characterSelected(2)">
-    Welder
+      .character-selection img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 10px rgba(0, 188, 212, 0.8);
+      }
 
-</button>
+      /* Right Section */
+      .right-section {
+        grid-column: 2 / 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 80px;
+        background-color: #2c2c3a; /* secondary background colour */
+        padding: 20px;
+        border-radius: 5px;
+      }
 
-<button onclick="startGame()">
-    Start game
-</button>
+      .selected-character {
+        text-align: center;
+      }
 
-<script>
+      .selected-character img {
+        width: 250px;
+        height: 500px;
+        margin-top: 50px;
+        filter: blur(1px);
+        border-radius: 10px;
+      }
 
-    // variables
-    let gameStarted = false;
-    const playerList = document.getElementById("player-list");
+      /* Player List */
+      #player-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        flex-grow: 1;
+        overflow-y: auto;
+      }
 
+      #player-list li {
+        background-color: black;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
 
-    const ANGLER_INDEX = 0;
-    const GOLEM_INDEX = 1;
-    const WELDER_INDEX = 2;
+      #player-list li:hover {
+        background-color: #4c4c5a;
+      }
 
-    // actual program:
+      /* Buttons */
+      .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
 
-    function characterSelected(characterIndex) {
+      button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
 
-        resetButtons();
+      button:hover {
+        background-color: #00bcd4;
+      }
 
-        if (characterIndex == ANGLER_INDEX) {
-            console.log("angler selected");
-            document.getElementById("anglerButton").style.backgroundColor = "aqua";
-            document.getElementById("anglerButton").disabled = true;
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto auto;
         }
-        else if (characterIndex == GOLEM_INDEX) {
-            console.log("golem selected");
-            document.getElementById("golemButton").style.backgroundColor = "saddlebrown";
-            document.getElementById("golemButton").disabled = true;
-        }
-        // welder selected
-        else {
-            console.log("welder selected");
-            document.getElementById("welderButton").style.backgroundColor = "red";
-            document.getElementById("welderButton").disabled = true;
+
+        .left-middle,
+        .right-section {
+          grid-column: 1 / -1;
         }
 
-        fetch("/character-select", {
+        .character-selection {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Left + Middle Section -->
+    <div class="left-middle">
+      <!-- Waitroom Header -->
+      <div class="waitroom-header">
+        <h1>Waitroom</h1>
+        <p>Choose a character, see who is here now, and get ready to play!</p>
+      </div>
 
-            method: "POST",
-            body: JSON.stringify({
-                id: sessionStorage.getItem("playerId"),
-                character: characterIndex
-            })
+      <!-- Character Selection -->
+      <div class="character-selection">
+        <img
+          src="../images/main_wizard.png"
+          alt="Angler"
+          onclick="characterSelected(0)"
+        />
+        <img
+          src="../images/main_wizard.png"
+          alt="Golem"
+          onclick="characterSelected(1)"
+        />
+        <img
+          src="../images/main_wizard.png"
+          alt="Welder"
+          onclick="characterSelected(2)"
+        />
+      </div>
 
+      <!-- Player List -->
+      <h1>PLAYERS ONLINE:</h1>
+      <ol id="player-list"></ol>
+
+      <!-- Buttons -->
+      <div class="buttons">
+        <button onclick="backToMain()">Go back (leave lobby)</button>
+        <button onclick="startGame()">Start game</button>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right-section">
+      <div class="selected-character">
+        <h2 id="selected-username">Username</h2>
+        <img id="selected-character-image" src="" alt="Selected Character" />
+      </div>
+    </div>
+    <script>
+      // variables
+      let gameStarted = false;
+      const playerList = document.getElementById("player-list");
+      const selectedCharacterImage = document.getElementById(
+        "selected-character-image"
+      );
+      const selectedUsername = document.getElementById("selected-username");
+
+      const ANGLER_INDEX = 0;
+      const GOLEM_INDEX = 1;
+      const WELDER_INDEX = 2;
+
+      const characterImages = [
+        "../images/main_wizard.png",
+        "../images/welder-podium-active.png",
+        "../images/podium-angler-active.png",
+      ];
+
+      // actual program:
+
+      function characterSelected(characterIndex) {
+        // Update the selected character display
+        selectedCharacterImage.src = characterImages[characterIndex];
+        selectedUsername.textContent =
+          sessionStorage.getItem("username") || "Username";
+
+        // Disable the selected character image
+        const characterImagesElements = document.querySelectorAll(
+          ".character-selection img"
+        );
+        characterImagesElements.forEach((img, index) => {
+          if (index === characterIndex) {
+            img.style.opacity = "0.5";
+            img.style.pointerEvents = "none";
+          } else {
+            img.style.opacity = "1";
+            img.style.pointerEvents = "auto";
+          }
         });
 
-    }
+        // Send selection to server
+        fetch("/character-select", {
+          method: "POST",
+          body: JSON.stringify({
+            id: sessionStorage.getItem("playerId"),
+            character: characterIndex,
+          }),
+        });
+      }
 
-    function resetButtons() {
-        document.getElementById("anglerButton").style.backgroundColor = "grey";
-        document.getElementById("golemButton").style.backgroundColor = "grey";
-        document.getElementById("welderButton").style.backgroundColor = "grey";
-
-        document.getElementById("anglerButton").disabled = false;
-        document.getElementById("golemButton").disabled = false;
-        document.getElementById("welderButton").disabled = false;
-    }
-
-
-    const checkInterval = setInterval(() => {
+      const checkInterval = setInterval(() => {
         if (!gameStarted) {
-            hasTheGameStarted();
-
-            // manage players in the table
-            // refreshOnlinePlayers();
-
+          hasTheGameStarted();
         } else {
-            window.location.href = "/forces-of-nature/gameplay";
-            console.log("Game started!!");
-
+          window.location.href = "/forces-of-nature/gameplay";
+          console.log("Game started!!");
         }
-    }, 1000);
+      }, 1000);
 
-
-
-
-    // functions
-    function hasTheGameStarted() {
+      // functions
+      function hasTheGameStarted() {
         // Check for if the game has started yet
         fetch("/start-game", {
-            method: "GET"
+          method: "GET",
         })
-        .then(response => response.json())
-        .then(response => {
+          .then((response) => response.json())
+          .then((response) => {
             console.log(response);
             if (response.gameActive) {
-                // If the game HAS started, set variable to true to stop constantly checking.
-                gameStarted = true;
-                clearInterval(checkInterval);
-                // Start the repeating processes (sending data and updating screen).
-                window.location.href = "/forces-of-nature/gameplay";
+              // If the game HAS started, set variable to true to stop constantly checking.
+              gameStarted = true;
+              clearInterval(checkInterval);
+              // Start the repeating processes (sending data and updating screen).
+              window.location.href = "/forces-of-nature/gameplay";
+            } else {
+              // game hasnt started yet; update the table of players
+              updatePlayerList(response.playersOnline);
             }
-            else {
+          });
+      }
 
-                // game hasnt started yet; update the table of players
-                updatePlayerList(response.playersOnline);
-
-            }
-        });
-    }
-
-    function updatePlayerList(players) {
-        //        const playerCount = document.getElementById("playerCount");
-
+      function updatePlayerList(players) {
         // Clear the existing list
         playerList.innerHTML = "";
 
         // Add each player to the list
-        players.forEach(player => {
-            const listItem = document.createElement("li");
-            listItem.textContent = player.username + " (put selected character here)";
-            playerList.appendChild(listItem);
+        players.forEach((player) => {
+          const listItem = document.createElement("li");
+          listItem.textContent =
+            player.username + " (put selected character here)";
+          playerList.appendChild(listItem);
         });
+      }
 
-        // playerCount.textContent = players.length;
-    }
-
-
-    function backToMain() {
+      function backToMain() {
         window.location.href = "/forces-of-nature";
-    }
+      }
 
-    function startGame() {
-
+      function startGame() {
         fetch("/start-game", {
-
-            method: "POST"
-
+          method: "POST",
         });
 
         gameStarted = true;
-    }
+      }
 
-    window.onload = function() {
+      window.onload = function () {
         // Get THIS player's id
         const playerId = sessionStorage.getItem("playerId");
 
         if (!playerId) {
-            console.log("No Player ID found! Redirecting...");
-            window.location.href = "/forces-of-nature"; // Redirect if no ID
+          console.log("No Player ID found! Redirecting...");
+          //window.location.href = "/forces-of-nature"; // Redirect if no ID
         } else {
           console.log("Playing as player with id:", playerId);
         }
-    };
+      };
 
-    window.addEventListener("beforeunload", (event) => {
-
+      window.addEventListener("beforeunload", (event) => {
         // Directly compare pathname to check if it's the gameplay page
         if (gameStarted) {
-            return;
+          return;
         }
 
         const playerID = sessionStorage.getItem("playerId");
 
         if (playerID) {
-            fetch("/remove-player", {
-                method: "POST",
-                body: playerID
-            });
+          fetch("/remove-player", {
+            method: "POST",
+            body: playerID,
+          });
 
-            sessionStorage.removeItem("playerId");
+          sessionStorage.removeItem("playerId");
         }
-    });
-
-</script>
-
-</body>
+      });
+    </script>
+  </body>
 </html>
