@@ -63,10 +63,13 @@ public class Game {
 
                 for (Player aPlayer : players) {
 
-                    aPlayer.updatePosition();
-                    aPlayer.checkMapCollisions(currentMap);
-                    aPlayer.registerDamage(players);
-                    // check attacks
+                    if (!aPlayer.isSpecator()) {
+
+                        aPlayer.updatePosition();
+                        aPlayer.checkMapCollisions(currentMap);
+                        aPlayer.registerDamage(players);
+                        // check attacks
+                    }
                 }
 
                 // -- REPLACE WITH MATT'S UPDATE METHOD -----

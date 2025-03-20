@@ -486,6 +486,11 @@ public class GameServer {
                 int newPlayerId = newPlayer.getId();
                 reportToConsole("CREATED PLAYER (ID: " + newPlayerId + " | USERNAME: " + newPlayer.getUsername() + ").", INTERESTING);
 
+                if (game.isGameRunning()) {
+                    newPlayer.toggleSpectating();
+                    System.out.println("THIS PLAYER IS A SPECTATOR");
+                }
+
                 // Send back the id so that the browser can save it for when it sends the actions.
 
                 String response = String.valueOf(newPlayerId);
@@ -530,7 +535,6 @@ public class GameServer {
             return new Player(requestedUsername);
         }
     }
-
 
     // == API [REMOVE PLAYER - REMOVES PLAYER ==================
 

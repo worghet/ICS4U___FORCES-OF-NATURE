@@ -78,3 +78,10 @@ h1 {
     width:200px;
     height: 20px;
 }
+
+.spectating-notifier {
+    position: absolute;
+    top: 0px;
+    color: red;
+    font-style: bold;
+}

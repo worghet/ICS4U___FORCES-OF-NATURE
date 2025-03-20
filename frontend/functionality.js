@@ -19,6 +19,8 @@ spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing 
 // This holds the keyboard inputs sent to the back end.
 var keys_pressed = {left: false, right: false, up: false, down: false, melee: false, projectile: false};
 
+let spectating;
+
 // These help with user identification / messaging.
 let localPlayerId;
 let username;
@@ -27,14 +29,11 @@ let username;
 let gameStarted = false;
 let currentGameData = null;
 
+let playerActionInterval;
+
 
 // ============================================================
 // ======================== PROGRAM ===========================
-
-
-
-    setInterval(sendPlayerAction, (1000 / FPS));
-    setInterval(updatePosition, (1000 / FPS));
 
 
 // ======================== PROGRAM ===========================
@@ -130,6 +129,33 @@ window.onload = function() {
      }
 
    });
+
+
+    fetch("/gamedata", {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(json => {
+        json.players.forEach(player => {  // Corrected the forEach loop syntax
+
+            if (player.id == localPlayerId && player.isSpectating) {
+                console.log("is spectating")
+                isSpectating = true;
+                const spectatingNotifier = document.createElement("h1");
+                spectatingNotifier.innerText = "SPECTATING GAME";
+                spectatingNotifier.className = "spectating-notifier";
+                document.body.appendChild(spectatingNotifier);
+            }
+            else {
+                console.log("is NOT spectator")
+                playerActionInterval = setInterval(sendPlayerAction, (1000 / FPS));
+            }
+
+            setInterval(updatePosition, (1000 / FPS));
+
+        });
+    })
+
 
    // do countdown (wavy text "welcome to ...")
 
@@ -264,7 +290,6 @@ document.addEventListener("keyup", function (event) {
 
 function sendPlayerAction() {
 
-
     // Build keys_pressed into a legible array.
 
     const currentAction =  [keys_pressed.left, keys_pressed.right, keys_pressed.down, keys_pressed.up, keys_pressed.projectile, keys_pressed.melee];
@@ -321,64 +346,87 @@ function renderPlayers(players) {
     // Iterate through each player.
     players.forEach(player => {
 
-        // Try to locate an existing render for this user.
-        let playerBox = document.getElementById("box-" + player.id);
-        let playerTag = document.getElementById("tag-" + player.id);
+        if (!player.isSpectating) {
 
-        // If none found, create them.
-        if (!playerBox && !playerTag) {
 
-            // Create the actual box.
-            playerBox = document.createElement("div");
-            playerBox.id = "box-" + player.id;
-            playerBox.className = "box";
-            playerBox.style.backgroundColor = player.colour;
 
-            // Create the player tag (+ set tag contents to player username).
-            playerTag = document.createElement("div");
-            playerTag.id = "tag-" + player.id;
-            playerTag.className = "tag";
-            playerTag.innerHTML = player.username;
+            // Try to locate an existing render for this user.
+            let playerBox = document.getElementById("box-" + player.id);
+            let playerTag = document.getElementById("tag-" + player.id);
 
-            // Add box and tag to game window.
-            document.getElementById("game-window").appendChild(playerBox);
-            document.getElementById("game-window").appendChild(playerTag);
+            // If none found, create them.
+            if (!playerBox && !playerTag) {
+
+                // Create the actual box.
+                playerBox = document.createElement("div");
+                playerBox.id = "box-" + player.id;
+                playerBox.className = "box";
+                playerBox.style.backgroundColor = player.colour;
+
+                // Create the player tag (+ set tag contents to player username).
+                playerTag = document.createElement("div");
+                playerTag.id = "tag-" + player.id;
+                playerTag.className = "tag";
+                playerTag.innerHTML = player.username;
+
+                // Add box and tag to game window.
+                document.getElementById("game-window").appendChild(playerBox);
+                document.getElementById("game-window").appendChild(playerTag);
+            }
+
+
+            if (player.lives == 0) {
+                 isSpectating = true;
+
+                 if (player.id == localPlayerId) {
+
+                     const spectatingNotifier = document.createElement("h1");
+                     spectatingNotifier.innerText = "SPECTATING GAME";
+                     spectatingNotifier.className = "spectating-notifier";
+                     document.body.appendChild(spectatingNotifier);
+                     clearInterval(playerActionInterval);
+                 }
+
+
+                playerBox.remove();
+                playerTag.remove();
+                return;
+            }
+
+           /*
+            characterSprite = new animation(spriteSheet, 0, 0, 35, 35, 3, 1, false, true);
+            // playerBox.style.backgroundImage = url(...);
+            */
+
+            // show health, temp for now
+            playerBox.innerHTML = player.health + " / " + player.maxHealth + "   |   LIVES: " + player.lives;
+
+
+            // Update box's position based on the player's position.
+            playerBox.style.left = intToPx(player.position[X]);
+
+            // If crouching, move everything down 50 pixels.
+            if (player.isCrouching) {
+                playerBox.style.height = "35px";
+                playerBox.style.top = intToPx(player.position[Y] + 35);
+
+                // Maintain 40 pixel height separation when crouched.
+                playerTag.style.top = intToPx(player.position[Y] - 5);
+            }
+
+            // Otherwise, keep the positioning same as the computed one.
+            else {
+                playerBox.style.height = "70px";
+                playerBox.style.top = intToPx(player.position[Y]);
+
+                // Have the tag hover 40 pixels above the box.
+                playerTag.style.top = intToPx(player.position[Y] - 40);
+            }
+
+            // Center the tag based on the player's box position and width.
+            playerTag.style.left = intToPx(playerBox.offsetLeft + (playerBox.offsetWidth / 2) - (playerTag.offsetWidth / 2));
         }
 
-
-
-       /*
-        characterSprite = new animation(spriteSheet, 0, 0, 35, 35, 3, 1, false, true);
-        // playerBox.style.backgroundImage = url(...);
-        */
-
-        // show health, temp for now
-        playerBox.innerHTML = player.health + " / " + player.maxHealth + "   |   LIVES: " + player.lives;
-
-
-        // Update box's position based on the player's position.
-        playerBox.style.left = intToPx(player.position[X]);
-
-        // If crouching, move everything down 50 pixels.
-        if (player.isCrouching) {
-            playerBox.style.height = "35px";
-            playerBox.style.top = intToPx(player.position[Y] + 35);
-
-            // Maintain 40 pixel height separation when crouched.
-            playerTag.style.top = intToPx(player.position[Y] - 5);
-        }
-
-        // Otherwise, keep the positioning same as the computed one.
-        else {
-            playerBox.style.height = "70px";
-            playerBox.style.top = intToPx(player.position[Y]);
-
-            // Have the tag hover 40 pixels above the box.
-            playerTag.style.top = intToPx(player.position[Y] - 40);
-        }
-
-        // Center the tag based on the player's box position and width.
-        playerTag.style.left = intToPx(playerBox.offsetLeft + (playerBox.offsetWidth / 2) - (playerTag.offsetWidth / 2));
     });
 }
 

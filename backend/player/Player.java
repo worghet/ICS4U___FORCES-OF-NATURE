@@ -40,6 +40,7 @@ public class Player {
     // temporary
     String colour;
 
+    protected boolean isSpectating;
     protected String username;
     protected int id;
     protected int lives;
@@ -122,6 +123,7 @@ public class Player {
         DEFAULT_MELEE_WIDTH = 70;
         DEFAULT_MELEE_HEIGHT = 20;
         DEFAULT_MELEE_DAMAGE = 15;
+        isSpectating = false;
 
         // TECHNICALLY WHAT IS BELOW IS NOT NEEDED..
 
@@ -165,6 +167,7 @@ public class Player {
         DEFAULT_MELEE_WIDTH = 70;
         DEFAULT_MELEE_HEIGHT = 20;
         DEFAULT_MELEE_DAMAGE = 15;
+        isSpectating = false;
 
         // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
 
@@ -192,6 +195,13 @@ public class Player {
 
     // == UPDATER METHOD =======================================
 
+    public void toggleSpectating() {
+        isSpectating = !isSpectating;
+    }
+
+    public boolean isSpecator() {
+        return isSpectating;
+    }
 
     public void updatePosition() {
 
