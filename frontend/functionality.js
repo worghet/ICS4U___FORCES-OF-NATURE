@@ -60,6 +60,13 @@ window.onload = function() {
      const backgroundIndex = mapData.backgroundIndex;
      console.log("Background Index: ", backgroundIndex);
 
+
+                            const groundDiv = document.createElement("div");
+                            groundDiv.className = "ground";
+                            groundDiv.style.top = intToPx(mapData.groundY + 70);
+                            document.body.appendChild(groundDiv);
+
+
      switch (backgroundIndex) {
 
         case 0:
@@ -73,6 +80,7 @@ window.onload = function() {
                 islandDiv.style.left = intToPx(island.topLeftX);
                 islandDiv.style.top = intToPx(island.topLeftY);
                 islandDiv.style.width = intToPx(island.width);
+                islandDiv.style.backgroundColor = "yellow";
 
 //                islandDiv.style.backgroundImage = `url("/images/sand_island_texture.jpg")`;
 //                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
@@ -104,7 +112,7 @@ window.onload = function() {
             break;
         case 2:
             console.log("welcome to industry")
-            document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
+           document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
 
                      mapData.islands.forEach((island) => {
                             const islandDiv = document.createElement("div");

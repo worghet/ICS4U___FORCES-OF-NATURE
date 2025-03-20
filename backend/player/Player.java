@@ -71,7 +71,7 @@ public class Player {
     // Default crouched variables (active when crouched).
     protected double CROUCH_FRICTION;
     protected int MAX_CROUCH_VELOCITY;
-    protected static final int CROUCH_GRAVITY = 15;
+    protected static final int CROUCH_GRAVITY = 7;
     protected boolean isCrouching;
 
     // Default jump-related variables.
@@ -391,10 +391,12 @@ public class Player {
 //            if (direction) {
 //                System.out.println("movin right");
 //                position[X] += ((double) DEFAULT_MELEE_WIDTH / 2); // move player forward a bit
+////                velocity[X] += 20;
 //            }
 //            else {
 //                System.out.println("movin left");
-//                position[X] -= ((double) DEFAULT_MELEE_WIDTH / 2); // move player forward a bit
+////                velocity[X] -= 20;
+//                position[X] -=z ((double) DEFAULT_MELEE_WIDTH / 2); // move player forward a bit
 //
 //            }
 
@@ -404,8 +406,6 @@ public class Player {
                     boolean withinHorizontalRange = (direction && tempPos[X] >= attackStartX && tempPos[X] <= attackEndX) || (!direction && tempPos[X] <= attackStartX && tempPos[X] >= attackEndX); //first check for if facing right, then if facing left
                     boolean withinVerticalRange = Math.abs(tempPos[Y] - position[Y]) < DEFAULT_MELEE_HEIGHT; //vertical check
 
-
-
                     if (withinHorizontalRange && withinVerticalRange) {
                         temp.takeDamage(DEFAULT_MELEE_DAMAGE); //deal damage to the player if they are within the attack range
                         this.damageDealt += 10;
@@ -413,11 +413,13 @@ public class Player {
 
                         if (temp.getHealth() == 0) {
                             temp.setLives(temp.getLives() - 1);
-                            if (temp.getLives() > 0) {
+                            if (!temp.isDead()) {
                                 temp.respawn();
                             }
                             else {
                                 GameServer.reportToConsole(temp.getUsername() + "is Dead!!", GameServer.INTERESTING);
+                                temp.toggleSpectating();
+                                System.out.println("this guy is spectating: " + temp.isSpectating);
                             }
                         }
 
@@ -446,9 +448,11 @@ public class Player {
 
     public void checkMapCollisions(GameMap map) {
 
-        // Check if the player is on the ground (this part could be generalized to handle any type of surface).
-        if (this.position[Y] >= map.getGroundY() + 10) {
-            this.position[Y] = map.getGroundY() + 10;  // Keep the player on top of the ground
+
+        // GROUND COLLISION
+
+        if (this.position[Y] >= map.getGroundY()) { // checks if is clipping in the ground
+            this.position[Y] = map.getGroundY();
             this.velocity[Y] = 0;  // Stop falling
             this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;  // Reset jump count
             isJumping = false;  // Player is no longer in the air
@@ -458,9 +462,8 @@ public class Player {
         for (Island island : map.getIslands()) {
 
             // Check if the player is within the horizontal bounds of the island
-            if (position[X] + 70 >= island.getTopLeftX() && position[X] <= island.getBottomRightX()) {
+            if (position[X] + 70 >= island.getTopLeftX() && position[X] <= island.getBottomRightX() && !isCrouching) {
 
-                // Check if the player is falling (velocity[Y] > 0) and within the vertical bounds of the island
                 if (position[Y] + 70 >= island.getTopLeftY() &&  velocity[Y] > 0) {
                     // Player is falling and above the island, they should land
 //                    System.out.println("Landing on the island...");
