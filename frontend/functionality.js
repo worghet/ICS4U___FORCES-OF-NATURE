@@ -7,6 +7,11 @@
 const X = 0;
 const Y = 1;
 const FPS = 40;
+//animation
+const spriteSheet = new Image();
+spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
+//will finish sprite sheet, & organize it
+
 
 
 // == IMPORTANT VARIABLES ==================================
@@ -252,7 +257,7 @@ function renderPlayers(players) {
             playerBox = document.createElement("div");
             playerBox.id = "box-" + player.id;
             playerBox.className = "box";
-            playerBox.style.backgroundColor = player.colour;
+            playerBox.style.backgroundColor = player.colour; 
 
             // Create the player tag (+ set tag contents to player username).
             playerTag = document.createElement("div");
@@ -267,10 +272,10 @@ function renderPlayers(players) {
 
 
 
-        //animation
-        const spriteSheet = new Image();
-        spriteSheet.src = "./images/Unfinished Sprites.png";
+       /*
+        characterSprite = new animation(spriteSheet, 0, 0, 35, 35, 3, 1, false, true);
         // playerBox.style.backgroundImage = url(...);
+        */
 
         // show health, temp for now
         playerBox.innerHTML = player.health + " / " + player.maxHealth;
