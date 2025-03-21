@@ -85,11 +85,11 @@ public class Player {
     protected int numJumpsRemaining; // jumps remaining
 
     // Default attack-based variables.
-    protected final int MAX_PROJECTILE_COOLDOWN;
-    protected final int MAX_MELEE_COOLDOWN;
-    protected final int DEFAULT_MELEE_WIDTH; //default hitbox width for melee attacks
-    protected final int DEFAULT_MELEE_HEIGHT; //could be changed depending on the character
-    protected final int DEFAULT_MELEE_DAMAGE; //all constant for now
+    protected int MAX_PROJECTILE_COOLDOWN;
+    protected  int MAX_MELEE_COOLDOWN;
+    protected  int DEFAULT_MELEE_WIDTH; //default hitbox width for melee attacks
+    protected  int DEFAULT_MELEE_HEIGHT; //could be changed depending on the character
+    protected  int DEFAULT_MELEE_DAMAGE; //all constant for now
     protected boolean previouslyPressedMeleeAttack = false;
     protected int projectileCooldown; //only applies to projectile attacks
     protected int meleeCooldown; //only applies to melee attacks
@@ -119,6 +119,8 @@ public class Player {
         MAX_CROUCH_VELOCITY = 4;
         JUMP_FORCE = 15;
         MAX_CONSECUTIVE_JUMPS = 3;
+
+
         MAX_PROJECTILE_COOLDOWN = 10;
         MAX_MELEE_COOLDOWN = 10;
         DEFAULT_MELEE_WIDTH = 70;
@@ -468,6 +470,13 @@ public class Player {
             this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;  // Reset jump count
             isJumping = false;  // Player is no longer in the air
         }
+
+        if (position[X] < 0) {
+            position[X] = 0;
+        } else if (position[X] > 1675) {
+            position[X] = 1675;
+        }
+
 
         // Check for collision with islands (or any other platforms in the map)
         for (Island island : map.getIslands()) {

@@ -12,11 +12,9 @@ public class Golem extends Player {
 
         this.maxHealth = 150; //higher than base player
         this.health = maxHealth;
-        this.speedMultiplier = 0.75; //lower than base player
-
 
         // movement stuffz
-        this.speedMultiplier = 1; //higher than base player
+        this.speedMultiplier = 0.9; //higher than base player
         MAX_X_VELOCITY = 4;
         MAX_Y_VELOCITY = 13;
         JUMP_FORCE = 20;
@@ -24,6 +22,10 @@ public class Golem extends Player {
         CROUCH_FRICTION = 0.05;
         MAX_CROUCH_VELOCITY = 1;
         MAX_CONSECUTIVE_JUMPS = 2;
+
+        MAX_MELEE_COOLDOWN = 25;
+        DEFAULT_MELEE_DAMAGE = 25;
+
 
         colour = "saddlebrown";
         //slower with more health

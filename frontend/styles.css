@@ -52,7 +52,7 @@ body {
 }
 
 .backToMainButton {
-    width: 625px;
+    width: 750px;
     color: red;
     background-color: rgba(0, 0, 0, 0.6);
     border: 3px solid red;
@@ -61,6 +61,7 @@ body {
     padding: 5px 20px;
     border-radius: 2px;
     text-align: center;
+    margin-top: 50px;
     font-size: 1.7em;
     font-family: "KeyanCoffee", monospace;
     transition: all 0.15s;

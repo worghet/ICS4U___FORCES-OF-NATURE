@@ -90,6 +90,8 @@
         background-position: contain;
         background-repeat: no-repeat;
         background-position-x: 50%;
+        background-position-y: 50%;
+
         background-size: 50%;
       }
 
@@ -144,7 +146,7 @@
         grid-template-columns: 1fr 1fr 1fr;
         gap: 20px;
         grid-auto-columns: auto;
-        padding: 0;
+        padding: 10px;
         margin: 0;
         flex-grow: 1;
         overflow-y: auto;
@@ -162,12 +164,15 @@
       }
 
       #player-list li.ready {
-        outline: 2px solid green; /* Green outline for ready players */
-        box-shadow: 0 0 10px green; /* Green glow for ready players */
+        outline: 2px solid lime; /* Green outline for ready players */
+        box-shadow: 0 0 10px lime; /* Green glow for ready players */
+        background-color:seagreen;
+
       }
 
       #player-list li.not-ready {
         outline: 2px solid red; /* Red outline for not-ready players */
+        background-color:firebrick;
         box-shadow: 0 0 10px red; /* Red glow for not-ready players */
       }
 
@@ -187,18 +192,18 @@
         color: #fff;
         border: none;
         padding: 0.5em 1em;
-        border-radius: 0.5em;
+        border-radius: 0.2em;
         cursor: pointer;
-        font-size: 1em;
-        transition: background-color 0.3s ease;
+        font-size: 1.2em;
+        transition: all 0.3s;
       }
 
       button:hover {
-        background-color: #00bcd4;
+        opacity: 0.75;
       }
 
       button:disabled {
-        background-color: #555;
+        background-color: firebrick;
         cursor: not-allowed;
       }
 
@@ -287,9 +292,9 @@
 
         <!-- Buttons -->
         <div class="buttons">
-          <button onclick="backToMain()">Go back (leave lobby)</button>
-          <button id="readyButton" onclick="toggleReady()">Ready</button>
-          <button id="startGameButton" onclick="startGame()">Start game</button>
+          <button onclick="backToMain()">RETURN TO HOME</button>
+          <button id="readyButton" onclick="toggleReady()">READY UP</button>
+          <button id="startGameButton" onclick="startGame()">START GAME</button>
         </div>
       </div>
 
@@ -297,7 +302,7 @@
       <div class="right-section">
         <div class="selected-character">
           <h2 id="selected-username">Username</h2>
-          <img id="selected-character-image" src="" alt="Selected Character" />
+          <img id="selected-character-image"/>
         </div>
       </div>
     </div>
@@ -343,7 +348,7 @@
       // Function to toggle ready state
       function toggleReady() {
         isReady = !isReady; // Toggle readiness
-        readyButton.textContent = isReady ? "Unready" : "Ready"; // Update button text
+        readyButton.textContent = isReady ? "UNREADY" : "READY UP"; // Update button text
 
         // Update the selected character image based on readiness
         if (selectedCharacter !== null) {
@@ -384,14 +389,6 @@
         // Add each player to the list
         players.forEach((player) => {
           const listItem = document.createElement("li");
-          const characterName =
-            player.character === ANGLER_INDEX
-              ? "Angler"
-              : player.character === GOLEM_INDEX
-              ? "Golem"
-              : player.character === WELDER_INDEX
-              ? "Welder"
-              : "";
 
           listItem.classList.add(player.isReady ? "ready" : "not-ready");
           listItem.textContent = `${player.username} `;

@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 25;
+const FPS = 35;
 //animation
 const spriteSheet = new Image();
 spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
@@ -74,7 +74,7 @@ window.onload = function() {
         case 0:
             console.log("welcome to deepsea");
             document.body.style.backgroundImage = `url("/images/deepsea.gif")`;
-                groundDiv.style.backgroundColor = "yellow";
+            groundDiv.style.backgroundColor = "yellow";
 
 
             mapData.islands.forEach((island) => {
@@ -83,6 +83,7 @@ window.onload = function() {
                 islandDiv.style.left = intToPx(island.topLeftX);
                 islandDiv.style.top = intToPx(island.topLeftY);
                 islandDiv.style.width = intToPx(island.width);
+
                 islandDiv.style.backgroundColor = "yellow";
 
 
@@ -97,6 +98,8 @@ window.onload = function() {
         case 1:
             console.log("welcome to caves")
             document.body.style.backgroundImage = `url("/images/gameplay_background_earth.gif")`;
+            document.body.style.backgroundPositionY = "-300px";
+
 
                      mapData.islands.forEach((island) => {
                             const islandDiv = document.createElement("div");
@@ -104,6 +107,7 @@ window.onload = function() {
                             islandDiv.style.left = intToPx(island.topLeftX);
                             islandDiv.style.top = intToPx(island.topLeftY);
                             islandDiv.style.width = intToPx(island.width);
+
 
 //                                        islandDiv.style.backgroundImage = `url("/images/ground_island_texture.jpg")`;
 //                                        islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
@@ -121,6 +125,7 @@ window.onload = function() {
             console.log("welcome to industry")
                 groundDiv.style.backgroundColor = "grey";
            document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
+           document.body.style.backgroundPositionY = "-500px";
 
                      mapData.islands.forEach((island) => {
                             const islandDiv = document.createElement("div");
