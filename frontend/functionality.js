@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 40;
+const FPS = 15;
 //animation
 const spriteSheet = new Image();
 spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
@@ -384,7 +384,8 @@ function renderPlayers(players) {
 
                  if (player.id == localPlayerId) {
 
-                       document.getElementById("spectator-div").style.visibility = "visible";
+                    console.log("you are now dead, here is the div for you")
+                     document.getElementById("spectator-div").style.visibility = "visible";
                      clearInterval(playerActionInterval);
                  }
 
