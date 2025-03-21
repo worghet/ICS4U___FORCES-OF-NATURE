@@ -37,11 +37,12 @@ body {
     height: 25vh;
     width: 100vw;
     display: flex;
+    z-index 0;
     justify-content: center; /* Center vertically */
     align-items: center; /* Center horizontally */
 }
 
-h1 {
+.spectating-notifier {
     font-family: "KeyanCoffee", monospace;
     letter-spacing: 0.1em;
     font-size: 5em;
@@ -106,6 +107,7 @@ h1 {
     height:400px;
     background: yellow;
     width:100vw;
+    z-index: -1;
 }
 .game-info-div {
     height: 15vh; /* 15% of the viewport height */
@@ -131,7 +133,7 @@ h1 {
     border-radius: 10px;
     margin: 10px;
 
-    background-image: url("/images/welder-podium-active.png");
+    background-image: url("/images/podium-welder-active.png");
     background-position-x: 75%;
     background-repeat: no-repeat; /* Prevent the background from repeating */
     background-size: 35%; /* Adjust the image size to fit the container */

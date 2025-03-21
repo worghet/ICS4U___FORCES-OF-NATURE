@@ -58,6 +58,7 @@ public class GameServer {
     static private final String GAMEMAP_API = "/game-map";
     static private final String PLAYER_ACTION_API = "/player-action";
     static private final String ADD_PLAYER_API = "/add-player";
+    static private final String TOGGLE_READY_API = "/toggle-ready";
     static private final String REMOVE_PLAYER_API = "/remove-player";
     static private final String CHARACTER_SELECT_API = "/character-select";
     static private final String START_GAME_API = "/start-game";
@@ -157,6 +158,7 @@ public class GameServer {
             httpServer.createContext(GAMEMAP_API, new GameMapHandler(game));
             httpServer.createContext(PLAYER_ACTION_API, new PlayerActionHandler(game));
             httpServer.createContext(ADD_PLAYER_API, new AddPlayerHandler(game));
+            httpServer.createContext(TOGGLE_READY_API, new TogglePlayerReady(game));
             httpServer.createContext(REMOVE_PLAYER_API, new RemovePlayerHandler(game));
             httpServer.createContext(START_GAME_API, new GameStartupHandler(game));
             httpServer.createContext(CHARACTER_SELECT_API, new CharacterSelectHandler(game));
@@ -493,7 +495,7 @@ public class GameServer {
 
                 // Send back the id so that the browser can save it for when it sends the actions.
 
-                String response = String.valueOf(newPlayerId);
+                String response = "{\"playerId\":" + newPlayerId + ", \"username\":\"" + newPlayer.getUsername() + "\"}";
                 httpExchange.sendResponseHeaders(200, response.length()); // Correct length
                 OutputStream os = httpExchange.getResponseBody();
                 os.write(response.getBytes(StandardCharsets.UTF_8)); // Send as UTF-8 string
@@ -536,6 +538,40 @@ public class GameServer {
         }
     }
 
+    static class TogglePlayerReady implements HttpHandler {
+
+        private Game game;
+
+        public TogglePlayerReady(Game game) {
+            this.game = game;
+        }
+
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            if ("POST".equals(httpExchange.getRequestMethod())) {
+
+                InputStream inputStream = httpExchange.getRequestBody();
+                int playerId = Integer.parseInt(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+
+                game.getPlayerById(playerId).toggleReady();
+                System.out.println(game.getPlayerById(playerId).getUsername().toUpperCase() + " is ready: " + game.getPlayerById(playerId).isReady());
+
+                // Let client know all is OK!
+
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().close();
+
+            }
+        }
+    }
+
+
+
+
+
+
+
+
     // == API [REMOVE PLAYER - REMOVES PLAYER ==================
 
 
@@ -553,7 +589,7 @@ public class GameServer {
             // Should technically only be post; but just to be safe we check.
 
             if ("POST".equals(httpExchange.getRequestMethod())) {
-
+                System.out.println("removal called");
                 // Read the ID of the player who is going to be removed.
 
                 InputStream inputStream = httpExchange.getRequestBody();
@@ -591,6 +627,7 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("POST".equals(httpExchange.getRequestMethod())) {
 
+                System.out.println("char select called");
                 // Read the request body.
 
                 InputStream inputStream = httpExchange.getRequestBody();
