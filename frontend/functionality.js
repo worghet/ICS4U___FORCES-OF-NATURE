@@ -28,6 +28,7 @@ let username;
 // Other vital
 let gameStarted = false;
 let currentGameData = null;
+let spectatingUI = document.getElementById("spectator-div");
 
 let playerActionInterval;
 
@@ -147,12 +148,8 @@ window.onload = function() {
         json.players.forEach(player => {  // Corrected the forEach loop syntax
 
             if (player.id == localPlayerId && player.isSpectating) {
-                console.log("is spectating")
                 isSpectating = true;
-                const spectatingNotifier = document.createElement("h1");
-                spectatingNotifier.innerText = "SPECTATING GAME";
-                spectatingNotifier.className = "spectating-notifier";
-                document.body.appendChild(spectatingNotifier);
+                spectatingUI.style.visibility = "true";
             }
             else {
                 console.log("is NOT spectator")
