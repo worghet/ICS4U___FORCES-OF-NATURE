@@ -72,7 +72,7 @@ h1 {
 .island {
     position:absolute;
     top: 390px;
-    left 200px;
+    left: 200px;
     background-color: black;
     border: none;
     width:200px;
