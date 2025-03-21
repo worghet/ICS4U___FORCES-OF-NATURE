@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 40;
+const FPS = 15;
 //animation
 const spriteSheet = new Image();
 spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
@@ -28,6 +28,8 @@ let username;
 // Other vital
 let gameStarted = false;
 let currentGameData = null;
+
+let spectatingUI = document.getElementById("spectator-div");
 
 let playerActionInterval;
 
@@ -147,12 +149,9 @@ window.onload = function() {
         json.players.forEach(player => {  // Corrected the forEach loop syntax
 
             if (player.id == localPlayerId && player.isSpectating) {
-                console.log("is spectating")
                 isSpectating = true;
-                const spectatingNotifier = document.createElement("h1");
-                spectatingNotifier.innerText = "SPECTATING GAME";
-                spectatingNotifier.className = "spectating-notifier";
-                document.body.appendChild(spectatingNotifier);
+                document.getElementById("spectator-div").style.visibility = "visible";
+                console.log("is spectator")
             }
             else {
                 console.log("is NOT spectator")
@@ -171,23 +170,11 @@ window.onload = function() {
 
 window.addEventListener("beforeunload", (event) => {
 
-    // remove player trace
+    disconnect();
 
-    const playerId = sessionStorage.getItem("playerId");
+    document.getElementById("box-" + localPlayerId).remove();
+    document.getElementById("tag-" + localPlayerId).remove();
 
-    if (playerID) {
-        fetch("/remove-player", {
-            method: "POST",
-            body: playerId
-        }).then(() => {
-
-            // TODO: remove storage session tag and box
-
-            document.getElementById("box-" + playerId).remove;
-
-            sessionStorage.removeItem("playerId");
-        });
-    }
 });
 
 
@@ -320,28 +307,26 @@ function sendPlayerAction() {
 }
 
 function updatePosition() {
-
-    // Request the data itself from the server.
-
-    fetch("/gamedata", {
-        method: "GET"
-    })
+    fetch("/gamedata", { method: "GET" })
     .then(response => response.json())
     .then(json => {
-
-        // Check that the data is not repeated and/or identical to the previous.
-        // (This is done for optimization's sake.)
-
-        if (JSON.stringify(currentGameData) === JSON.stringify(json)) {
-            return;
-        }
-
-        // If something is new, update currentGameData, and update renders of the players.
+        if (JSON.stringify(currentGameData) === JSON.stringify(json)) return; // Avoid redundant updates
 
         currentGameData = json;
-        renderPlayers(currentGameData.players);
-    })
+        const activePlayerIds = new Set(json.players.map(p => p.id)); // Store all active players
+
+        // Remove any player elements that are no longer in the game
+        document.querySelectorAll(".box, .tag").forEach(element => {
+            const playerId = element.id.split("-")[1]; // Extract player ID
+            if (!activePlayerIds.has(playerId)) {
+                element.remove(); // Remove disconnected player elements
+            }
+        });
+
+        renderPlayers(json.players);
+    });
 }
+
 
 
 // == FUNCTIONS [UTILITY] ==================================
@@ -399,10 +384,8 @@ function renderPlayers(players) {
 
                  if (player.id == localPlayerId) {
 
-                     const spectatingNotifier = document.createElement("h1");
-                     spectatingNotifier.innerText = "SPECTATING GAME";
-                     spectatingNotifier.className = "spectating-notifier";
-                     document.body.appendChild(spectatingNotifier);
+                    console.log("you are now dead, here is the div for you")
+                     document.getElementById("spectator-div").style.visibility = "visible";
                      clearInterval(playerActionInterval);
                  }
 
@@ -446,6 +429,18 @@ function renderPlayers(players) {
     });
 }
 
+   function backToMain() {
+        disconnect();
+        window.location.href = "/forces-of-nature";
+    }
+
+    function disconnect() {
+      fetch("/remove-player", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: sessionStorage.getItem("playerId")
+      });
+    }
 
 // == FUNCTIONS [LOCAL] ====================================
 

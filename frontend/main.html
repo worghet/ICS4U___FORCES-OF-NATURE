@@ -338,7 +338,6 @@
 
       function openWaitroom() {
         registerPlayer(document.getElementById("username-field").value);
-
         window.location.href = "/forces-of-nature/waitroom";
       }
 
@@ -353,15 +352,20 @@
 
           //body: { username: ... }
         })
-          .then((response) => response.text())
-          .then((playerId) => {
+          .then((response) => response.json())
+          .then((playerData) => {
             //after receiving the unique id for this page, save it to session (will reset if tab is closed; like cookies but simpler and less capable).
 
-            playerId = parseInt(playerId);
+            playerId = parseInt(playerData.playerId);
             sessionStorage.setItem("playerId", playerId); // Store player ID in session storage
+            let username = playerData.username;
+            sessionStorage.setItem("playerUsername", username);
+            console.log("made player with username: " + username);
+            console.log("player id:" + playerId);
 
-            console.log("made player with username: " + requestedUsername);
           });
+
+
       }
     </script>
   </body>

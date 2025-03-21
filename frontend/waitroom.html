@@ -246,7 +246,7 @@
         <div class="buttons">
           <button onclick="backToMain()">Go back (leave lobby)</button>
           <button id="readyButton" onclick="toggleReady()">Ready</button>
-          <button id="startGameButton" onclick="startGame()" disabled>
+          <button id="startGameButton" onclick="startGame()">
             Start game
           </button>
         </div>
@@ -317,13 +317,12 @@
             : characterImages[characterKey].inactive;
         }
 
+        console.log("Sending readiness -->" + isReady);
+
         // Send readiness state to server
         fetch("/toggle-ready", {
           method: "POST",
-          body: JSON.stringify({
-            id: sessionStorage.getItem("playerId"),
-            isReady: isReady,
-          }),
+          body: sessionStorage.getItem("playerId")
         })
           .then(() => hasTheGameStarted()) // Refresh player list after toggling readiness
           .catch((error) =>
@@ -367,15 +366,33 @@
 
       // Function to handle when the game starts
       function startGame() {
+
+       fetch("/start-game", {
+
+            method: "POST"
+
+        });
+
         gameStarted = true;
-        alert("Game is starting!");
-        // Additional logic for starting the game goes here
+        window.location.href = "/forces-of-nature/gameplay";
       }
 
       // Function to handle character selection
       function characterSelected(index) {
         selectedCharacter = index;
         updateCharacterSelection(index);
+
+
+        fetch("/character-select", {
+
+            method: "POST",
+            body: JSON.stringify({
+                id: sessionStorage.getItem("playerId"),
+                character: index
+            })
+
+        });
+
       }
 
       // Function to update the character image based on selection
@@ -391,17 +408,64 @@
       }
 
       // Function to update the player list and game state
-      function hasTheGameStarted() {
-        if (gameStarted) {
-          // Logic to check the game status and display proper UI
-        }
-      }
+        function hasTheGameStarted() {
+        // Check for if the game has started yet (using get entry)
+        fetch("/start-game", {
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+            if (response.gameActive) {
+                // If the game HAS started, set variable to true to stop constantly checking.
+                gameStarted = true;
+                window.location.href = "/forces-of-nature/gameplay";
+            }
+            else {
+
+                // game hasnt started yet; update the table of players
+                updatePlayerList(response.playersOnline);
+
+            }
+        });
+    }
+
 
       // Run the code to update the username when the page loads
       window.onload = () => {
-        updateUsername();
-        setInterval(hasTheGameStarted, 2000); // Fetch game state every 2 seconds
+
+        const playerId = sessionStorage.getItem("playerId");
+        const playerUsername = sessionStorage.getItem("playerUsername");
+
+        if (!playerId) {
+            console.log("No Player ID found! Redirecting...");
+            window.location.href = "/forces-of-nature"; // Redirect if no ID
+        } else {
+          console.log("Playing as player with id:", playerId);
+          console.log("Playing as player with username", playerUsername);
+          selectedUsername.innerText = playerUsername;
+
+          setInterval(hasTheGameStarted, 1000);
+
+        }
       };
+
+
+    function backToMain() {
+        disconnect();
+        window.location.href = "/forces-of-nature";
+    }
+
+    function disconnect() {
+      fetch("/remove-player", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: sessionStorage.getItem("playerId")
+      });
+    }
+
+
+
     </script>
   </body>
 </html>

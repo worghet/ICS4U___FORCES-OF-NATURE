@@ -8,7 +8,29 @@
 </head>
 
 <body id="game-window">
-<!--    <h1 class="spectating-notifier">YOU ARE SPECTATING</h1>-->
+
+<div id="spectator-div" class="spectator-div">
+    <h1 class="spectating-notifier">YOU ARE SPECTATING</h1>
+    <button id="spectating-return" onclick="backToMain()" class="backToMainButton">RETURN TO MAIN MENU / QUIT SPECTATING</button>
+</div>
+
+<div class="game-info-div">
+    <div class="other-players-div">
+        <div class="other-player">
+
+            <p class="other-player-username">PLAYER-1</p>
+            <progress class="other-player-health-bar" value="70" max="100"></progress>
+
+        </div>
+        <div class="other-player"></div>
+
+
+    </div>
+    <div class="player-info">
+    </div>
+</div>
+
+
 
 
 <!--    <div id="game-window" class="game-window">-->
@@ -19,7 +41,7 @@
 
 
 
-    <script src="/functionality.js"></script>
+<script src="/functionality.js"></script>
 </body>
 
 </html>
