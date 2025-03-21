@@ -99,15 +99,16 @@ body {
     border: none;
     width:200px;
     height: 20px;
+    border-radius: 0px 0px 5px 5px;
 }
 
 .ground {
-
     position: absolute;
-    height:400px;
-    background: yellow;
-    width:100vw;
+    height: 400px;
+    width: 100vw;
     z-index: -1;
+    background-color: yellow;
+
 }
 .game-info-div {
     height: 15vh; /* 15% of the viewport height */

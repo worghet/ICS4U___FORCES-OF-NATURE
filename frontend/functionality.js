@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 15;
+const FPS = 25;
 //animation
 const spriteSheet = new Image();
 spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
@@ -73,7 +73,8 @@ window.onload = function() {
 
         case 0:
             console.log("welcome to deepsea");
-            document.body.style.backgroundImage = `url("/images/gameplay_background_water.gif")`;
+            document.body.style.backgroundImage = `url("/images/deepsea.gif")`;
+                groundDiv.style.backgroundColor = "yellow";
 
 
             mapData.islands.forEach((island) => {
@@ -83,6 +84,7 @@ window.onload = function() {
                 islandDiv.style.top = intToPx(island.topLeftY);
                 islandDiv.style.width = intToPx(island.width);
                 islandDiv.style.backgroundColor = "yellow";
+
 
 //                islandDiv.style.backgroundImage = `url("/images/sand_island_texture.jpg")`;
 //                islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
@@ -106,14 +108,18 @@ window.onload = function() {
 //                                        islandDiv.style.backgroundImage = `url("/images/ground_island_texture.jpg")`;
 //                                        islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
 //                                        islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
+                                islandDiv.style.backgroundColor = "saddlebrown";
                             document.body.appendChild(islandDiv);
                         });
 
+
+                                groundDiv.style.backgroundColor = "saddlebrown";
 
 
             break;
         case 2:
             console.log("welcome to industry")
+                groundDiv.style.backgroundColor = "grey";
            document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
 
                      mapData.islands.forEach((island) => {
@@ -122,7 +128,7 @@ window.onload = function() {
                             islandDiv.style.left = intToPx(island.topLeftX);
                             islandDiv.style.top = intToPx(island.topLeftY);
                             islandDiv.style.width = intToPx(island.width);
-
+                islandDiv.style.backgroundColor = "grey";
                             document.body.appendChild(islandDiv);
 
 //                islandDiv.style.backgroundImage = `url("/images/steel_island_texture.jpg")`;
@@ -359,7 +365,7 @@ function renderPlayers(players) {
                 //displaying sprite
                 playerBox.style.backgroundImage = 'url("/images/main_wizard.png")'
                 // playerBox.style.backgroundSize = "525px 525px"; // Adjust based on sprite sheet size
-                playerBox.style.backgroundPosition = "0px 0px"; // X and Y offset to select a portion*/
+                playerBox.style.backgroundPosition = "center 0px"; // X and Y offset to select a portion*/
                 playerBox.style.backgroundSize =  "contain";
 
                 // playerBox.style.width = "35px"; // Size of cropped portion
@@ -395,7 +401,20 @@ function renderPlayers(players) {
                 return;
             }
 
-           
+
+            if (player.isAttacking) {
+                playerBox.style.backgroundColor = "black";
+            }
+            else {
+                            playerBox.style.backgroundColor = player.colour;
+            }
+
+            if (player.direction) {
+                playerBox.style.transform = "scaleX(1)";
+            }
+            else {
+                            playerBox.style.transform = "scaleX(-1)";
+            }
 
             // show health, temp for now
             playerBox.innerHTML = player.health + " / " + player.maxHealth + "   |   LIVES: " + player.lives;
