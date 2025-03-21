@@ -101,12 +101,13 @@
         align-items: center;
         width: 100%;
         height: 100%; /* Ensure it takes the full height */
+        overflow: hidden; /* Prevent overflow */
       }
 
       .selected-character img {
-        width: 100%; /* Fill the container */
-        max-width: 100%; /* Ensure it doesn't overflow */
+        width: 100%; /* Fill the container width */
         height: auto; /* Maintain aspect ratio */
+        max-height: 80vh; /* Limit maximum height to 80% of the viewport height */
         border-radius: 0.5em;
         object-fit: contain; /* Ensure the image fits within the container */
       }
