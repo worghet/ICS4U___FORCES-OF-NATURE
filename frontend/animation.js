@@ -1,8 +1,8 @@
 //taking this from: https://www.youtube.com/watch?v=SE3WlyefYuc, in process of typing it out
 
 class animation{
-   constructor(spritesheet, xStart, yStart, height, width, frameCount, frameDuration,  reverse, loop){
-    Object.assign(this, { spritesheet, xStart, yStart, height, width, frameCount, frameDuration,  reverse, loop });
+   constructor(spritesheet, xStart, yStart, height, width, frameCount, frameDuration, loop){
+    Object.assign(this, { spritesheet, xStart, yStart, height, width, frameCount, frameDuration, loop });
 
     this.elapsedTime = 0;
     this.totalTime = this.frameCount * this.frameDuration;
@@ -18,7 +18,6 @@ class animation{
     }
 
     let frame = this.currentFrame();
-    if(this.reverse) frame = this.frameCount - frame - 1;
 
     ctx.drawImage(this.spritesheet, this.xStart + frame * this.width, this.yStart,
     this.width, this.height, x, y, this.width * scale, this.height * scale);
