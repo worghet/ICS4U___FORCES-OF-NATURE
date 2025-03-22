@@ -134,9 +134,9 @@ body {
     background-color: rgb(169, 106, 18);
     border-radius: 10px;
     margin: 10px;
-
+    padding: 10px 0px 0px 10px;
     background-image: url("/images/podium-welder-active.png");
-    background-position-x: 75%;
+    background-position-x: 85%;
     background-repeat: no-repeat; /* Prevent the background from repeating */
     background-size: 35%; /* Adjust the image size to fit the container */
     background-position-y: -10px;
@@ -145,9 +145,11 @@ body {
 .other-player-username {
     font-family: "KeyanCoffee", monospace;
     letter-spacing: 0.05em;
-    position: absolute;
+    /*position: absolute;*/
     bottom: 15px;
     left: 15px;
+    margin:0;
+        padding:0;
     color: white;
     font-size: 1.5em;
     margin: 0;
@@ -155,14 +157,15 @@ body {
 }
 
 .other-player-health-bar {
-    position: absolute;
+    /*position: absolute; */
     bottom: 50px;
     left: 15px;
     width: 110px;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     height: 10px;
-
+    margin:0;
+    padding:0;
 
     background-color: black;
 }
@@ -175,9 +178,67 @@ body {
     background-color: red; /* Change this color as needed */
 }
 
+.other-player-hearts {
+    /*position: absolute; */
+    bottom: 65px;
+    left: 15px;
+    letter-spacing:0.5em;
+    font-weight: bold;
+    color:red;
+    font-size: 1.95em;
+    margin:0;
+        padding:0;
+}
 .player-info {
     height: 100%; /* Take up the full height of the parent */
-    background-color: #292931;;
+    background-color: #292931;
+    position: relative;  /* Make sure the child elements can be positioned inside */
+    padding-right: 20px;  /* Add some padding on the right side */
+    padding-top: 20px;
+     background-image: url("/images/podium-golem-active.png");
+        background-position-x: 10%;
+        background-repeat: no-repeat; /* Prevent the background from repeating */
+        background-size: 20%; /* Adjust the image size to fit the container */
+        background-position-y: -10px;
+
 }
+
+.this-player-name {
+    color: white;
+    font-family: "KeyanCoffee", monospace;
+    font-size: 2.8em;
+    letter-spacing: 0.1em;
+    text-align: right;  /* Align the text to the right */
+    margin: 0;  /* Remove default margins */
+}
+
+.this-player-health {
+    position: absolute; /* Make it absolute inside the parent */
+    bottom: 45px;
+    right: 25px; /* Align the progress bar to the right */
+    width: 175px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    border-radius: 100px; /* Corrected property name */
+}
+.this-player-health::-webkit-progress-value {
+    background-color: red; /* Change this color as needed */
+}
+
+.this-player-health::-moz-progress-bar {
+    background-color: red; /* Change this color as needed */
+}
+
+.this-player-hearts {
+    font-size: 2.4em;
+    color: red;
+    letter-spacing: 0.4em;
+    position: absolute;
+    bottom:30px;
+    right: 210px;
+}
+
 
 

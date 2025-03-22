@@ -141,7 +141,8 @@ public class Player {
 
         // Vital variables.
         lives = 3;
-        health = 100;
+        health = 60;
+        maxHealth = 60;
 
         // Movement-based variables
         numJumpsRemaining = 3;
@@ -182,7 +183,8 @@ public class Player {
 
         // Vital variables.
         lives = 3;
-        health = 100;
+        health = 60;
+        maxHealth = 60;
 
         // Movement-based variables
         numJumpsRemaining = 3;
@@ -426,6 +428,7 @@ public class Player {
 
                         if (temp.getHealth() == 0) {
                             temp.setLives(temp.getLives() - 1);
+                            System.out.println(temp.getUsername() + "has " + temp.getLives() + " lives");
                             if (!temp.isDead()) {
                                 temp.respawn();
                             }

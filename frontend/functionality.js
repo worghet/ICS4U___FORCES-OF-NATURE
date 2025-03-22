@@ -30,6 +30,7 @@ let gameStarted = false;
 let currentGameData = null;
 
 let spectatingUI = document.getElementById("spectator-div");
+let otherPlayersSectionUI = document.getElementById("other-players-div");
 
 let playerActionInterval;
 
@@ -159,21 +160,125 @@ window.onload = function() {
     .then(json => {
         json.players.forEach(player => {  // Corrected the forEach loop syntax
 
-            if (player.id == localPlayerId && player.isSpectating) {
-                isSpectating = true;
-                document.getElementById("spectator-div").style.visibility = "visible";
-                console.log("is spectator")
+            // if dealing with this player
+            if (player.id == localPlayerId) {
+
+                if (player.isSpectating) {
+                    isSpectating = true;
+                    document.getElementById("spectator-div").style.visibility = "visible";
+                    console.log("is spectator");
+                }
+                else {
+                    console.log("is not spectator");
+                    // start sending input to server
+                    playerActionInterval = setInterval(sendPlayerAction, (1000 / FPS));
+
+                    // build player ui (hearts, health, etc)
+                    const playerInfo = document.getElementById("player-info");
+
+                     switch(player.colour) {
+                                       case "aqua":
+                                           playerInfo.style.backgroundImage = "url('/images/podium-angler-active.png')"
+                                           playerInfo.style.backgroundColor = "steelblue"
+                                           break;
+                                       case "saddlebrown":
+                                           playerInfo.style.backgroundImage = "url('/images/podium-golem-active.png')"
+                                           playerInfo.style.backgroundColor = "saddlebrown"
+
+                                           break;
+                                       case "red":
+                                           playerInfo.style.backgroundImage = "url('/images/podium-welder-active.png')"
+                                           playerInfo.style.backgroundColor = "firebrick"
+                                           break;
+                                       default:
+                                           playerInfo.style.backgroundImage = "url('/images/main_wizard.png')"
+                                           playerInfo.style.backgroundColor = "purple"
+                                           // wizard
+
+                                   }
+
+                    // change image and background
+
+                    const thisPlayerUsernameUI = document.getElementById("this-player-username");
+                    thisPlayerUsernameUI.textContent = player.username;
+
+
+                    const thisPlayerHealthUI = document.getElementById("this-player-health");
+                    thisPlayerHealthUI.max = player.maxHealth;
+                    thisPlayerHealthUI.value = player.health;
+                    // Append all elements to the player-info container
+
+                    const thisPlayerHeartsUI = document.getElementById("this-player-lives");
+                    thisPlayerHeartsUI.innerHTML = '&hearts;'.repeat(player.lives || 3);  // Default to 3 hearts if no lives
+
+                }
             }
             else {
-                console.log("is NOT spectator")
-                playerActionInterval = setInterval(sendPlayerAction, (1000 / FPS));
-            }
+                // dealing with other players
+              const otherPlayerDiv = document.createElement("div");
+              otherPlayerDiv.className = "other-player";
+              otherPlayerDiv.id = "div-" + player.id;  // Give the div a unique ID for tracking
 
-            setInterval(updatePosition, (1000 / FPS));
+              // Create and append the username
+              const otherPlayerName = document.createElement("p");
+              otherPlayerName.className = "other-player-username";
+              otherPlayerName.textContent = player.username;
+              console.log("adding " + player.username + "to div " + otherPlayerDiv.id)
+              otherPlayerDiv.appendChild(otherPlayerName);
+
+              // Create and append the health bar
+              const healthBar = document.createElement('progress');
+              healthBar.classList.add('other-player-health-bar');
+              healthBar.value = player.health || 100;  // Default to 100 if no health value
+              healthBar.max = player.maxHealth || 100;  // Default to 100 if maxHealth is undefined
+              healthBar.id = "health-" + player.id;
+              console.log("adding " + player.username + "health bar to div " + otherPlayerDiv.id)
+              otherPlayerDiv.appendChild(healthBar);
+
+              // Create and append the hearts (lives)
+              const hearts = document.createElement('div');
+              hearts.classList.add('other-player-hearts');
+              hearts.innerHTML = '&hearts;'.repeat(player.lives || 3);  // Default to 3 hearts if no lives
+              hearts.id = "lives-" + player.id;
+              console.log("adding " + player.username + "lives to div " + otherPlayerDiv.id);
+              otherPlayerDiv.appendChild(hearts);
+
+
+                console.log(player.colour)
+                switch(player.colour) {
+                    case "aqua":
+                        otherPlayerDiv.style.backgroundImage = "url('/images/podium-angler-active.png')"
+                        otherPlayerDiv.style.backgroundColor = "steelblue"
+                        break;
+                    case "saddlebrown":
+                        otherPlayerDiv.style.backgroundImage = "url('/images/podium-golem-active.png')"
+                        otherPlayerDiv.style.backgroundColor = "saddlebrown"
+
+                        break;
+                    case "red":
+                        otherPlayerDiv.style.backgroundImage = "url('/images/podium-welder-active.png')"
+                        otherPlayerDiv.style.backgroundColor = "firebrick"
+                        break;
+                    default:
+                        otherPlayerDiv.style.backgroundImage = "url('/images/main_wizard.png')"
+                        otherPlayerDiv.style.backgroundColor = "purple"
+                        // wizard
+
+                }
+
+              // Append the newly created div to the section
+              otherPlayersSectionUI.appendChild(otherPlayerDiv);
+
+                // Append the newly created div to the section
+                console.log("Appended player div for: " + player.username);
+                console.log(otherPlayersSectionUI);
+            }
 
         });
     })
 
+
+    setInterval(updatePosition, (1000 / FPS));
 
    // do countdown (wavy text "welcome to ...")
 
@@ -183,8 +288,8 @@ window.addEventListener("beforeunload", (event) => {
 
     disconnect();
 
-    document.getElementById("box-" + localPlayerId).remove();
-    document.getElementById("tag-" + localPlayerId).remove();
+//    document.getElementById("box-" + localPlayerId).remove();
+//    document.getElementById("tag-" + localPlayerId).remove();
 
 });
 
@@ -326,17 +431,26 @@ function updatePosition() {
         currentGameData = json;
         const activePlayerIds = new Set(json.players.map(p => p.id)); // Store all active players
 
+        console.log(activePlayerIds)
+
         // Remove any player elements that are no longer in the game
-        document.querySelectorAll(".box, .tag").forEach(element => {
-            const playerId = element.id.split("-")[1]; // Extract player ID
+        document.querySelectorAll(".box, .tag, .other-player").forEach(element => {
+
+            const playerId = parseInt(element.id.split("-")[1], 10); // Extract player ID and parse as an integer
+            console.log(element + "   looking at " + playerId)
             if (!activePlayerIds.has(playerId)) {
+                console.log("up for removal")
                 element.remove(); // Remove disconnected player elements
+                console.log("REMOVED")
             }
         });
 
+        // Render players who are still in the game
         renderPlayers(json.players);
     });
 }
+
+
 
 
 
@@ -357,6 +471,7 @@ function renderPlayers(players) {
             // Try to locate an existing render for this user.
             let playerBox = document.getElementById("box-" + player.id);
             let playerTag = document.getElementById("tag-" + player.id);
+
 
             // If none found, create them.
             if (!playerBox && !playerTag) {
@@ -391,21 +506,31 @@ function renderPlayers(players) {
 
 
             if (player.lives == 0) {
-                 isSpectating = true;
 
                  if (player.id == localPlayerId) {
+                    isSpectating = true;
 
                     console.log("you are now dead, here is the div for you")
                      document.getElementById("spectator-div").style.visibility = "visible";
+
+                                document.getElementById("this-player-health").value = 0;
+                                document.getElementById("this-player-lives").innerHTML = "";  // Default to 3 hearts if no lives
+                                document.getElementById("player-info").style.filter = "grayscale(100%)";
+//                     document.getElementById("player-info").
                      clearInterval(playerActionInterval);
                  }
+                 else {
 
+                    let otherPlayerInfoSection = document.getElementById("div-" + player.id);
+                    if (otherPlayerInfoSection) {
+                        otherPlayerInfoSection.remove();
+                    }
+                 }
 
                 playerBox.remove();
                 playerTag.remove();
                 return;
             }
-
 
             if (player.isAttacking) {
                 playerBox.style.backgroundColor = "black";
@@ -421,8 +546,8 @@ function renderPlayers(players) {
                             playerBox.style.transform = "scaleX(-1)";
             }
 
-            // show health, temp for now
-            playerBox.innerHTML = player.health + " / " + player.maxHealth + "   |   LIVES: " + player.lives;
+//            otherPlayerHealth.value = "player.health";  // Set the new health value
+//            otherPlayerLives.innerHTML = '&hearts;'.repeat(player.lives);  // Update hearts with new lives count
 
 
             // Update box's position based on the player's position.
@@ -448,6 +573,27 @@ function renderPlayers(players) {
 
             // Center the tag based on the player's box position and width.
             playerTag.style.left = intToPx(playerBox.offsetLeft + (playerBox.offsetWidth / 2) - (playerTag.offsetWidth / 2));
+
+
+
+
+            // UPDATE THEIR DIV
+
+            if (localPlayerId != player.id) {
+
+                            document.getElementById("health-" + player.id).value = player.health;
+                            document.getElementById("lives-" + player.id).innerHTML = '&hearts;'.repeat(player.lives);
+
+            }
+            else {
+
+
+                                document.getElementById("this-player-health").value = player.health;
+                                document.getElementById("this-player-lives").innerHTML = '&hearts;'.repeat(player.lives || 3);  // Default to 3 hearts if no lives
+
+
+            }
+
         }
 
     });
