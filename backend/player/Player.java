@@ -41,6 +41,7 @@ public class Player {
     String colour;
 
     protected boolean isSpectating;
+    protected boolean isReady;
     protected String username;
     protected int id;
     protected int lives;
@@ -84,11 +85,11 @@ public class Player {
     protected int numJumpsRemaining; // jumps remaining
 
     // Default attack-based variables.
-    protected final int MAX_PROJECTILE_COOLDOWN;
-    protected final int MAX_MELEE_COOLDOWN;
-    protected final int DEFAULT_MELEE_WIDTH; //default hitbox width for melee attacks
-    protected final int DEFAULT_MELEE_HEIGHT; //could be changed depending on the character
-    protected final int DEFAULT_MELEE_DAMAGE; //all constant for now
+    protected int MAX_PROJECTILE_COOLDOWN;
+    protected  int MAX_MELEE_COOLDOWN;
+    protected  int DEFAULT_MELEE_WIDTH; //default hitbox width for melee attacks
+    protected  int DEFAULT_MELEE_HEIGHT; //could be changed depending on the character
+    protected  int DEFAULT_MELEE_DAMAGE; //all constant for now
     protected boolean previouslyPressedMeleeAttack = false;
     protected int projectileCooldown; //only applies to projectile attacks
     protected int meleeCooldown; //only applies to melee attacks
@@ -118,12 +119,15 @@ public class Player {
         MAX_CROUCH_VELOCITY = 4;
         JUMP_FORCE = 15;
         MAX_CONSECUTIVE_JUMPS = 3;
+
+
         MAX_PROJECTILE_COOLDOWN = 10;
         MAX_MELEE_COOLDOWN = 10;
         DEFAULT_MELEE_WIDTH = 70;
         DEFAULT_MELEE_HEIGHT = 20;
         DEFAULT_MELEE_DAMAGE = 15;
         isSpectating = false;
+        isReady = false;
 
         // TECHNICALLY WHAT IS BELOW IS NOT NEEDED..
 
@@ -137,7 +141,8 @@ public class Player {
 
         // Vital variables.
         lives = 3;
-        health = 100;
+        health = 60;
+        maxHealth = 60;
 
         // Movement-based variables
         numJumpsRemaining = 3;
@@ -168,6 +173,7 @@ public class Player {
         DEFAULT_MELEE_HEIGHT = 20;
         DEFAULT_MELEE_DAMAGE = 15;
         isSpectating = false;
+        isReady = false;
 
         // TODO: note that here on out, the variables do not technically have to be initialized in the constructor; they can be initialized where they are declared; they may be changed in overriden constructors.
 
@@ -177,7 +183,8 @@ public class Player {
 
         // Vital variables.
         lives = 3;
-        health = 100;
+        health = 60;
+        maxHealth = 60;
 
         // Movement-based variables
         numJumpsRemaining = 3;
@@ -197,6 +204,14 @@ public class Player {
 
     public void toggleSpectating() {
         isSpectating = !isSpectating;
+    }
+
+    public void toggleReady() {
+        isReady = !isReady;
+    }
+
+    public boolean isReady() {
+        return isReady;
     }
 
     public boolean isSpecator() {
@@ -413,6 +428,7 @@ public class Player {
 
                         if (temp.getHealth() == 0) {
                             temp.setLives(temp.getLives() - 1);
+                            System.out.println(temp.getUsername() + "has " + temp.getLives() + " lives");
                             if (!temp.isDead()) {
                                 temp.respawn();
                             }
@@ -457,6 +473,13 @@ public class Player {
             this.numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;  // Reset jump count
             isJumping = false;  // Player is no longer in the air
         }
+
+        if (position[X] < 0) {
+            position[X] = 0;
+        } else if (position[X] > 1675) {
+            position[X] = 1675;
+        }
+
 
         // Check for collision with islands (or any other platforms in the map)
         for (Island island : map.getIslands()) {

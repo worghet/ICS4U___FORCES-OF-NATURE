@@ -2,6 +2,7 @@ package game;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class GameMap {
@@ -20,92 +21,37 @@ public class GameMap {
     // Load the map based on the given index
     public static GameMap loadMap(int MAP_INDEX) {
 
-        MAP_INDEX = 0;
         GameMap desiredMap = new GameMap();
-
-        switch (MAP_INDEX) {
-            case 0: // DEEPSEA
-                desiredMap.backgroundIndex = DEEPSEA;
-                desiredMap.groundY = 500; // + 70 for player
-
-                desiredMap.islands = new Island[3]; // how many islands here
-                desiredMap.islands[0] = new Island(100, 400, 500);
-                desiredMap.islands[1] = new Island(800, 400, 500);
-                desiredMap.islands[2] = new Island(450, 200, 500);
+        desiredMap.backgroundIndex = MAP_INDEX;
 
 
-                desiredMap.spawnPoints = new double[1][2];
-                desiredMap.spawnPoints[0][0] = 1150;
-                desiredMap.spawnPoints[0][1] = 400;
+        desiredMap.groundY = 500; // + 70 for player
 
-                desiredMap.spawnPoints = new double[2][2];
-                desiredMap.spawnPoints[0][0] = 500;
-                desiredMap.spawnPoints[0][1] = 600;
+        desiredMap.islands = new Island[3]; // how many islands here
 
-                desiredMap.spawnPoints = new double[3][2];
-                desiredMap.spawnPoints[0][0] = 700;
-                desiredMap.spawnPoints[0][1] = 300;
+        // left low
+        desiredMap.islands[0] = new Island(125, 400, 600);
 
+        // right low
+        desiredMap.islands[1] = new Island(1030, 400, 600);
 
-                System.out.println("loading deepsea");
-                break;
-            case 1: // CAVE
-                desiredMap.backgroundIndex = CAVE;
-                System.out.println("loading cave");
-                desiredMap.groundY = 500;
-
-                desiredMap.islands = new Island[3]; // how many islands here
-                desiredMap.islands[0] = new Island(1000, 400, 300);
-                desiredMap.islands[1] = new Island(300, 500, 400);
-                desiredMap.islands[2] = new Island(600, 200, 150);
+        // top center
+        desiredMap.islands[2] = new Island(600, 200, 550);
 
 
-                desiredMap.spawnPoints = new double[1][2];
-                desiredMap.spawnPoints[0][0] = 1150;
-                desiredMap.spawnPoints[0][1] = 400;
+        // set number of spawn points (3 in this map)
+        desiredMap.spawnPoints = new double[3][2];
 
-                desiredMap.spawnPoints = new double[2][2];
-                desiredMap.spawnPoints[0][0] = 500;
-                desiredMap.spawnPoints[0][1] = 600;
+        // left low
+        desiredMap.spawnPoints[0][0] = 386.5; //x
+        desiredMap.spawnPoints[0][1] = 55; // y
 
-                desiredMap.spawnPoints = new double[3][2];
-                desiredMap.spawnPoints[0][0] = 700;
-                desiredMap.spawnPoints[0][1] = 300;
-
-
-
-                break;
-            case 2: // INDUSTRY
-                desiredMap.backgroundIndex = INDUSTRY;
-                desiredMap.groundY = 500;
-
-                desiredMap.islands = new Island[3]; // how many islands here
-                desiredMap.islands[0] = new Island(1000, 400, 300);
-                desiredMap.islands[1] = new Island(300, 500, 400);
-                desiredMap.islands[2] = new Island(600, 200, 150);
-
-
-                desiredMap.spawnPoints = new double[1][2];
-                desiredMap.spawnPoints[0][0] = 1150;
-                desiredMap.spawnPoints[0][1] = 400;
-
-                desiredMap.spawnPoints = new double[2][2];
-                desiredMap.spawnPoints[0][0] = 500;
-                desiredMap.spawnPoints[0][1] = 600;
-
-                desiredMap.spawnPoints = new double[3][2];
-                desiredMap.spawnPoints[0][0] = 700;
-                desiredMap.spawnPoints[0][1] = 300;
-
-
-                System.out.println("loading industry");
-                break;
-            default:
-                System.out.println("idk what map ts is");
-        }
-
-        // Set other properties (groundY, spawn points, etc.)
-        // Assuming there is some logic here to configure each map type's unique properties
+        // right low
+        desiredMap.spawnPoints[1][0] = 845;
+        desiredMap.spawnPoints[1][1] = 55;
+//
+        desiredMap.spawnPoints[2][0] = 1303.5;
+        desiredMap.spawnPoints[2][1] = 55;
 
         return desiredMap;
     }
@@ -121,7 +67,7 @@ public class GameMap {
     public double[] getSpawnPoint() {
 
         int randomSpawnPointIndex = new Random().nextInt(spawnPoints.length);
-        System.out.println("got spawn points.. player gonna spwan");
+        System.out.println("got spawn points.. player gonna spwan -->" +  spawnPoints[randomSpawnPointIndex][0] + " "+  spawnPoints[randomSpawnPointIndex][1]);
         return spawnPoints[randomSpawnPointIndex];
 
 

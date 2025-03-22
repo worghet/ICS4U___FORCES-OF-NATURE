@@ -2,268 +2,447 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/images/favicon.png" />
     <title>Forces of Nature - Waitroom</title>
     <style>
       /* General Styles */
+      /* General Styles */
+      @font-face {
+        font-family: "KeyanCoffee";
+        src: url("/libraries/KeyanCoffee.otf") format("opentype");
+      }
+
+      html,
       body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
         font-family: "Arial", sans-serif;
         background-color: #1e1e2f; /* primary background colour */
         color: #ffffff;
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        display: grid;
-        grid-template-columns: 2fr 1fr; /* Left + Middle combined, Right */
-        grid-template-rows: auto 1fr;
-        gap: 10px;
-        padding: 10px;
+        display: flex;
+        flex-direction: column;
       }
 
       h1 {
         color: #00bcd4;
+        font-family: "KeyanCoffee";
+        letter-spacing: 0.05em;
         margin: 0;
+        font-size: 2em;
       }
 
       p {
         color: #b3b3b3;
+        font-family: "KeyanCoffee";
+        letter-spacing: 0.05em;
         margin: 0;
+        font-size: 1em;
+      }
+
+      h2 {
+        color: white;
+        font-family: "KeyanCoffee";
+        letter-spacing: 0.05em;
+        margin: 0;
+        font-size: 3em;
+      }
+
+      /* Main Container */
+      .main-container {
+        display: flex;
+        flex: 1;
+        gap: 1em;
+        padding: 1em;
+        box-sizing: border-box;
       }
 
       /* Left + Middle Section */
       .left-middle {
-        grid-column: 1 / 2;
+        flex: 2;
         display: flex;
         flex-direction: column;
-        gap: 120px;
+        gap: 1em;
       }
 
       /* Waitroom Header */
       .waitroom-header {
         text-align: center;
-        padding: 10px;
+        padding: 1em;
         background-color: #2c2c3a; /* secondary background colour */
-        border-radius: 5px;
+        border-radius: 0.5em;
       }
 
       /* Character Selection */
       .character-selection {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-auto-columns: auto;
         justify-content: space-around;
-        gap: 30px;
-        margin-top: -80px;
-        margin-bottom: -40px;
+        gap: 1em;
       }
 
-      .character-selection img {
-        width: 200px;
-        height: 200px;
-        border-radius: 10px;
+      .character-selection-img {
+        height: 150px;
+        background-image: url("../images/default_angler.png");
+        background-position: contain;
+        background-repeat: no-repeat;
+        background-position-x: 50%;
+        background-position-y: 50%;
+
+        background-size: 50%;
+      }
+
+      .character-selection-img {
+        border-radius: 0.5em;
         cursor: pointer;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
-      .character-selection img:hover {
+      .character-selection-img:hover {
         transform: scale(1.1);
-        box-shadow: 0 0 10px rgba(0, 188, 212, 0.8);
+        box-shadow: 0 0 1em rgba(0, 188, 212, 0.8);
       }
 
       /* Right Section */
       .right-section {
-        grid-column: 2 / 3;
+        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 80px;
+        gap: 1em;
         background-color: #2c2c3a; /* secondary background colour */
-        padding: 20px;
-        border-radius: 5px;
+        padding: 1em;
+        border-radius: 0.5em;
+        overflow: hidden; /* Ensure the image doesn't overflow the container */
       }
 
       .selected-character {
         text-align: center;
+        flex-grow: 1; /* Fill remaining space */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%; /* Ensure it takes the full height */
+        overflow: hidden; /* Prevent overflow */
       }
 
       .selected-character img {
-        width: 250px;
-        height: 500px;
-        margin-top: 50px;
-        filter: blur(1px);
-        border-radius: 10px;
+        width: 100%; /* Fill the container width */
+        height: auto; /* Maintain aspect ratio */
+        max-height: 80vh; /* Limit maximum height to 80% of the viewport height */
+        border-radius: 0.5em;
+        object-fit: contain; /* Ensure the image fits within the container */
       }
 
       /* Player List */
       #player-list {
         list-style-type: none;
-        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        grid-auto-columns: auto;
+        padding: 10px;
         margin: 0;
         flex-grow: 1;
         overflow-y: auto;
+        max-height: 400px; /* Scrollable area */
       }
 
       #player-list li {
+        height: 25px;
+        font-family: "KeyanCoffee", monospace;
+        font-size: 1.2em;
         background-color: black;
-        padding: 10px;
-        margin: 5px 0;
-        border-radius: 5px;
+        padding: 0.5em;
+        margin: 0.5em 0;
+        border-radius: 0.5em;
         text-align: center;
         transition: background-color 0.3s ease;
       }
 
-      #player-list li:hover {
-        background-color: #4c4c5a;
+      #player-list li.ready {
+        border: 2px solid lime; /* Green outline for ready players */
+        box-shadow: 0 0 10px lime; /* Green glow for ready players */
+        background-color:seagreen;
+
+      }
+
+      #player-list li.not-ready {
+        border: 2px solid red; /* Red outline for not-ready players */
+        background-color:firebrick;
+        box-shadow: 0 0 10px red; /* Red glow for not-ready players */
       }
 
       /* Buttons */
       .buttons {
-        display: flex;
+        display: grid;
+        grid-template-columns: 30% 30% 30%;
         justify-content: center;
-        gap: 10px;
+        gap: 1em;
+        margin-top: auto; /* Push buttons to the bottom */
       }
 
       button {
+        font-family: "KeyanCoffee";
+        letter-spacing: 0.05em;
         background-color: #333;
         color: #fff;
         border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
+        padding: 0.5em 1em;
+        border-radius: 0.2em;
         cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
+        font-size: 1.2em;
+        transition: all 0.3s;
       }
 
       button:hover {
-        background-color: #00bcd4;
+        opacity: 0.75;
+      }
+
+      button:disabled {
+        background-color: firebrick;
+        cursor: not-allowed;
       }
 
       /* Responsive Design */
       @media (max-width: 768px) {
-        body {
-          grid-template-columns: 1fr;
-          grid-template-rows: auto auto auto;
-        }
-
-        .left-middle,
-        .right-section {
-          grid-column: 1 / -1;
+        .main-container {
+          flex-direction: column;
+          padding: 0.5em;
         }
 
         .character-selection {
           flex-direction: column;
           align-items: center;
+          gap: 0.5em;
+        }
+
+        .character-selection img {
+          width: 50%; /* Larger images for smaller screens */
+          max-height: fit-content; /* Smaller images for smaller screens */
+        }
+
+        .selected-character img {
+          max-width: 150px; /* Smaller image for smaller screens */
+        }
+
+        #player-list {
+          max-height: 15vh; /* Smaller scrollable area */
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .character-selection img {
+          width: 15%; /* Smaller images for larger screens */
+        }
+
+        .selected-character img {
+          max-width: 300px; /* Larger image for larger screens */
         }
       }
     </style>
   </head>
   <body>
-    <!-- Left + Middle Section -->
-    <div class="left-middle">
-      <!-- Waitroom Header -->
-      <div class="waitroom-header">
-        <h1>Waitroom</h1>
-        <p>Choose a character, see who is here now, and get ready to play!</p>
+    <!-- Main Container -->
+    <div class="main-container">
+      <!-- Left + Middle Section -->
+      <div class="left-middle">
+        <!-- Waitroom Header -->
+        <div class="waitroom-header">
+          <h1>WAITROOM</h1>
+          <p>Choose a character, see who is here now, and get ready to play!</p>
+        </div>
+
+        <!-- Character Selection -->
+        <div class="character-selection">
+          <div
+            style="
+              background-color: steelblue;
+              background-image: url('../images/default_angler.png');
+            "
+            class="character-selection-img"
+            onclick="characterSelected(0)"
+          ></div>
+
+          <div
+            class="character-selection-img"
+            style="
+              background-color: saddlebrown;
+              background-image: url('../images/default_golem.png');
+            "
+            onclick="characterSelected(1)"
+          ></div>
+
+          <div
+            style="
+              background-color: firebrick;
+              background-image: url('../images/default_welder.png');
+            "
+            class="character-selection-img"
+            onclick="characterSelected(2)"
+          ></div>
+        </div>
+
+        <!-- Player List -->
+        <h1>PLAYERS ONLINE:</h1>
+        <ol id="player-list"></ol>
+
+        <!-- Buttons -->
+        <div class="buttons">
+          <button onclick="backToMain()">RETURN TO HOME</button>
+          <button id="readyButton" onclick="toggleReady()">READY UP</button>
+          <button id="startGameButton" onclick="startGame()">START GAME</button>
+        </div>
       </div>
 
-      <!-- Character Selection -->
-      <div class="character-selection">
-        <img
-          src="../images/main_wizard.png"
-          alt="Angler"
-          onclick="characterSelected(0)"
-        />
-        <img
-          src="../images/main_wizard.png"
-          alt="Golem"
-          onclick="characterSelected(1)"
-        />
-        <img
-          src="../images/main_wizard.png"
-          alt="Welder"
-          onclick="characterSelected(2)"
-        />
-      </div>
-
-      <!-- Player List -->
-      <h1>PLAYERS ONLINE:</h1>
-      <ol id="player-list"></ol>
-
-      <!-- Buttons -->
-      <div class="buttons">
-        <button onclick="backToMain()">Go back (leave lobby)</button>
-        <button onclick="startGame()">Start game</button>
-      </div>
-    </div>
-
-    <!-- Right Section -->
-    <div class="right-section">
-      <div class="selected-character">
-        <h2 id="selected-username">Username</h2>
-        <img id="selected-character-image" src="" alt="Selected Character" />
+      <!-- Right Section -->
+      <div class="right-section">
+        <div class="selected-character">
+          <h2 id="selected-username">Username</h2>
+          <img id="selected-character-image"/>
+        </div>
       </div>
     </div>
     <script>
       // variables
       let gameStarted = false;
+      let isReady = false; // Track player's readiness
       const playerList = document.getElementById("player-list");
       const selectedCharacterImage = document.getElementById(
         "selected-character-image"
       );
       const selectedUsername = document.getElementById("selected-username");
+      const readyButton = document.getElementById("readyButton");
+      const startGameButton = document.getElementById("startGameButton");
 
       const ANGLER_INDEX = 0;
       const GOLEM_INDEX = 1;
       const WELDER_INDEX = 2;
 
-      const characterImages = [
-        "../images/main_wizard.png",
-        "../images/welder-podium-active.png",
-        "../images/podium-angler-active.png",
-      ];
+      const characterImages = {
+        angler: {
+          inactive: "../images/podium-angler-inactive.png",
+          active: "../images/podium-angler-active.png",
+        },
+        golem: {
+          inactive: "../images/podium-golem-inactive.png",
+          active: "../images/podium-golem-active.png",
+        },
+        welder: {
+          inactive: "../images/podium-welder-inactive.png",
+          active: "../images/podium-welder-active.png",
+        },
+      };
 
-      // actual program:
+      let selectedCharacter = null; // Track the selected character
 
-      function characterSelected(characterIndex) {
-        // Update the selected character display
-        selectedCharacterImage.src = characterImages[characterIndex];
-        selectedUsername.textContent =
-          sessionStorage.getItem("username") || "Username";
+      // Function to update the username display
+      function updateUsername() {
+        const username = sessionStorage.getItem("username") || "Username";
+        selectedUsername.textContent = username;
+      }
 
-        // Disable the selected character image
-        const characterImagesElements = document.querySelectorAll(
-          ".character-selection img"
-        );
-        characterImagesElements.forEach((img, index) => {
-          if (index === characterIndex) {
-            img.style.opacity = "0.5";
-            img.style.pointerEvents = "none";
-          } else {
-            img.style.opacity = "1";
-            img.style.pointerEvents = "auto";
-          }
+      // Function to toggle ready state
+      function toggleReady() {
+        isReady = !isReady; // Toggle readiness
+        readyButton.textContent = isReady ? "UNREADY" : "READY UP"; // Update button text
+
+        // Update the selected character image based on readiness
+        if (selectedCharacter !== null) {
+          const characterKey =
+            selectedCharacter === ANGLER_INDEX
+              ? "angler"
+              : selectedCharacter === GOLEM_INDEX
+              ? "golem"
+              : "welder";
+          selectedCharacterImage.src = isReady
+            ? characterImages[characterKey].active
+            : characterImages[characterKey].inactive;
+        }
+
+        console.log("Sending readiness -->" + isReady);
+
+        // Send readiness state to server
+        fetch("/toggle-ready", {
+          method: "POST",
+          body: sessionStorage.getItem("playerId"),
+        })
+          .then(() => hasTheGameStarted()) // Refresh player list after toggling readiness
+          .catch((error) =>
+            console.error("Error toggling ready state:", error)
+          );
+      }
+
+      // Function to check if all players are ready
+      function checkAllPlayersReady(players) {
+        return players.every((player) => player.isReady);
+      }
+
+      // Function to update the player list
+      function updatePlayerList(players) {
+        // Clear the existing list
+        playerList.innerHTML = "";
+
+        // Add each player to the list
+        players.forEach((player) => {
+          const listItem = document.createElement("li");
+
+          listItem.classList.add(player.isReady ? "ready" : "not-ready");
+          listItem.textContent = `${player.username} `;
+
+          // Append the list item to the player list
+          playerList.appendChild(listItem);
         });
 
-        // Send selection to server
+        // Enable/disable the "Start Game" button based on readiness
+        const allReady = checkAllPlayersReady(players);
+        startGameButton.disabled = !allReady;
+      }
+
+      // Function to handle when the game starts
+      function startGame() {
+        fetch("/start-game", {
+          method: "POST",
+        });
+
+        gameStarted = true;
+        window.location.href = "/forces-of-nature/gameplay";
+      }
+
+      // Function to handle character selection
+      function characterSelected(index) {
+        selectedCharacter = index;
+        updateCharacterSelection(index);
+
         fetch("/character-select", {
           method: "POST",
           body: JSON.stringify({
             id: sessionStorage.getItem("playerId"),
-            character: characterIndex,
+            character: index,
           }),
         });
       }
 
-      const checkInterval = setInterval(() => {
-        if (!gameStarted) {
-          hasTheGameStarted();
-        } else {
-          window.location.href = "/forces-of-nature/gameplay";
-          console.log("Game started!!");
-        }
-      }, 1000);
+      // Function to update the character image based on selection
+      function updateCharacterSelection(index) {
+        const characterKey =
+          index === ANGLER_INDEX
+            ? "angler"
+            : index === GOLEM_INDEX
+            ? "golem"
+            : "welder";
 
-      // functions
+        selectedCharacterImage.src = characterImages[characterKey].inactive;
+      }
+
+      // Function to update the player list and game state
       function hasTheGameStarted() {
-        // Check for if the game has started yet
+        // Check for if the game has started yet (using get entry)
         fetch("/start-game", {
           method: "GET",
         })
@@ -273,8 +452,6 @@
             if (response.gameActive) {
               // If the game HAS started, set variable to true to stop constantly checking.
               gameStarted = true;
-              clearInterval(checkInterval);
-              // Start the repeating processes (sending data and updating screen).
               window.location.href = "/forces-of-nature/gameplay";
             } else {
               // game hasnt started yet; update the table of players
@@ -283,60 +460,35 @@
           });
       }
 
-      function updatePlayerList(players) {
-        // Clear the existing list
-        playerList.innerHTML = "";
-
-        // Add each player to the list
-        players.forEach((player) => {
-          const listItem = document.createElement("li");
-          listItem.textContent =
-            player.username + " (put selected character here)";
-          playerList.appendChild(listItem);
-        });
-      }
-
-      function backToMain() {
-        window.location.href = "/forces-of-nature";
-      }
-
-      function startGame() {
-        fetch("/start-game", {
-          method: "POST",
-        });
-
-        gameStarted = true;
-      }
-
-      window.onload = function () {
-        // Get THIS player's id
+      // Run the code to update the username when the page loads
+      window.onload = () => {
         const playerId = sessionStorage.getItem("playerId");
+        const playerUsername = sessionStorage.getItem("playerUsername");
 
         if (!playerId) {
           console.log("No Player ID found! Redirecting...");
-          //window.location.href = "/forces-of-nature"; // Redirect if no ID
+          window.location.href = "/forces-of-nature"; // Redirect if no ID
         } else {
           console.log("Playing as player with id:", playerId);
+          console.log("Playing as player with username", playerUsername);
+          selectedUsername.innerText = playerUsername;
+
+          setInterval(hasTheGameStarted, 1000);
         }
       };
 
-      window.addEventListener("beforeunload", (event) => {
-        // Directly compare pathname to check if it's the gameplay page
-        if (gameStarted) {
-          return;
-        }
+      function backToMain() {
+        disconnect();
+        window.location.href = "/forces-of-nature";
+      }
 
-        const playerID = sessionStorage.getItem("playerId");
-
-        if (playerID) {
-          fetch("/remove-player", {
-            method: "POST",
-            body: playerID,
-          });
-
-          sessionStorage.removeItem("playerId");
-        }
-      });
+      function disconnect() {
+        fetch("/remove-player", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: sessionStorage.getItem("playerId"),
+        });
+      }
     </script>
   </body>
 </html>

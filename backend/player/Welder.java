@@ -11,7 +11,7 @@ public class Welder extends Player {
         id = player.getId();
 
 
-        this.maxHealth = 100;
+        this.maxHealth = 110;
         this.health = maxHealth;
 
 
@@ -23,6 +23,10 @@ public class Welder extends Player {
         FRICTION = 0.7;
         CROUCH_FRICTION = 0.9; // slide
         MAX_CROUCH_VELOCITY = 14;
+
+        MAX_MELEE_COOLDOWN = 13;
+        DEFAULT_MELEE_DAMAGE = 15;
+
 
 
         colour = "red";

@@ -2,30 +2,24 @@
         font-family: "KeyanCoffee";
         src: url("/libraries/KeyanCoffee.otf") format("opentype");
       }
+
+
+
 body {
     margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    background-color: aqua;
+    background-color: lightgrey;
     background-size: cover;
     backdrop-filter: blur(6px);
     background-repeat: no-repeat;
     background-position: center;
-}
-
-.game-window {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border: 15px solid black;
-    width: 1100px;
-    height: 500px;
-    background-color: lightgray;
 }
 
 .box {
@@ -36,12 +30,54 @@ body {
     top: 0px;
     left: 0px;
 }
+.spectator-div {
+    visibility: hidden; /* can change to hidden in js for optimizing*/
+    position: absolute;
+    top:15px;
+    height: 25vh;
+    width: 100vw;
+    display: flex;
+    z-index 0;
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+}
 
-h1 {
-    font-size: 48px; /* Adjust size as needed */
+.spectating-notifier {
+    font-family: "KeyanCoffee", monospace;
+    letter-spacing: 0.1em;
+    font-size: 5em;
     font-weight: bold;
-    text-align: center; /* Optional: Centers the text */
-    margin-top: 20px; /* Adjust spacing */
+    text-align: center;
+    margin-top: 0; /* Remove extra top margin to maintain tight positioning */
+}
+
+.backToMainButton {
+    width: 750px;
+    color: red;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 3px solid red;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    padding: 5px 20px;
+    border-radius: 2px;
+    text-align: center;
+    margin-top: 50px;
+    font-size: 1.7em;
+    font-family: "KeyanCoffee", monospace;
+    transition: all 0.15s;
+}
+.backToMainButton:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+.backToMainButton:active {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.spectating-notifier {
+    position: absolute;
+    top: 0px;
+    color: red;
+    font-style: bold;
 }
 
 
@@ -57,40 +93,152 @@ h1 {
     font-size:1.2em;
 }
 
-.backToMainButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: gray;
-    color: black;
-    border: none;
-    cursor: pointer;
-    padding: 10px 20px;
-    border-radius: 5px;
-  }
 
 .island {
     position:absolute;
-    top: 390px;
-    left 200px;
     background-color: black;
     border: none;
     width:200px;
     height: 20px;
+    border-radius: 0px 0px 5px 5px;
 }
 
 .ground {
-
     position: absolute;
-    height:400px;
-    background: yellow;
-    width:100vw;
+    height: 400px;
+    width: 100vw;
+    z-index: -1;
+    background-color: yellow;
+
+}
+.game-info-div {
+    height: 15vh; /* 15% of the viewport height */
+    width: 100vw;
+    background-color: #1e1e2f;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: grid; /* Use grid layout */
+    grid-template-columns: 70% 30%; /* Two columns, 70% and 30% width */
+}
+.other-players-div {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-auto-columns: auto;
+    gap: -10px;
 }
 
-.spectating-notifier {
-    position: absolute;
-    top: 0px;
+
+.other-player {
+    background-color: rgb(169, 106, 18);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px 0px 0px 10px;
+    background-image: url("/images/podium-welder-active.png");
+    background-position-x: 85%;
+    background-repeat: no-repeat; /* Prevent the background from repeating */
+    background-size: 35%; /* Adjust the image size to fit the container */
+    background-position-y: -10px;
+}
+
+.other-player-username {
+    font-family: "KeyanCoffee", monospace;
+    letter-spacing: 0.05em;
+    /*position: absolute;*/
+    bottom: 15px;
+    left: 15px;
+    margin:0;
+        padding:0;
+    color: white;
+    font-size: 1.5em;
+    margin: 0;
+    padding: 0;
+}
+
+.other-player-health-bar {
+    /*position: absolute; */
+    bottom: 50px;
+    left: 15px;
+    width: 110px;
+    border: none;
+    border-radius: 4px;
+    height: 10px;
+    margin:0;
+    padding:0;
+
+    background-color: black;
+}
+
+.other-player-health-bar::-webkit-progress-value {
+    background-color: red; /* Change this color as needed */
+}
+
+.other-player-health-bar::-moz-progress-bar {
+    background-color: red; /* Change this color as needed */
+}
+
+.other-player-hearts {
+    /*position: absolute; */
+    bottom: 65px;
+    left: 15px;
+    letter-spacing:0.5em;
+    font-weight: bold;
+    color:red;
+    font-size: 1.95em;
+    margin:0;
+        padding:0;
+}
+.player-info {
+    height: 100%; /* Take up the full height of the parent */
+    background-color: #292931;
+    position: relative;  /* Make sure the child elements can be positioned inside */
+    padding-right: 20px;  /* Add some padding on the right side */
+    padding-top: 20px;
+     background-image: url("/images/podium-golem-active.png");
+        background-position-x: 10%;
+        background-repeat: no-repeat; /* Prevent the background from repeating */
+        background-size: 20%; /* Adjust the image size to fit the container */
+        background-position-y: -10px;
+
+}
+
+.this-player-name {
+    color: white;
+    font-family: "KeyanCoffee", monospace;
+    font-size: 2.8em;
+    letter-spacing: 0.1em;
+    text-align: right;  /* Align the text to the right */
+    margin: 0;  /* Remove default margins */
+}
+
+.this-player-health {
+    position: absolute; /* Make it absolute inside the parent */
+    bottom: 45px;
+    right: 25px; /* Align the progress bar to the right */
+    width: 175px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    border-radius: 100px; /* Corrected property name */
+}
+.this-player-health::-webkit-progress-value {
+    background-color: red; /* Change this color as needed */
+}
+
+.this-player-health::-moz-progress-bar {
+    background-color: red; /* Change this color as needed */
+}
+
+.this-player-hearts {
+    font-size: 2.4em;
     color: red;
-    font-style: bold;
+    letter-spacing: 0.4em;
+    position: absolute;
+    bottom:30px;
+    right: 210px;
 }
+
+
 

@@ -15,7 +15,7 @@ public class Angler extends Player {
 
         // change health stats
 
-        this.maxHealth = 10; //lower than base player
+        this.maxHealth = 90; //lower than base player
         this.health = maxHealth;
 
         // movement stuffz
@@ -29,6 +29,11 @@ public class Angler extends Player {
 
         // sprite sheet / color change
         colour = "aqua";
+
+
+        MAX_MELEE_COOLDOWN = 7;
+        DEFAULT_MELEE_DAMAGE = 10;
+
         //quicker with less health
     }
 
