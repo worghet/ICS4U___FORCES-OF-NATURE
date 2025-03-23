@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 35;
+const FPS = 30;
 //animation
 const spriteSheet = new Image();
 spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
@@ -33,6 +33,7 @@ let spectatingUI = document.getElementById("spectator-div");
 let otherPlayersSectionUI = document.getElementById("other-players-div");
 
 let playerActionInterval;
+let updatePositionInterval;
 
 
 // ============================================================
@@ -164,7 +165,6 @@ window.onload = function() {
             if (player.id == localPlayerId) {
 
                 if (player.isSpectating) {
-                    isSpectating = true;
                     document.getElementById("spectator-div").style.visibility = "visible";
                     console.log("is spectator");
                 }
@@ -278,7 +278,7 @@ window.onload = function() {
     })
 
 
-    setInterval(updatePosition, (1000 / FPS));
+    updatePositionInterval = setInterval(updatePosition, (1000 / FPS));
 
    // do countdown (wavy text "welcome to ...")
 
@@ -429,24 +429,40 @@ function updatePosition() {
         if (JSON.stringify(currentGameData) === JSON.stringify(json)) return; // Avoid redundant updates
 
         currentGameData = json;
-        const activePlayerIds = new Set(json.players.map(p => p.id)); // Store all active players
 
-        console.log(activePlayerIds)
+        if (currentGameData.gameRunning) {
+            console.log("game is running")
+            const activePlayerIds = new Set(json.players.map(p => p.id)); // Store all active players
 
-        // Remove any player elements that are no longer in the game
-        document.querySelectorAll(".box, .tag, .other-player").forEach(element => {
+            console.log(activePlayerIds)
 
-            const playerId = parseInt(element.id.split("-")[1], 10); // Extract player ID and parse as an integer
-            console.log(element + "   looking at " + playerId)
-            if (!activePlayerIds.has(playerId)) {
-                console.log("up for removal")
-                element.remove(); // Remove disconnected player elements
-                console.log("REMOVED")
-            }
-        });
+            // Remove any player elements that are no longer in the game
+            document.querySelectorAll(".box, .tag, .other-player").forEach(element => {
 
-        // Render players who are still in the game
-        renderPlayers(json.players);
+                const playerId = parseInt(element.id.split("-")[1], 10); // Extract player ID and parse as an integer
+                console.log(element + "   looking at " + playerId)
+                if (!activePlayerIds.has(playerId)) {
+                    console.log("up for removal")
+                    element.remove(); // Remove disconnected player elements
+                    console.log("REMOVED")
+                }
+            });
+
+            // Render players who are still in the game
+            renderPlayers(json.players);
+
+        }
+        else {
+            console.log("game not running")
+            document.body.style.filter = "grayscale(100%)";
+            document.getElementById("game-over-popup").style.visibility = "visible";
+            console.log("Clearing interval:", playerActionInterval);
+            clearInterval(playerActionInterval);
+            console.log("Interval cleared. clearing update pos");
+            clearInterval(updatePositionInterval);
+            console.log("Interval cleared.");
+
+        }
     });
 }
 
@@ -502,34 +518,6 @@ function renderPlayers(players) {
                 // Add box and tag to game window.
                 document.getElementById("game-window").appendChild(playerBox);
                 document.getElementById("game-window").appendChild(playerTag);
-            }
-
-
-            if (player.lives == 0) {
-
-                 if (player.id == localPlayerId) {
-                    isSpectating = true;
-
-                    console.log("you are now dead, here is the div for you")
-                     document.getElementById("spectator-div").style.visibility = "visible";
-
-                                document.getElementById("this-player-health").value = 0;
-                                document.getElementById("this-player-lives").innerHTML = "";  // Default to 3 hearts if no lives
-                                document.getElementById("player-info").style.filter = "grayscale(100%)";
-//                     document.getElementById("player-info").
-                     clearInterval(playerActionInterval);
-                 }
-                 else {
-
-                    let otherPlayerInfoSection = document.getElementById("div-" + player.id);
-                    if (otherPlayerInfoSection) {
-                        otherPlayerInfoSection.remove();
-                    }
-                 }
-
-                playerBox.remove();
-                playerTag.remove();
-                return;
             }
 
             if (player.isAttacking) {
@@ -594,6 +582,32 @@ function renderPlayers(players) {
 
             }
 
+        } else {
+
+            // is spectating
+                       let playerBox = document.getElementById("box-" + player.id);
+                        let playerTag = document.getElementById("tag-" + player.id);
+              if (playerBox) {
+                            playerBox.remove();
+                        }
+                        if (playerTag) {
+                            playerTag.remove();
+                        }
+
+                          let otherPlayerInfoSection = document.getElementById("div-" + player.id);
+                                            if (otherPlayerInfoSection) {
+                                                otherPlayerInfoSection.remove();
+                                            }
+                if (player.id == localPlayerId) {
+                                              console.log("you are now dead, here is the div for you")
+                                                                 document.getElementById("spectator-div").style.visibility = "visible";
+
+                                                                            document.getElementById("this-player-health").value = 0;
+                                                                            document.getElementById("this-player-lives").innerHTML = "";  // Default to 3 hearts if no lives
+                                                                            document.getElementById("player-info").style.filter = "grayscale(100%)";
+                                            //                     document.getElementById("player-info").
+                                                                 clearInterval(playerActionInterval);
+                                                                 }
         }
 
     });

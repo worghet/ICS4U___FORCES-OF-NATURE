@@ -401,7 +401,13 @@
 
         // Enable/disable the "Start Game" button based on readiness
         const allReady = checkAllPlayersReady(players);
-        startGameButton.disabled = !allReady;
+
+        if (players.length == 1 || !allReady) {
+          startGameButton.disabled = true;
+        }
+        else {
+          startGameButton.disabled = false;
+        }
       }
 
       // Function to handle when the game starts

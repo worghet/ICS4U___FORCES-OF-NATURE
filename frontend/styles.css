@@ -241,4 +241,61 @@ body {
 }
 
 
+.end-game-popup {
+    z-index: 1001;
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    position: fixed; /* Ensures it stays centered even when scrolling */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -65%); /* Perfect centering */
+    height: 50vh;
+    width: 50vw;
+    border-radius: 10px;
+
+    /* Center contents */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Ensure text is centered */
+}
+
+.game-over-text {
+    font-family: "KeyanCoffee", monospace;
+    letter-spacing: 0.05em;
+    font-size: 5em;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+.winner-is-text {
+    margin: 0;
+    padding: 0;
+    font-family: "KeyanCoffee", monospace;
+    letter-spacing: 0.05em;
+    font-size: 2em;
+    color: white;
+}
+
+.over-return-to-main-button {
+    margin-top: 100px;
+    width: 500px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 5px solid white;
+    padding: 10px 50px;
+    font-family: "KeyanCoffee", monospace;
+    font-size: 2em;
+    letter-spacing: 0.05em;
+    transition: all 0.5s;
+    cursor: pointer;
+}
+.over-return-to-main-button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+
 
