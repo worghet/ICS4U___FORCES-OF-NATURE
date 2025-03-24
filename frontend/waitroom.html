@@ -89,11 +89,30 @@
         background-image: url("../images/default_angler.png");
         background-position: contain;
         background-repeat: no-repeat;
-        background-position-x: 50%;
+        background-position-x: 15%;
         background-position-y: 50%;
 
-        background-size: 50%;
+        background-size: 40%;
       }
+    .character-selection-title {
+      font-family: "KeyanCoffee", monospace;
+      color: white;
+      position: relative; /* Keep relative positioning */
+      left: 50%;
+      transform: translateX(8%); /* Center horizontally */
+      top: 10%;
+    }
+
+    .character-selection-text {
+        font-family: "KeyanCoffee", monospace;
+        color: white;
+        position: relative; /* Keep relative positioning */
+        left: 50%;
+        transform: translateX(18%); /* Center horizontally */
+        top: 10%;
+        max-width: 45%;
+        align-text: start;
+    }
 
       .character-selection-img {
         border-radius: 0.5em;
@@ -267,7 +286,12 @@
             "
             class="character-selection-img"
             onclick="characterSelected(0)"
-          ></div>
+          >
+
+            <h1 class="character-selection-title">ANGLER</h1>
+            <p class="character-selection-text"> - Slippery <br> - Faster <br> - Weaker </p>
+
+          </div>
 
           <div
             class="character-selection-img"
@@ -276,7 +300,13 @@
               background-image: url('../images/default_golem.png');
             "
             onclick="characterSelected(1)"
-          ></div>
+          >
+
+            <h1 class="character-selection-title">GOLEM</h1>
+            <p class="character-selection-text"> - Steady <br> - Powerful <br> - Tanky </p>
+
+
+          </div>
 
           <div
             style="
@@ -285,7 +315,13 @@
             "
             class="character-selection-img"
             onclick="characterSelected(2)"
-          ></div>
+          >
+
+            <h1 class="character-selection-title">WELDER</h1>
+            <p class="character-selection-text"> - Moderate<br> - Regular<br> - Average</p>
+
+
+          </div>
         </div>
 
         <!-- Player List -->
