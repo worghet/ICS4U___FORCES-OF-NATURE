@@ -42,6 +42,7 @@ public class Player {
 
     //to keep track of where in the animation it is (ex: 3 running frames)
     protected int animationFrame = 1;
+    //protected int attackFrame = 30;
 
     protected boolean isSpectating;
     protected boolean isReady;

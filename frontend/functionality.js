@@ -12,6 +12,7 @@ const FPS = 30;
 //animation
 let spriteSheetPos; //use the animation() function to return where to cut out img on sprite sheet 
 //will finish sprite sheet, & organize it
+let attackFrame = 31; //because isAttacking is only true for an instant, needs a counter to display sprite for longer
 
 
 // == IMPORTANT VARIABLES ==================================
@@ -547,8 +548,10 @@ function renderPlayers(players) {
 
             if (player.isAttacking) {
                // playerBox.style.backgroundColor = "black";
+               attackFrame= 0; 
+               console.log("attackframe: "+attackFrame);
                 // Get sprite sheet position from animate function (returns [x, y])
-                spriteSheetPos = animate(1, "attack", checkPlayerType(player), player.direction);
+                spriteSheetPos = animate(1, "attack", checkPlayerType(player), player.direction, attackFrame, true);
 
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
@@ -575,7 +578,12 @@ function renderPlayers(players) {
             if (player.direction) {
                 playerBox.style.transform = "scaleX(1)";
                 // Get sprite sheet position from animate function (returns [x, y])
-                spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction);
+                if(attackFrame<30){
+                    spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, true);
+                }else{
+                    spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, false);
+                }
+        
 
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
@@ -600,7 +608,11 @@ function renderPlayers(players) {
             else {
                 playerBox.style.transform = "scaleX(-1)";
                 // Get sprite sheet position from animate function (returns [x, y])
-                spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction);
+                if(attackFrame<30){
+                    spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, true);
+                }else{
+                    spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, false);
+                }
 
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
@@ -632,7 +644,11 @@ function renderPlayers(players) {
                 //playerBox.style.height = "35px";
 
                 // Get sprite sheet position from animate function (returns [x, y])
-                spriteSheetPos = animate(2, "crouch", checkPlayerType(player), player.direction);
+                if(attackFrame<30){
+                    spriteSheetPos = animate(2, "crouch", checkPlayerType(player), player.direction, attackFrame, true);
+                }else{
+                    spriteSheetPos = animate(2, "crouch", checkPlayerType(player), player.direction, attackFrame);
+                }
 
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
@@ -676,7 +692,13 @@ function renderPlayers(players) {
 
             if(player.isJumping) {
                 // Get sprite sheet position from animate function (returns [x, y])
-                spriteSheetPos = animate(1, "jump", checkPlayerType(player), player.direction);
+                
+                if(attackFrame<30){
+                    spriteSheetPos = animate(1, "jump", checkPlayerType(player), player.direction, attackFrame, true);
+                }else{
+                    spriteSheetPos = animate(1, "jump", checkPlayerType(player), player.direction, attackFrame, false);
+                }
+
 
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
@@ -770,7 +792,7 @@ function intToPx(int_px) {
     return (int_px + "px");
 }
 
-function animate(frame, state, type, direction){
+function animate(frame, state, type, direction, aFrame, attack){
     //vars for where to cut out image from sprite sheet
     var yInitial = 0;
     var yAdding = 0;
@@ -779,6 +801,7 @@ function animate(frame, state, type, direction){
     var xAdding = 0;
     var xFinal = 0;
 
+    
     switch (type){
         case "Angler": 
             yInitial = 0;
@@ -790,6 +813,22 @@ function animate(frame, state, type, direction){
             yInitial = 560;
             break;
     }
+    if(aFrame < 30 && attack){
+        attackFrame++;
+        if(type === "Angler"){
+            console.log("angler attack !!!!!!");
+            return [280, 140];
+
+        } else if (type === "Golem"){
+            console.log("golem attack !!!!!!!");
+            return [280, yInitial+140];
+
+        }else{
+            console.log("welder attack !!!!!!!");
+            return [280, yInitial+140];
+        }
+    }
+
 
     switch (state) {
         case "crouch":
@@ -807,13 +846,25 @@ function animate(frame, state, type, direction){
             break;
         case "attack":
             xInitial = 210;
-            if(direction){
+            if(type === "Angler"){
+                console.log("angler attack");
+                return [280, 140];
+
+            } else if (type === "Golem"){
+                console.log("golem attack");
+                return [350, 490];
+
+            }else{
+                console.log("welder attack");
+                return [350, yInitial+140];
+            }
+           /* if(direction){
                 yAdding = 280; 
 //                console.log("attack right");
             }else{
                 yAdding = 280;
 //               console.log("attack left");
-            }
+            }*/
             break;
         case "run":
             xInitial = 0; 
