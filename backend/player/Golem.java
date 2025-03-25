@@ -22,8 +22,8 @@ public class Golem extends Player {
         CROUCH_FRICTION = 0.05;
         MAX_CROUCH_VELOCITY = 1;
         MAX_CONSECUTIVE_JUMPS = 2;
-
         MAX_MELEE_COOLDOWN = 25;
+        DEFAULT_MELEE_WIDTH = 120;
         DEFAULT_MELEE_DAMAGE = 25;
 
 

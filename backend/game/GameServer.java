@@ -295,7 +295,7 @@ public class GameServer {
 
 
                 // Let console know that someone is accessing the server.
-                reportToConsole("A user just requested: " + path, MESSAGE);
+//                reportToConsole("A user just requested: " + path, MESSAGE);
 
 
                 // Convert to bytes, and send it to the client.
@@ -486,11 +486,13 @@ public class GameServer {
                 // Get the new player id, print that the player was made.
 
                 int newPlayerId = newPlayer.getId();
-                reportToConsole("CREATED PLAYER (ID: " + newPlayerId + " | USERNAME: " + newPlayer.getUsername() + ").", INTERESTING);
 
                 if (game.isGameRunning()) {
                     newPlayer.toggleSpectating();
-                    System.out.println("THIS PLAYER IS A SPECTATOR");
+                    reportToConsole("NEW SPECTATOR (ID: " + newPlayerId + " | USERNAME: " + newPlayer.getUsername() + ").", INTERESTING);
+                }
+                else {
+                    reportToConsole("CREATED PLAYER (ID: " + newPlayerId + " | USERNAME: " + newPlayer.getUsername() + ").", INTERESTING);
                 }
 
                 // Send back the id so that the browser can save it for when it sends the actions.
@@ -554,7 +556,7 @@ public class GameServer {
                 int playerId = Integer.parseInt(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
 
                 game.getPlayerById(playerId).toggleReady();
-                System.out.println(game.getPlayerById(playerId).getUsername().toUpperCase() + " is ready: " + game.getPlayerById(playerId).isReady());
+//                System.out.println(game.getPlayerById(playerId).getUsername().toUpperCase() + " is ready: " + game.getPlayerById(playerId).isReady());
 
                 // Let client know all is OK!
 
@@ -589,7 +591,7 @@ public class GameServer {
             // Should technically only be post; but just to be safe we check.
 
             if ("POST".equals(httpExchange.getRequestMethod())) {
-                System.out.println("removal called");
+//                System.out.println("removal called");
                 // Read the ID of the player who is going to be removed.
 
                 InputStream inputStream = httpExchange.getRequestBody();
@@ -627,7 +629,7 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("POST".equals(httpExchange.getRequestMethod())) {
 
-                System.out.println("char select called");
+//                System.out.println("char select called");
                 // Read the request body.
 
                 InputStream inputStream = httpExchange.getRequestBody();

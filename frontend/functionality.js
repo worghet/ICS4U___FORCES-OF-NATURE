@@ -7,6 +7,8 @@
 const X = 0;
 const Y = 1;
 const FPS = 30;
+
+
 //animation
 let spriteSheetPos; //use the animation() function to return where to cut out img on sprite sheet 
 //will finish sprite sheet, & organize it
@@ -48,7 +50,7 @@ window.onload = function() {
     const playerId = sessionStorage.getItem("playerId");
 
     if (playerId === null) {
-        console.log("invalid player id")
+//        console.log("invalid player id")
         window.location.href = "/forces-of-nature";
     } else {
         console.log("Playing as player with id:", playerId);
@@ -61,7 +63,7 @@ window.onload = function() {
    .then(response => response.json())
    .then(mapData => {
      const backgroundIndex = mapData.backgroundIndex;
-     console.log("Background Index: ", backgroundIndex);
+//     console.log("Background Index: ", backgroundIndex);
 
 
                             const groundDiv = document.createElement("div");
@@ -73,7 +75,7 @@ window.onload = function() {
      switch (backgroundIndex) {
 
         case 0:
-            console.log("welcome to deepsea");
+//            console.log("welcome to deepsea");
             document.body.style.backgroundImage = `url("/images/deepsea.gif")`;
             groundDiv.style.backgroundColor = "yellow";
 
@@ -97,7 +99,7 @@ window.onload = function() {
 
             break;
         case 1:
-            console.log("welcome to caves")
+//            console.log("welcome to caves")
             document.body.style.backgroundImage = `url("/images/gameplay_background_earth.gif")`;
             document.body.style.backgroundPositionY = "-300px";
 
@@ -123,7 +125,7 @@ window.onload = function() {
 
             break;
         case 2:
-            console.log("welcome to industry")
+//            console.log("welcome to industry")
                 groundDiv.style.backgroundColor = "grey";
            document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
            document.body.style.backgroundPositionY = "-500px";
@@ -165,12 +167,16 @@ window.onload = function() {
 
                 if (player.isSpectating) {
                     document.getElementById("spectator-div").style.visibility = "visible";
-                    console.log("is spectator");
+//                    console.log("is spectator");
                 }
                 else {
-                    console.log("is not spectator");
-                    // start sending input to server
+//                    console.log("is not spectator");
+
+
+                    // Start sending input to server (based on FPS).
                     playerActionInterval = setInterval(sendPlayerAction, (1000 / FPS));
+
+
 
                     // build player ui (hearts, health, etc)
                     const playerInfo = document.getElementById("player-info");
@@ -222,7 +228,7 @@ window.onload = function() {
               const otherPlayerName = document.createElement("p");
               otherPlayerName.className = "other-player-username";
               otherPlayerName.textContent = player.username;
-              console.log("adding " + player.username + "to div " + otherPlayerDiv.id)
+//              console.log("adding " + player.username + "to div " + otherPlayerDiv.id)
               otherPlayerDiv.appendChild(otherPlayerName);
 
               // Create and append the health bar
@@ -231,7 +237,7 @@ window.onload = function() {
               healthBar.value = player.health || 100;  // Default to 100 if no health value
               healthBar.max = player.maxHealth || 100;  // Default to 100 if maxHealth is undefined
               healthBar.id = "health-" + player.id;
-              console.log("adding " + player.username + "health bar to div " + otherPlayerDiv.id)
+//              console.log("adding " + player.username + "health bar to div " + otherPlayerDiv.id)
               otherPlayerDiv.appendChild(healthBar);
 
               // Create and append the hearts (lives)
@@ -239,11 +245,11 @@ window.onload = function() {
               hearts.classList.add('other-player-hearts');
               hearts.innerHTML = '&hearts;'.repeat(player.lives || 3);  // Default to 3 hearts if no lives
               hearts.id = "lives-" + player.id;
-              console.log("adding " + player.username + "lives to div " + otherPlayerDiv.id);
+//              console.log("adding " + player.username + "lives to div " + otherPlayerDiv.id);
               otherPlayerDiv.appendChild(hearts);
 
 
-                console.log(player.colour)
+//                console.log(player.colour)
                 switch(player.colour) {
                     case "aqua":
                         otherPlayerDiv.style.backgroundImage = "url('/images/podium-angler-active.png')"
@@ -269,14 +275,14 @@ window.onload = function() {
               otherPlayersSectionUI.appendChild(otherPlayerDiv);
 
                 // Append the newly created div to the section
-                console.log("Appended player div for: " + player.username);
-                console.log(otherPlayersSectionUI);
+//                console.log("Appended player div for: " + player.username);
+//                console.log(otherPlayersSectionUI);
             }
 
         });
     })
 
-
+    // Interval (repeated action) timing based on FPS constant.
     updatePositionInterval = setInterval(updatePosition, (1000 / FPS));
 
    // do countdown (wavy text "welcome to ...")
@@ -425,25 +431,20 @@ function updatePosition() {
     fetch("/gamedata", { method: "GET" })
     .then(response => response.json())
     .then(json => {
-        if (JSON.stringify(currentGameData) === JSON.stringify(json)) return; // Avoid redundant updates
 
+        // If the data is the exact same (no changes), avoid redundant updates.
+        if (JSON.stringify(currentGameData) == JSON.stringify(json)) return;
+
+        // Set local variable to new game data.
         currentGameData = json;
 
+        // If game is on, render the data.
         if (currentGameData.gameRunning) {
-            console.log("game is running")
             const activePlayerIds = new Set(json.players.map(p => p.id)); // Store all active players
-
-            console.log(activePlayerIds)
-
-            // Remove any player elements that are no longer in the game
             document.querySelectorAll(".box, .tag, .other-player").forEach(element => {
-
                 const playerId = parseInt(element.id.split("-")[1], 10); // Extract player ID and parse as an integer
-                console.log(element + "   looking at " + playerId)
                 if (!activePlayerIds.has(playerId)) {
-                    console.log("up for removal")
-                    element.remove(); // Remove disconnected player elements
-                    console.log("REMOVED")
+                    element.remove();
                 }
             });
 
@@ -451,22 +452,16 @@ function updatePosition() {
             renderPlayers(json.players);
 
         }
+
+        // Otherwise, show the game end screen.
         else {
-            console.log("game not running")
             document.body.style.filter = "grayscale(100%)";
             document.getElementById("game-over-popup").style.visibility = "visible";
-            console.log("Clearing interval:", playerActionInterval);
             clearInterval(playerActionInterval);
-            console.log("Interval cleared. clearing update pos");
             clearInterval(updatePositionInterval);
-            console.log("Interval cleared.");
-
         }
     });
 }
-
-
-
 
 
 // == FUNCTIONS [UTILITY] ==================================
@@ -495,7 +490,7 @@ function renderPlayers(players) {
                 playerBox = document.createElement("div");
                 playerBox.id = "box-" + player.id;
                 playerBox.className = "box";
-                playerBox.style.backgroundColor = player.colour;
+                playerBox.style.backgroundColor = "rgba(0, 0, 0, 0)";
 
 
                 // playerBox.style.width = "35px"; // Size of cropped portion
@@ -528,7 +523,7 @@ function renderPlayers(players) {
                  if (player.id == localPlayerId) {
                     isSpectating = true;
 
-                    console.log("you are now dead, here is the div for you")
+//                    console.log("you are now dead, here is the div for you")
                      document.getElementById("spectator-div").style.visibility = "visible";
 
                                 document.getElementById("this-player-health").value = 0;
@@ -645,7 +640,7 @@ function renderPlayers(players) {
                 //display crouch
                 playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
                 playerBox.style.width = "70px"; // Display size (scaled)
-                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.height = "35px"; // Display size (scaled)
                 playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
                 playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
                 playerBox.style.backgroundRepeat = "no-repeat";
@@ -737,7 +732,7 @@ function renderPlayers(players) {
                                                 otherPlayerInfoSection.remove();
                                             }
                 if (player.id == localPlayerId) {
-                                              console.log("you are now dead, here is the div for you")
+//                                              console.log("you are now dead, here is the div for you")
                                                                  document.getElementById("spectator-div").style.visibility = "visible";
 
                                                                             document.getElementById("this-player-health").value = 0;
@@ -800,39 +795,39 @@ function animate(frame, state, type, direction){
         case "crouch":
             xInitial = 70;
             yAdding = 0; 
-            console.log("crouching");
+//            console.log("crouching");
             break;
         case "jump":
             xInitial = 210;
             yAdding = 0; 
-            console.log("jumping");
+//            console.log("jumping");
             break;
         case "attack":
             xInitial = 210;
             if(direction){
                 yAdding = 140; 
-                console.log("attack right");
+//                console.log("attack right");
             }else{
                 yAdding = 140;
-                console.log("attack left");
+//                console.log("attack left");
             }
             break;
         case "run":
             xInitial = 0; 
             if(direction){
                 yAdding = 140; 
-                console.log("run right");
+//                console.log("run right");
                 xAdding = 70 * frame - 70; // Frame count starts at 1, so adjust accordingly
             }else{
                 yAdding = 140;
-                console.log("run left");
+//                console.log("run left");
                 xAdding = 70 * frame - 70; // Frame count starts at 1, so adjust accordingly
             }
             break;
         case "stand":
             xInitial = 0;
             yAdding = 0;
-            console.log("standing");
+//            console.log("standing");
             break;
         default:
             console.error("Unknown player type: ", type);
@@ -844,7 +839,7 @@ function animate(frame, state, type, direction){
     xFinal = xInitial + xAdding;
 
     // return values in a 2D array
-    console.log("xPos:", xFinal, "yPos:", yFinal);
+//    console.log("xPos:", xFinal, "yPos:", yFinal);
     return [xFinal, yFinal];
 
 }//end of animation function
