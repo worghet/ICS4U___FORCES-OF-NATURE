@@ -60,7 +60,7 @@ public class Game {
                 }
 
                 // -- REPLACE WITH MATT'S UPDATE METHOD -----
-
+                int activePlayerCount = 0;
                 for (Player aPlayer : players) {
 
                     if (!aPlayer.isSpecator()) {
@@ -68,8 +68,14 @@ public class Game {
                         aPlayer.updatePosition();
                         aPlayer.checkMapCollisions(currentMap);
                         aPlayer.registerDamage(players);
-                        // check attacks
+                        activePlayerCount++;
+
                     }
+                }
+
+                if (activePlayerCount == 1) {
+                    gameRunning = false;
+                    GameServer.reportToConsole("GAME OVER",  GameServer.OKAY);
                 }
 
                 // -- REPLACE WITH MATT'S UPDATE METHOD -----
@@ -180,7 +186,6 @@ public class Game {
         players.clear();
 
         // 2. Clear map preference.
-        // map = null; // or just a default one idk
 
         // 3. reset player IDs.
         Player.resetPlayerCount();

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png" />
     <title>Forces of Nature</title>
 
     <style>
@@ -90,15 +90,14 @@
         border-radius: 10px;
         text-align: center;
         position: relative; /* For positioning the close button */
-        max-width: 80vh; /* Ensure the popup fits within the screen */
-        max-height: 80vh; /* Ensure the popup fits within the screen */
-        overflow-y: auto; /* Enable vertical scrolling */
+        max-width: 60%; /* Ensure the popup fits within the screen */
+        max-height: 60%; /* Ensure the popup fits within the screen */
+        background-position-y: center;
       }
 
       .popup-content img {
-        max-width: 100%; /* Ensure the image fits within the screen */
+        width: 100%; /* Ensure the image takes up the full width */
         border-radius: 10px; /* Rounded corners for the image */
-        overflow-y: auto; /* Enable vertical scrolling */
       }
 
       .close-button {
@@ -264,13 +263,15 @@
     </div>
 
     <!-- Controls button -->
-    <div class="controlsButton" style="margin-top: 10px;">
-      <button class="btn-blue" style="width: 712px;" onclick="openControls()">GAME CONTROLS</button>
+    <div class="controlsButton" style="margin-top: 10px">
+      <button class="btn-blue" style="width: 712px" onclick="openControls()">
+        GAME CONTROLS
+      </button>
     </div>
 
     <!-- Controls popup -->
     <div id="controlsPopup" class="popup">
-      <div class="popup-content">
+      <div class="popup-content" style="bottom: 5%">
         <span class="close-button" onclick="closeControls()">&times;</span>
         <img src="/images/controls.png" alt="Controls" />
       </div>
@@ -283,7 +284,7 @@
 
     <!-- Lore popup-->
     <div id="lorePopup" class="popup">
-      <div class="popup-content">
+      <div class="popup-content" style="overflow-y: auto">
         <span class="close-button" onclick="closeLore()">&times;</span>
         <img src="../images/testlore.gif" alt="Lore" />
       </div>
@@ -362,10 +363,7 @@
             sessionStorage.setItem("playerUsername", username);
             console.log("made player with username: " + username);
             console.log("player id:" + playerId);
-
           });
-
-
       }
     </script>
   </body>

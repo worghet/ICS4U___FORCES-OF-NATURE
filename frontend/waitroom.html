@@ -89,10 +89,29 @@
         background-image: url("../images/default_angler.png");
         background-position: contain;
         background-repeat: no-repeat;
-        background-position-x: 50%;
+        background-position-x: 15%;
         background-position-y: 50%;
 
-        background-size: 50%;
+        background-size: 40%;
+      }
+      .character-selection-title {
+        font-family: "KeyanCoffee", monospace;
+        color: white;
+        position: relative; /* Keep relative positioning */
+        left: 50%;
+        transform: translateX(8%); /* Center horizontally */
+        top: 10%;
+      }
+
+      .character-selection-text {
+        font-family: "KeyanCoffee", monospace;
+        color: white;
+        position: relative; /* Keep relative positioning */
+        left: 50%;
+        transform: translateX(18%); /* Center horizontally */
+        top: 10%;
+        max-width: 45%;
+        text-align: start;
       }
 
       .character-selection-img {
@@ -168,13 +187,12 @@
       #player-list li.ready {
         border: 2px solid lime; /* Green outline for ready players */
         box-shadow: 0 0 10px lime; /* Green glow for ready players */
-        background-color:seagreen;
-
+        background-color: seagreen;
       }
 
       #player-list li.not-ready {
         border: 2px solid red; /* Red outline for not-ready players */
-        background-color:firebrick;
+        background-color: firebrick;
         box-shadow: 0 0 10px red; /* Red glow for not-ready players */
       }
 
@@ -267,7 +285,14 @@
             "
             class="character-selection-img"
             onclick="characterSelected(0)"
-          ></div>
+          >
+            <h1 class="character-selection-title">ANGLER</h1>
+            <p class="character-selection-text">
+              - Slippery <br />
+              - Faster <br />
+              - Weaker
+            </p>
+          </div>
 
           <div
             class="character-selection-img"
@@ -276,7 +301,14 @@
               background-image: url('../images/default_golem.png');
             "
             onclick="characterSelected(1)"
-          ></div>
+          >
+            <h1 class="character-selection-title">GOLEM</h1>
+            <p class="character-selection-text">
+              - Steady <br />
+              - Powerful <br />
+              - Tanky
+            </p>
+          </div>
 
           <div
             style="
@@ -285,7 +317,14 @@
             "
             class="character-selection-img"
             onclick="characterSelected(2)"
-          ></div>
+          >
+            <h1 class="character-selection-title">WELDER</h1>
+            <p class="character-selection-text">
+              - Moderate<br />
+              - Regular<br />
+              - Average
+            </p>
+          </div>
         </div>
 
         <!-- Player List -->
@@ -304,7 +343,7 @@
       <div class="right-section">
         <div class="selected-character">
           <h2 id="selected-username">Username</h2>
-          <img id="selected-character-image"/>
+          <img id="selected-character-image" />
         </div>
       </div>
     </div>
@@ -401,7 +440,12 @@
 
         // Enable/disable the "Start Game" button based on readiness
         const allReady = checkAllPlayersReady(players);
-        startGameButton.disabled = !allReady;
+
+        if (players.length == 1 || !allReady) {
+          startGameButton.disabled = true;
+        } else {
+          startGameButton.disabled = false;
+        }
       }
 
       // Function to handle when the game starts

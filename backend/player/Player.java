@@ -206,7 +206,7 @@ public class Player {
     // == UPDATER METHOD =======================================
 
     public void toggleSpectating() {
-        isSpectating = !isSpectating;
+        isSpectating = true;
     }
 
     public void toggleReady() {
