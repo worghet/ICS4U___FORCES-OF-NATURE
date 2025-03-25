@@ -6,7 +6,7 @@
 
 const X = 0;
 const Y = 1;
-const FPS = 30;
+const FPS = 40;
 
 
 //animation
@@ -78,7 +78,7 @@ window.onload = function() {
         case 0:
 //            console.log("welcome to deepsea");
             document.body.style.backgroundImage = `url("/images/deepsea.gif")`;
-            groundDiv.style.backgroundColor = "yellow";
+            groundDiv.style.backgroundColor = "darkgoldenrod";
 
 
             mapData.islands.forEach((island) => {
@@ -88,7 +88,7 @@ window.onload = function() {
                 islandDiv.style.top = intToPx(island.topLeftY);
                 islandDiv.style.width = intToPx(island.width);
 
-                islandDiv.style.backgroundColor = "yellow";
+                islandDiv.style.backgroundColor = "darkgoldenrod";
 
 
 //                islandDiv.style.backgroundImage = `url("/images/sand_island_texture.jpg")`;
@@ -116,18 +116,18 @@ window.onload = function() {
 //                                        islandDiv.style.backgroundImage = `url("/images/ground_island_texture.jpg")`;
 //                                        islandDiv.style.backgroundSize = 'contain';  // Ensures the image covers the entire div
 //                                        islandDiv.style.backgroundRepeat = 'repeat';  // Ensures the image repeats if it's smaller than the div
-                                islandDiv.style.backgroundColor = "saddlebrown";
+                                islandDiv.style.backgroundColor = "darkslategrey";
                             document.body.appendChild(islandDiv);
                         });
 
 
-                                groundDiv.style.backgroundColor = "saddlebrown";
+                                groundDiv.style.backgroundColor = "darkslategrey";
 
 
             break;
         case 2:
 //            console.log("welcome to industry")
-                groundDiv.style.backgroundColor = "grey";
+                groundDiv.style.backgroundColor = "silver";
            document.body.style.backgroundImage = `url("/images/gameplay_background_industrial.gif")`;
            document.body.style.backgroundPositionY = "-500px";
 
@@ -137,7 +137,7 @@ window.onload = function() {
                             islandDiv.style.left = intToPx(island.topLeftX);
                             islandDiv.style.top = intToPx(island.topLeftY);
                             islandDiv.style.width = intToPx(island.width);
-                islandDiv.style.backgroundColor = "grey";
+                islandDiv.style.backgroundColor = "silver";
                             document.body.appendChild(islandDiv);
 
 //                islandDiv.style.backgroundImage = `url("/images/steel_island_texture.jpg")`;
@@ -578,7 +578,7 @@ function renderPlayers(players) {
             if (player.direction) {
                 playerBox.style.transform = "scaleX(1)";
                 // Get sprite sheet position from animate function (returns [x, y])
-                if(attackFrame<30){
+                if(attackFrame<5){
                     spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, true);
                 }else{
                     spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, false);
@@ -608,7 +608,7 @@ function renderPlayers(players) {
             else {
                 playerBox.style.transform = "scaleX(-1)";
                 // Get sprite sheet position from animate function (returns [x, y])
-                if(attackFrame<30){
+                if(attackFrame<5){
                     spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, true);
                 }else{
                     spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction, attackFrame, false);
@@ -644,7 +644,7 @@ function renderPlayers(players) {
                 //playerBox.style.height = "35px";
 
                 // Get sprite sheet position from animate function (returns [x, y])
-                if(attackFrame<30){
+                if(attackFrame<5){
                     spriteSheetPos = animate(2, "crouch", checkPlayerType(player), player.direction, attackFrame, true);
                 }else{
                     spriteSheetPos = animate(2, "crouch", checkPlayerType(player), player.direction, attackFrame);
