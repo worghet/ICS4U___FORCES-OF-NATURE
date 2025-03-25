@@ -1,25 +1,19 @@
 package game;
 
 // == IMPORTS =============================
-
-import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-
 import java.nio.charset.StandardCharsets;
-
+import com.sun.net.httpserver.HttpServer;
+import com.google.gson.JsonObject;
 import com.google.gson.Gson;
-
+import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import player.*;
-
 import java.util.*;
 import java.net.*;
 import java.io.*;
+import player.*;
 
 // == GAME_SERVER =====
 public class GameServer {
@@ -28,13 +22,21 @@ public class GameServer {
     // == INSTANCE VARIABLES [FIELDS] ==========================
 
 
-    private final String localHostAddress; // IP address.
-    private HttpServer httpServer; // Server object.
-    private final int serverPort; // What port server hosted on.
-    private Game game; // Game for communication and updating.
+    // Local IP address.
+    private final String localHostAddress; 
+    
+    // Server object (used for setting up APIs, etc).
+    private HttpServer httpServer; 
+
+    // What port the server is hosted on.
+    private final int serverPort; 
+    
+    // Game for communication and updating.
+    private Game game; 
 
 
     // == API CONSTANTS [FOR READABILITY] ======================
+
 
     // Used for the multipurpose nature of page handler.
     static private final int MAIN_MENU_PAGE = 0;
@@ -47,13 +49,13 @@ public class GameServer {
     static private final int GOLEM_INDEX = 1;
     static private final int WELDER_INDEX = 2;
 
-    // Return menu page.
+    // APIs which return menu pages.
     static private final String MAIN_MENU_API = "/forces-of-nature";
     static private final String INFO_MENU_API = "/forces-of-nature/info";
     static private final String WAITROOM_MENU_API = "/forces-of-nature/waitroom";
     static private final String GAMEPLAY_SCREEN_API = "/forces-of-nature/gameplay";
 
-    // Manipulate / receive game data.
+    // APIs which get / send game data.
     static private final String GAMEDATA_API = "/gamedata";
     static private final String GAMEMAP_API = "/game-map";
     static private final String PLAYER_ACTION_API = "/player-action";
@@ -90,13 +92,13 @@ public class GameServer {
 
         // Essentially trying to run a server on requested port... seeing what happens.
 
-        // (This is fancy "try-with-resources" syntax; auto closes objects when complete.
+        // (This is fancy "try-with-resources" syntax; auto closes objects when complete.)
         try (ServerSocket socket = new ServerSocket(requestedServerPort)) {
 
             // If there was no error binding this socket, then it is available.
             portAvailible = true;
 
-        } catch (IOException e) {
+        } catch (Exception e) {
 
             // Exception was thrown - likely because requested port was busy.
             System.out.println("port " + requestedServerPort + " is... OCCUPIED!");
@@ -128,22 +130,22 @@ public class GameServer {
 
         try {
 
-            // Create the actual server object.
+            // Create the actual server object (this is a more "custom" server).
 
             httpServer = HttpServer.create(new InetSocketAddress(serverPort), 0);
+
 
             // -------------------------------------------------
             // -- APIs ("web access point" / "end point") ------
             // -------------------------------------------------
 
-            // Assign static resource APIs (give resources like images, and other files).
+
+            // Assign static resource APIs (give resources like images, fonts, and other files).
 
             httpServer.createContext("/styles.css", new StaticFileHandler("frontend", "text/css"));
             httpServer.createContext("/functionality.js", new StaticFileHandler("frontend", "frontend/javascript"));
             httpServer.createContext("/images", new StaticFileHandler("images", "image/gif"));
             httpServer.createContext("/libraries", new StaticFileHandler("libraries", "font/otf"));
-
-            // TODO: Add "animation-frame" getters, etc. (Unless that will be in the player object to load from.)
 
             // Assign page APIs (give webpages; technically can be combined with previous as html is a static file).
 
@@ -167,7 +169,7 @@ public class GameServer {
 
             httpServer.setExecutor(null);
 
-            // Start the server.
+            // Start the server; add message for success.
 
             System.out.println("╔══ SERVER CREATION =========================================");
             System.out.print("║ SERVER STATUS | ");
@@ -175,19 +177,19 @@ public class GameServer {
             System.out.println("\u001B[32mSTARTED\u001B[0m");
             System.out.println("║ http://" + hostAddress + ":" + serverPort + "/forces-of-nature");
 
-            // Add some more information on how to use (given different problems encountered.
+            // Add some more information on how to use (given different problems encountered during development).
 
             System.out.println("╠══ QUICK TIPS ==============================================");
             System.out.println("║");
             System.out.println("║ \u001B[37m> CHROME OS (W/ VIRTUAL MACHINE): TOGGLE PORT FORWARDING.\u001B[0m");
             System.out.println("║ \u001B[37m> AVOID USING FIREFOX OR SAFARI.. STICK TO CHROME!\u001B[0m");
-            System.out.println("║ \u001B[37m> DIFFERENT IDES RESULT MAY REDUCE SPEEDS; INTELLIJ IS THE BEST.\u001B[0m");
             System.out.println("║ \u001B[37m> MAKE SURE TO DELETE OLD TABS.. THEY STILL HAUNT THE SERVER..\u001B[0m");
             System.out.println("║");
             System.out.println("╚══ SERVER OUTPUT BEGINS ====================================");
 
-        } catch (Exception exception) {
-            System.out.println("Server setup went wrong... " + exception);
+        } 
+        catch (Exception e) {
+            System.out.println("Server setup went wrong... " + e.getMessage());
         }
     }
 
@@ -200,31 +202,41 @@ public class GameServer {
         // NOTE: ChatGPT wrote this; I've commented what I understood, though explanations may be unclear.
 
         try {
+
             // Get all network interfaces (ip addresses, names, etc... found in the computer).
+            
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
             while (networkInterfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = networkInterfaces.nextElement();
 
                 // Get all IP addresses for each network interface (grab only the IP addresses).
+            
                 Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
                 while (inetAddresses.hasMoreElements()) {
 
                     // Iterate through each address of the computer.
+            
                     InetAddress inetAddress = inetAddresses.nextElement();
 
-                    // Ignore loop-back addresses like 127.0.0.1 (those who know).
+                    // Ignore loop-back addresses like 127.0.0.1 (and ensure that its an IPv4 address).
+            
                     if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
                         return inetAddress.getHostAddress();
+            
                         // This first one should be the one we want.
-                        // (Starts with 10.x.x.x, or 172.x.x.x, etc;
-                        //  really depends on where this is being run.)
+                        // (Starts with 10.x.x.x, or 172.x.x.x, etc;)
+                        //  This is the private IP address; only 
+                        //  people within the same network see it.)
+            
                     }
                 }
             }
-        } catch (SocketException e) {
+        } 
+        catch (SocketException e) {
             System.out.println("Error while obtaining local host address.");
         }
 
+        // In case sum wrong happens, return null.
         return null;
     }
 
@@ -252,7 +264,10 @@ public class GameServer {
 
     // == API [WEBPAGE - RETURN HTML] ==========================
 
+
     static class WebpageHandler implements HttpHandler {
+
+        // Note: this class is technically unnecissary; could have just used static file handler instead (html is static).
 
         private final int requestedPage;
 
@@ -293,11 +308,6 @@ public class GameServer {
                         break;
                 }
 
-
-                // Let console know that someone is accessing the server.
-//                reportToConsole("A user just requested: " + path, MESSAGE);
-
-
                 // Convert to bytes, and send it to the client.
 
                 byte[] htmlBytes = Files.readAllBytes(Paths.get(path));
@@ -328,7 +338,6 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
-
                 // Get the requested file path (relative to the rootPath).
                 String requestedPath = httpExchange.getRequestURI().getPath();
                 requestedPath = requestedPath.replace("/images", "");
@@ -343,9 +352,10 @@ public class GameServer {
                     OutputStream os = httpExchange.getResponseBody();
                     os.write(fileBytes);
                     os.close();
-                } else
-                {
-                    // If the file doesn't exist, return a 404.
+                } 
+                
+                // If the file doesn't exist, return a 404.
+                else {
                     httpExchange.sendResponseHeaders(404, 0);
                     httpExchange.getResponseBody().close();
                 }
@@ -369,7 +379,6 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
-
                 // Serialize game data into JSON.
 
                 String jsonResponse = gson.toJson(game);
@@ -386,8 +395,6 @@ public class GameServer {
         }
     }
 
-
-
     static class GameMapHandler implements HttpHandler {
 
         private Game game;
@@ -400,7 +407,11 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("GET".equals(httpExchange.getRequestMethod())) {
 
+                // Serialize the game map.
+
                 String response = gson.toJson(game.getCurrentMap());
+
+                // Send it over to the client.
 
                 httpExchange.sendResponseHeaders(200, response.length());
                 OutputStream os = httpExchange.getResponseBody();
@@ -410,11 +421,6 @@ public class GameServer {
             }
         }
     }
-
-
-
-
-
 
 
     // == API [PLAYER ACTION - GETS THE KEYBOARD INPUT] ========
@@ -439,11 +445,9 @@ public class GameServer {
                 InputStream inputStream = httpExchange.getRequestBody();
                 String requestBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
-                // Deserialize JSON to the pre-made PlayerAction object;
+                // Deserialize JSON to the pre-made PlayerAction object.
 
                 PlayerAction playerAction = gson.fromJson(requestBody, PlayerAction.class);
-//                System.out.println("projectile " + playerAction.getKeysPressed()[PlayerAction.PROJECTILE]);
-//                System.out.println("melee " + playerAction.getKeysPressed()[PlayerAction.MELEE]);
 
                 // Extract playerId from the object.
 
@@ -463,7 +467,7 @@ public class GameServer {
     }
 
 
-    // == API [ADD PLAYER - MAKES PLAYER + RETURNS ID ==========
+    // == API [ADD PLAYER - MAKES PLAYER + RETURNS ID] =========
 
 
     static class AddPlayerHandler implements HttpHandler {
@@ -481,11 +485,16 @@ public class GameServer {
                 // Read from the request body and make player.
 
                 Player newPlayer = getPlayer(httpExchange);
+
+                // Add player to the game object.
+
                 game.addPlayer(newPlayer);
 
-                // Get the new player id, print that the player was made.
+                // Get the new player id, report that the player was made.
 
                 int newPlayerId = newPlayer.getId();
+
+                // Set new player to spectator if the game is already running.
 
                 if (game.isGameRunning()) {
                     newPlayer.toggleSpectating();
@@ -498,11 +507,10 @@ public class GameServer {
                 // Send back the id so that the browser can save it for when it sends the actions.
 
                 String response = "{\"playerId\":" + newPlayerId + ", \"username\":\"" + newPlayer.getUsername() + "\"}";
-                httpExchange.sendResponseHeaders(200, response.length()); // Correct length
+                httpExchange.sendResponseHeaders(200, response.length()); 
                 OutputStream os = httpExchange.getResponseBody();
-                os.write(response.getBytes(StandardCharsets.UTF_8)); // Send as UTF-8 string
+                os.write(response.getBytes(StandardCharsets.UTF_8));
                 os.close();
-
             }
         }
 
@@ -552,11 +560,14 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("POST".equals(httpExchange.getRequestMethod())) {
 
+                // Read the request (get the playerId).
+                
                 InputStream inputStream = httpExchange.getRequestBody();
                 int playerId = Integer.parseInt(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
 
+                // Set the specific player to ready.
+
                 game.getPlayerById(playerId).toggleReady();
-//                System.out.println(game.getPlayerById(playerId).getUsername().toUpperCase() + " is ready: " + game.getPlayerById(playerId).isReady());
 
                 // Let client know all is OK!
 
@@ -566,12 +577,6 @@ public class GameServer {
             }
         }
     }
-
-
-
-
-
-
 
 
     // == API [REMOVE PLAYER - REMOVES PLAYER ==================
@@ -591,7 +596,7 @@ public class GameServer {
             // Should technically only be post; but just to be safe we check.
 
             if ("POST".equals(httpExchange.getRequestMethod())) {
-//                System.out.println("removal called");
+
                 // Read the ID of the player who is going to be removed.
 
                 InputStream inputStream = httpExchange.getRequestBody();
@@ -617,6 +622,7 @@ public class GameServer {
 
 
     // == API [CHARACTER SELECT - CHANGES CHARACTER] ===========
+
     static class CharacterSelectHandler implements HttpHandler {
 
         private Game game;
@@ -629,27 +635,26 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             if ("POST".equals(httpExchange.getRequestMethod())) {
 
-//                System.out.println("char select called");
                 // Read the request body.
 
                 InputStream inputStream = httpExchange.getRequestBody();
                 String requestBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
-                // Get an object (was too lazy to make custom)
+                // Get an object (was too lazy to make custom).
 
                 JsonObject jsonObject = gson.fromJson(requestBody, JsonObject.class);
 
-                // get the important variables.
+                // Get the important content (playerId - which player to change. | character - which character to change them to).
 
                 int playerId = Integer.parseInt(jsonObject.get("id").getAsString());
                 int desiredCharacterIndex = Integer.parseInt(jsonObject.get("character").getAsString());
 
-                // get the specific player that were "casting"
+                // Get the specific player that were "casting".
 
                 Player player = game.getPlayerById(playerId);
 
-                // understand which character is the desired switch
-                // if we really wanted to optimize, we could save as string and do it when the game loads but whatever
+                // Understand which character is the desired switch.
+                // Note: if we really wanted to optimize, we could save as string and do it when the game loads but whatever.
 
                 switch (desiredCharacterIndex) {
 
@@ -657,10 +662,12 @@ public class GameServer {
                         game.setPlayerTo(playerId, Angler.castTo(player));
                         reportToConsole("CHARACTER SELECTED (ID: " + playerId + " | " + player.getUsername() + " changed to ANGLER).", INTERESTING);
                         break;
+
                     case GOLEM_INDEX:
                         game.setPlayerTo(playerId, Golem.castTo(player));
                         reportToConsole("CHARACTER SELECTED (ID: " + playerId + " | " + player.getUsername() + " changed to GOLEM).", INTERESTING);
                         break;
+
                     case WELDER_INDEX:
                         game.setPlayerTo(playerId, Welder.castTo(player));
                         reportToConsole("CHARACTER SELECTED (ID: " + playerId + " | " + player.getUsername() + " changed to WELDER).", INTERESTING);
@@ -694,16 +701,26 @@ public class GameServer {
         public void handle(HttpExchange httpExchange) throws IOException {
 
             // If a player requested to start the game... start it!
+
             if ("POST".equals(httpExchange.getRequestMethod())) {
 
-                // Start the game (loop) in the game object.
+                // Check if the game is already running (prevent multi-clicking).
 
                 if (!game.isGameRunning()) {
+
+                    // If not, setup the game variables.
+
                     game.generateMap();
                     game.setSpawnPoints();
+
+                    // Then start the game (and report it).
+
                     game.startGame();
                     reportToConsole("GAME HAS BEGUN", OKAY);
                 } else {
+
+                    // If the game is running already, just log it.
+
                     reportToConsole("GAME ALREADY RUNNING", ERROR);
                 }
 
@@ -715,9 +732,12 @@ public class GameServer {
             }
 
             // If the player wants to check whether the game has started or not.
+
             else if ("GET".equals(httpExchange.getRequestMethod())) {
 
                 // Just get the boolean "isRunning" & "players" from the game object.
+                // Then package it into custom data class "WaitroomData".
+
                 WaitroomData currentWaitroomData = new WaitroomData(game);
                 String response = gson.toJson(currentWaitroomData);
 

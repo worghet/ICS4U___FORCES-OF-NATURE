@@ -23,4 +23,5 @@ public class WaitroomData {
         playersOnline = game.getPlayers().toArray(new Player[0]);
     }
 
+    
 }

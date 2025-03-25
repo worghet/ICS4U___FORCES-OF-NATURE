@@ -10,23 +10,18 @@ import player.Player;
 // == GAME ========
 public class Game {
 
-
     // == INSTANCE VARIABLES [FIELDS] ==========================
-
 
     private final ArrayList<Player> players = new ArrayList<>();
     private boolean gameRunning;
     private GameMap currentMap;
 
-
     // == CONSTRUCTOR ==========================================
 
-
-    public Game() {}
-
+    public Game() {
+    }
 
     // == GENERAL METHODS ======================================
-
 
     public void startGame() {
 
@@ -38,7 +33,8 @@ public class Game {
 
         // Set timer schedule variables (These are in milliseconds).
         int delay = 0; // Since delay is 0, task will immediately begin.
-        int period = 12; // How often should the task be done? In this case, every 12ms (can be changed to 10 or 15).
+        int period = 12; // How often should the task be done? In this case, every 12ms (can be changed
+                         // to 10 or 15).
 
         // Set the code to run in the task.
         TimerTask gameLoop = new TimerTask() {
@@ -75,7 +71,7 @@ public class Game {
 
                 if (activePlayerCount == 1) {
                     gameRunning = false;
-                    GameServer.reportToConsole("GAME OVER",  GameServer.OKAY);
+                    GameServer.reportToConsole("GAME OVER", GameServer.OKAY);
                 }
 
                 // -- REPLACE WITH MATT'S UPDATE METHOD -----
@@ -93,18 +89,19 @@ public class Game {
         for (int i = 0; i < players.size(); i++) {
 
             Player temp = players.get(i);
-//            temp.update();//checks if player has moved, updates
-            //temp.getLatestActionPerformed();
+            // temp.update();//checks if player has moved, updates
+            // temp.getLatestActionPerformed();
 
-            //if player is long range attacking, creates projectile
+            // if player is long range attacking, creates projectile
             if (temp.getIsAttacking()) {
-                //will move this in the character subclasses i think
-//                Projectile shot = new Projectile(temp);//inputs player obj that attacked to get x,y, & type (ex. Player.Welder)
+                // will move this in the character subclasses i think
+                // Projectile shot = new Projectile(temp);//inputs player obj that attacked to
+                // get x,y, & type (ex. Player.Welder)
 
-                //bad will stop the loop that checks for other characters movements??
-//                while(shot.getActive()){
-//                    shot.somethingHit(game.Game.this.players);
-//                }
+                // bad will stop the loop that checks for other characters movements??
+                // while(shot.getActive()){
+                // shot.somethingHit(game.Game.this.players);
+                // }
 
             }
         }
@@ -113,7 +110,7 @@ public class Game {
     // * Matt's method; not commenting / touching it. *
     public void playerNear(Player attacker) {
 
-        //checks whther or not player is close enough for a close range attack
+        // checks whther or not player is close enough for a close range attack
 
         for (int i = 0; i < players.size(); i++) {
             Player temp = players.get(i);
@@ -121,17 +118,15 @@ public class Game {
                 double[] attackerPos = attacker.getPosition();
                 double[] check = temp.getPosition();
 
+                // checking position of attacker vs others, not done
+                // if(attackerPos[0][0] + check[0][0]){
 
-                //checking position of attacker vs others, not done
-                //if(attackerPos[0][0] + check[0][0]){
-
-                //}
+                // }
 
             }
         }
 
     }
-
 
     // == MUTATOR METHODS ======================================
 
@@ -139,7 +134,8 @@ public class Game {
         for (Player player : players) {
 
             player.setPosition(currentMap.getSpawnPoint());
-//            System.out.println("set " + player.getUsername() + "spawn to [" + player.getPosition()[0] + ", " + player.getPosition()[1] + ")");
+            // System.out.println("set " + player.getUsername() + "spawn to [" +
+            // player.getPosition()[0] + ", " + player.getPosition()[1] + ")");
 
         }
     }
@@ -182,7 +178,8 @@ public class Game {
 
         // TODO (Finish the following in method)
 
-        // 1. Clear all players from game (assuming just going to send players to main menu)
+        // 1. Clear all players from game (assuming just going to send players to main
+        // menu)
         players.clear();
 
         // 2. Clear map preference.
@@ -191,7 +188,6 @@ public class Game {
         Player.resetPlayerCount();
 
     }
-
 
     // == GETTER METHODS =======================================
 
@@ -205,7 +201,7 @@ public class Game {
     }
 
     public Player getPlayerById(int requestedPlayerId) {
-        for (Player player: players) {
+        for (Player player : players) {
             if (player.getId() == requestedPlayerId) {
                 return player;
             }
@@ -220,6 +216,5 @@ public class Game {
     public ArrayList<Player> getPlayers() {
         return players;
     }
-
 
 }
