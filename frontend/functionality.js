@@ -556,7 +556,7 @@ function renderPlayers(players) {
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
 
-                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature3.png")';
                 playerBox.style.width = "70px"; // Display size (scaled)
                 playerBox.style.height = "70px"; // Display size (scaled)
                 playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
@@ -588,7 +588,7 @@ function renderPlayers(players) {
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
 
-                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature3.png")';
                 playerBox.style.width = "70px"; // Display size (scaled)
                 playerBox.style.height = "70px"; // Display size (scaled)
                 playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
@@ -617,7 +617,7 @@ function renderPlayers(players) {
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
 
-                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature3.png")';
                 playerBox.style.width = "70px"; // Display size (scaled)
                 playerBox.style.height = "70px"; // Display size (scaled)
                 playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
@@ -654,7 +654,7 @@ function renderPlayers(players) {
                 let [xPos, yPos] = spriteSheetPos;
 
                 //display crouch
-                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature3.png")';
                 playerBox.style.width = "70px"; // Display size (scaled)
                 //playerBox.style.height = "35px"; // Display size (scaled)
                 playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
@@ -704,7 +704,7 @@ function renderPlayers(players) {
                 let [xPos, yPos] = spriteSheetPos;
 
                 //display crouch
-                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature3.png")';
                 playerBox.style.width = "70px"; // Display size (scaled)
                 playerBox.style.height = "70px"; // Display size (scaled)
                 playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
@@ -816,15 +816,10 @@ function animate(frame, state, type, direction, aFrame, attack){
     if(aFrame < 30 && attack){
         attackFrame++;
         if(type === "Angler"){
-            console.log("angler attack !!!!!!");
-            return [280, 140];
-
+            return [210, 140];
         } else if (type === "Golem"){
-            console.log("golem attack !!!!!!!");
             return [280, yInitial+140];
-
         }else{
-            console.log("welder attack !!!!!!!");
             return [280, yInitial+140];
         }
     }
@@ -847,15 +842,15 @@ function animate(frame, state, type, direction, aFrame, attack){
         case "attack":
             xInitial = 210;
             if(type === "Angler"){
-                console.log("angler attack");
+//               console.log("angler attack");
                 return [280, 140];
 
             } else if (type === "Golem"){
-                console.log("golem attack");
+//                console.log("golem attack");
                 return [350, 490];
 
             }else{
-                console.log("welder attack");
+ //               console.log("welder attack");
                 return [350, yInitial+140];
             }
            /* if(direction){
