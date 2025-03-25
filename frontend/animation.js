@@ -1,4 +1,5 @@
-//taking this from: https://www.youtube.com/watch?v=SE3WlyefYuc, in process of typing it out
+//this uses a js canvas instead of the css commands and its easier to use the css stuff in functionality.js
+//will delete later but for now the reference is still helpful
 
 class animation{
    constructor(spritesheet, xStart, yStart, height, width, frameCount, frameDuration, loop){

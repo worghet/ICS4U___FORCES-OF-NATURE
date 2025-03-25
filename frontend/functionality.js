@@ -8,8 +8,7 @@ const X = 0;
 const Y = 1;
 const FPS = 35;
 //animation
-const spriteSheet = new Image();
-spriteSheet.src = "./images/Unfinished Sprites.png";//wanted to use for testing purposes but need help syncing back & front end
+let spriteSheetPos; //use the animation() function to return where to cut out img on sprite sheet 
 //will finish sprite sheet, & organize it
 
 
@@ -482,11 +481,6 @@ function renderPlayers(players) {
                 playerBox.className = "box";
                 playerBox.style.backgroundColor = player.colour;
 
-                //displaying sprite
-                playerBox.style.backgroundImage = 'url("/images/main_wizard.png")'
-                // playerBox.style.backgroundSize = "525px 525px"; // Adjust based on sprite sheet size
-                playerBox.style.backgroundPosition = "center 0px"; // X and Y offset to select a portion*/
-                playerBox.style.backgroundSize =  "contain";
 
                 // playerBox.style.width = "35px"; // Size of cropped portion
                 // playerBox.style.height = "35px"; // Size of cropped portion
@@ -503,6 +497,14 @@ function renderPlayers(players) {
                 document.getElementById("game-window").appendChild(playerBox);
                 document.getElementById("game-window").appendChild(playerTag);
             }
+
+            //player starts facing forward
+           /* playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+            playerBox.style.width = "70px"; // Display size (scaled)
+            playerBox.style.height = "70px"; // Display size (scaled)
+            playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+            playerBox.style.backgroundPosition = "0px 0px"; // Select the top-left 35x35 portion
+            playerBox.style.backgroundRepeat = "no-repeat";*/
 
 
             if (player.lives == 0) {
@@ -533,17 +535,78 @@ function renderPlayers(players) {
             }
 
             if (player.isAttacking) {
-                playerBox.style.backgroundColor = "black";
+               // playerBox.style.backgroundColor = "black";
+                // Get sprite sheet position from animate function (returns [x, y])
+                spriteSheetPos = animate(1, "attack", checkPlayerType(player), player.direction);
+
+                // Extract x and y from the returned 2D array values
+                let [xPos, yPos] = spriteSheetPos;
+
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.width = "70px"; // Display size (scaled)
+                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+                playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
+                playerBox.style.backgroundRepeat = "no-repeat";
+                
+                
             }
             else {
-                            playerBox.style.backgroundColor = player.colour;
+                //player starts facing forward
+              /*  playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.width = "70px"; // Display size (scaled)
+                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+                playerBox.style.backgroundPosition = "0px 0px"; // Select the top-left 35x35 portion
+                playerBox.style.backgroundRepeat = "no-repeat";*/
             }
 
             if (player.direction) {
                 playerBox.style.transform = "scaleX(1)";
+                // Get sprite sheet position from animate function (returns [x, y])
+                spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction);
+
+                // Extract x and y from the returned 2D array values
+                let [xPos, yPos] = spriteSheetPos;
+
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.width = "70px"; // Display size (scaled)
+                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+                playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
+                playerBox.style.backgroundRepeat = "no-repeat";
+
+                //incrament the frame that should display
+                if(player.animationFrame === 3){
+                    player.animationFrame = 1;
+                } else {
+                    player.animationFrame +=1;
+                }
+                
+
+                
             }
             else {
-                            playerBox.style.transform = "scaleX(-1)";
+                playerBox.style.transform = "scaleX(-1)";
+                // Get sprite sheet position from animate function (returns [x, y])
+                spriteSheetPos = animate(player.animationFrame, "run", checkPlayerType(player), player.direction);
+
+                // Extract x and y from the returned 2D array values
+                let [xPos, yPos] = spriteSheetPos;
+
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.width = "70px"; // Display size (scaled)
+                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+                playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
+                playerBox.style.backgroundRepeat = "no-repeat";
+
+                //incrament the frame that should display
+                if(player.animationFrame === 3){
+                    player.animationFrame = 1;
+                } else {
+                    player.animationFrame +=1;
+                }
             }
 
 //            otherPlayerHealth.value = "player.health";  // Set the new health value
@@ -555,7 +618,22 @@ function renderPlayers(players) {
 
             // If crouching, move everything down 50 pixels.
             if (player.isCrouching) {
-                playerBox.style.height = "35px";
+                //playerBox.style.height = "35px";
+
+                // Get sprite sheet position from animate function (returns [x, y])
+                spriteSheetPos = animate(2, "crouch", checkPlayerType(player), player.direction);
+
+                // Extract x and y from the returned 2D array values
+                let [xPos, yPos] = spriteSheetPos;
+
+                //display crouch
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.width = "70px"; // Display size (scaled)
+                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+                playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
+                playerBox.style.backgroundRepeat = "no-repeat";
+
                 playerBox.style.top = intToPx(player.position[Y] + 35);
 
                 // Maintain 40 pixel height separation when crouched.
@@ -566,10 +644,42 @@ function renderPlayers(players) {
             else {
                 playerBox.style.height = "70px";
                 playerBox.style.top = intToPx(player.position[Y]);
-
                 // Have the tag hover 40 pixels above the box.
                 playerTag.style.top = intToPx(player.position[Y] - 40);
+
+                // just displaying standing --> would override the run display
+                // Get sprite sheet position from animate function (returns [x, y])
+               /* spriteSheetPos = animate(1, "stand", checkPlayerType(player), player.direction);
+
+                // Extract x and y from the returned 2D array values
+                let [xPos, yPos] = spriteSheetPos;
+
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.width = "70px"; // Display size (scaled)
+                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+                playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
+                playerBox.style.backgroundRepeat = "no-repeat";*/
+        
             }
+
+            if(player.isJumping) {
+                // Get sprite sheet position from animate function (returns [x, y])
+                spriteSheetPos = animate(2, "jump", checkPlayerType(player), player.direction);
+
+                // Extract x and y from the returned 2D array values
+                let [xPos, yPos] = spriteSheetPos;
+
+                //display crouch
+                playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
+                playerBox.style.width = "70px"; // Display size (scaled)
+                playerBox.style.height = "70px"; // Display size (scaled)
+                playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
+                playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
+                playerBox.style.backgroundRepeat = "no-repeat";
+            }
+
+            
 
             // Center the tag based on the player's box position and width.
             playerTag.style.left = intToPx(playerBox.offsetLeft + (playerBox.offsetWidth / 2) - (playerTag.offsetWidth / 2));
@@ -621,4 +731,93 @@ function pxToInt(str_px) {
 
 function intToPx(int_px) {
     return (int_px + "px");
+}
+
+function animate(frame, state, type, direction){
+    //vars for where to cut out image from sprite sheet
+    var yInitial = 0;
+    var yAdding = 0;
+    var yFinal = 0;
+    var xInitial = 0;
+    var xAdding = 0;
+    var xFinal = 0;
+
+    switch (type){
+        case "Angler": 
+            yInitial = 0;
+            break;
+        case "Golem":
+            yInitial = 280;
+            break;
+        case "Welder":
+            yInitial = 560;
+            break;
+    }
+
+    switch (state) {
+        case "crouch":
+            xInitial = 70;
+            yAdding = 0; 
+            console.log("crouching");
+            break;
+        case "jump":
+            xInitial = 210;
+            yAdding = 0; 
+            console.log("jumping");
+            break;
+        case "attack":
+            xInitial = 210;
+            if(direction){
+                yAdding = 140; 
+                console.log("attack right");
+            }else{
+                yAdding = 140;
+                console.log("attack left");
+            }
+            break;
+        case "run":
+            xInitial = 0; 
+            if(direction){
+                yAdding = 140; 
+                console.log("run right");
+                xAdding = 70 * frame - 70; // Frame count starts at 1, so adjust accordingly
+            }else{
+                yAdding = 140;
+                console.log("run left");
+                xAdding = 70 * frame - 70; // Frame count starts at 1, so adjust accordingly
+            }
+            break;
+        case "stand":
+            xInitial = 0;
+            yAdding = 0;
+            console.log("standing");
+            break;
+        default:
+            console.error("Unknown player type: ", type);
+            return [NaN, NaN];  // Return NaN if type is unrecognized
+    }
+
+
+    yFinal = yInitial + yAdding;
+    xFinal = xInitial + xAdding;
+
+    // return values in a 2D array
+    console.log("xPos:", xFinal, "yPos:", yFinal);
+    return [xFinal, yFinal];
+
+}//end of animation function
+
+//checks which hero is used
+function checkPlayerType(player) {
+    
+    if (player.colour === "aqua") {
+        return "Angler";
+    } if (player.colour === "saddlebrown") {
+        return "Golem";
+    } else if (player.colour === "red") {
+        return "Welder";
+    } else {
+        return "Unknown type";
+    }
+   
 }

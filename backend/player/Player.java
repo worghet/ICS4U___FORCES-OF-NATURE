@@ -40,6 +40,9 @@ public class Player {
     // temporary
     String colour;
 
+    //to keep track of where in the animation it is (ex: 3 running frames)
+    protected int animationFrame = 1;
+
     protected boolean isSpectating;
     protected boolean isReady;
     protected String username;
@@ -713,6 +716,14 @@ public class Player {
 
     public String getColour() {
         return colour;
+    }
+
+    public int getFrame(){
+        return animationFrame;
+    }
+
+    public void setFrame(int frame){
+        this.animationFrame = frame;
     }
 
 }
