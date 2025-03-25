@@ -640,15 +640,15 @@ function renderPlayers(players) {
                 //display crouch
                 playerBox.style.backgroundImage = 'url("/images/Finished-Sprites-Forces-of-Nature2.png")';
                 playerBox.style.width = "70px"; // Display size (scaled)
-                playerBox.style.height = "35px"; // Display size (scaled)
+                //playerBox.style.height = "35px"; // Display size (scaled)
                 playerBox.style.backgroundSize = "1050px 1050px"; // Scale entire sprite sheet 2x
                 playerBox.style.backgroundPosition = `-${xPos}px -${yPos}px`; // Select chunk from the sprite sheet
                 playerBox.style.backgroundRepeat = "no-repeat";
 
-                playerBox.style.top = intToPx(player.position[Y] + 35);
+                playerBox.style.top = intToPx(player.position[Y] + 10);
 
                 // Maintain 40 pixel height separation when crouched.
-                playerTag.style.top = intToPx(player.position[Y] - 5);
+                playerTag.style.top = intToPx(player.position[Y] - 10);
             }
 
             // Otherwise, keep the positioning same as the computed one.
@@ -676,7 +676,7 @@ function renderPlayers(players) {
 
             if(player.isJumping) {
                 // Get sprite sheet position from animate function (returns [x, y])
-                spriteSheetPos = animate(2, "jump", checkPlayerType(player), player.direction);
+                spriteSheetPos = animate(1, "jump", checkPlayerType(player), player.direction);
 
                 // Extract x and y from the returned 2D array values
                 let [xPos, yPos] = spriteSheetPos;
@@ -799,17 +799,20 @@ function animate(frame, state, type, direction){
             break;
         case "jump":
             xInitial = 210;
+            if(type === "Golem"){
+                xInitial = 140;
+            }
             yAdding = 0; 
 //            console.log("jumping");
             break;
         case "attack":
             xInitial = 210;
             if(direction){
-                yAdding = 140; 
+                yAdding = 280; 
 //                console.log("attack right");
             }else{
-                yAdding = 140;
-//                console.log("attack left");
+                yAdding = 280;
+//               console.log("attack left");
             }
             break;
         case "run":
@@ -818,10 +821,12 @@ function animate(frame, state, type, direction){
                 yAdding = 140; 
 //                console.log("run right");
                 xAdding = 70 * frame - 70; // Frame count starts at 1, so adjust accordingly
+                console.log(frame);
             }else{
                 yAdding = 140;
 //                console.log("run left");
                 xAdding = 70 * frame - 70; // Frame count starts at 1, so adjust accordingly
+                console.log(frame);
             }
             break;
         case "stand":
