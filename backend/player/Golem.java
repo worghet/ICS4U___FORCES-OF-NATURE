@@ -1,34 +1,44 @@
 package player;
-import java.util.ArrayList;
 
-
+// == GOLEM | PLAYER ==============
 public class Golem extends Player {
     
     public Golem(Player player){
+
+        // Use player constructor.
+
         super();
+
+        // Keep casting integrity.
 
         id = player.getId();
         username = player.getUsername();
 
-        this.maxHealth = 150; //higher than base player
+        // Change health stats.
+
+        this.maxHealth = 150; // Higher than base player.
         this.health = maxHealth;
 
-        // movement stuffz
-        this.speedMultiplier = 0.9; //higher than base player
+        // Change movement variables.
+
+        this.speedMultiplier = 0.9; // Higher than base player.
         MAX_X_VELOCITY = 4;
         MAX_Y_VELOCITY = 13;
         JUMP_FORCE = 20;
-        FRICTION = 0.2; // slippery
+        FRICTION = 0.2; // Very slow crouching.
         CROUCH_FRICTION = 0.05;
         MAX_CROUCH_VELOCITY = 1;
         MAX_CONSECUTIVE_JUMPS = 2;
         MAX_MELEE_COOLDOWN = 25;
-        DEFAULT_MELEE_WIDTH = 120;
-        DEFAULT_MELEE_DAMAGE = 25;
 
+        // Character identification.
 
         colour = "saddlebrown";
-        //slower with more health
+
+        // Stronger.
+
+        DEFAULT_MELEE_WIDTH = 120;
+        DEFAULT_MELEE_DAMAGE = 25;
     }
 
     public static Golem castTo(Player player) {
@@ -60,15 +70,15 @@ public class Golem extends Player {
 //        }
 //    }//close attack
 
-    @Override
-    public void projectileAttack(ArrayList<Projectile> projectiles) {
-        if (!isAttacking && projectileCooldown <= 0) {
-            this.isAttacking = true;
-            this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
-            System.out.println("Golem Projectile Attack!");
-            Projectile projectile = new Projectile(this, 5, 10, "RockBall");
-            //change frames to be rockball
-            projectiles.add(projectile);
-        }
-    }
+    // @Override
+    // public void projectileAttack(ArrayList<Projectile> projectiles) {
+    //     if (!isAttacking && projectileCooldown <= 0) {
+    //         this.isAttacking = true;
+    //         this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
+    //         System.out.println("Golem Projectile Attack!");
+    //         Projectile projectile = new Projectile(this, 5, 10, "RockBall");
+    //         //change frames to be rockball
+    //         projectiles.add(projectile);
+    //     }
+    // }
 }

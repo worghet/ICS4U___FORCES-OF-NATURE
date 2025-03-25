@@ -1,41 +1,48 @@
 package player;
-import java.util.ArrayList;
 
+// == ANGLER | PLAYER ==============
 public class Angler extends Player {
 
+    // Constructor.
 
     public Angler(Player player){
 
+        // Use Player constructor.
+
         super();
 
-        // keep casting integrity
+        // Keep casting integrity.
 
         id = player.getId();
         username = player.getUsername();
 
-        // change health stats
+        // Change health stats.
 
-        this.maxHealth = 90; //lower than base player
+        this.maxHealth = 90; // Lower than base player.
         this.health = maxHealth;
 
-        // movement stuffz
-        this.speedMultiplier = 3; //higher than base player
-        MAX_X_VELOCITY = 14;
-        MAX_Y_VELOCITY = 12;
-        JUMP_FORCE = 14;
-        FRICTION = 0.9; // slippery
-        CROUCH_FRICTION = 0.95;
-        MAX_CROUCH_VELOCITY = 25;
+        // Change movement variables.
 
-        // sprite sheet / color change
+        this.speedMultiplier = 3; // Higher than base player.
+        MAX_X_VELOCITY = 14; // Faster.
+        MAX_Y_VELOCITY = 12; // Faster.
+        JUMP_FORCE = 14; // Higher jump.
+        FRICTION = 0.9; // More slippery.
+        CROUCH_FRICTION = 0.95; // Faster.
+        MAX_CROUCH_VELOCITY = 25; // Faster (more like sliding).
+
+        // Character identifier (used in javascript).
+
         colour = "aqua";
 
+        // Weaker, but faster hitting.
 
         MAX_MELEE_COOLDOWN = 7;
         DEFAULT_MELEE_DAMAGE = 10;
 
-        //quicker with less health
     }
+
+    // Caster.
 
     public static Angler castTo(Player player) {
         return new Angler(player);
@@ -67,17 +74,16 @@ public class Angler extends Player {
 //        }
 //    }//close attack
 
-    @Override
-    public void projectileAttack(ArrayList<Projectile> projectiles) {
-        if (!isAttacking && projectileCooldown <= 0) {
-            this.isAttacking = true;
-            this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
-            System.out.println("Angler Projectile Attack!");
-            Projectile projectile = new Projectile(this, 5, 10, "Waterball");
-            //change frames to be waterball
-            projectiles.add(projectile);
-        }
-
-    }
+    // @Override
+    // public void projectileAttack(ArrayList<Projectile> projectiles) {
+    //     if (!isAttacking && projectileCooldown <= 0) {
+    //         this.isAttacking = true;
+    //         this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
+    //         System.out.println("Angler Projectile Attack!");
+    //         Projectile projectile = new Projectile(this, 5, 10, "Waterball");
+    //         //change frames to be waterball
+    //         projectiles.add(projectile);
+    //     }
+    // }
     
 }

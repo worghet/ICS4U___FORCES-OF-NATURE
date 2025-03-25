@@ -1,12 +1,11 @@
 package player;
 
 // == IMPORTS =============
-import game.Game;
-import game.GameMap;
+import java.util.ArrayList;
 import game.GameServer;
+import game.GameMap;
 import game.Island;
 
-import java.util.ArrayList;
 
 // == PLAYER ========
 public class Player {
@@ -37,7 +36,7 @@ public class Player {
     // == PLAYER RELATED DATA ==================================
 
 
-    // temporary
+    // Temporary (mayebe).
     String colour;
 
     //to keep track of where in the animation it is (ex: 3 running frames)
@@ -57,11 +56,9 @@ public class Player {
 
     // == CONTROL-BASED VARIABLES ==============================
 
-
+    
     // Default player stats; are configured in each character individually.
-    // TODO: These are NOT all static. Configure them and update in each character's class accordingly.
-    // TODO: I think protected is unnecessary here.
-
+    
     // Physical constants (static final); might be moved to Map object.
     protected static final double GRAVITY = 0.55;
     protected static final double ACCELERATION = 0.5;
@@ -107,6 +104,7 @@ public class Player {
     // Character classes will override this constructor,
     // and manipulate the movement / damage variables.
     // THIS CONSTRUCTS A DEFAULT CHARACTER.
+
     public Player(String username) {
 
         // Increment player count, set ID.
@@ -206,6 +204,117 @@ public class Player {
 
     // == UPDATER METHOD =======================================
 
+    
+    public void updatePosition() {
+        
+        // Save the latest action performed by the player (to not be suddenly changed).
+        
+        boolean[] keys_pressed = latestActionPerformed.getKeysPressed();
+        
+        // Increment X velocity based on left/right keys being pressed.
+        
+        if (keys_pressed[PlayerAction.LEFT]) {
+            moveLeft();  // Or apply acceleration
+        }
+        if (keys_pressed[PlayerAction.RIGHT]) {
+            moveRight();  // Or apply acceleration
+        }
+        
+        // Register jumps (track if had jumped; counter and whatnot).
+        
+        if (keys_pressed[PlayerAction.UP]) {
+
+            // Check that person is not holding but just jumping (check previous input).
+            
+            if (!previouslyJumped) {
+                jump();
+                previouslyJumped = true;
+            }
+            
+        }
+        else {
+            previouslyJumped = false;
+        }
+        
+        // Set isCrouching variable based on the player's input.
+        
+        isCrouching = keys_pressed[PlayerAction.DOWN];
+        
+        // Apply gravity based on user's movement state (crouched or standing or air).
+
+        if (isCrouching) {
+            velocity[Y] += CROUCH_GRAVITY;
+
+        } else {
+            velocity[Y] += GRAVITY;
+            }
+
+        // Apply friction (again, based on movement state).
+
+        if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
+
+            // Air resistance - least friction.
+            if (isJumping) {
+                velocity[X] *= AIR_FRICTION;
+            }
+            
+            // Crouching - higher friction.
+            else if (isCrouching) {
+                velocity[X] *= CROUCH_FRICTION;
+            }
+            
+            // Just standing - standard friction.
+            else {
+                velocity[X] *= FRICTION;  // Apply crouch friction
+            }
+        }
+        
+        // Cap the velocity to the maximum variables set for the player.
+        
+        capVelocity();
+        
+        // Update the actual position with reference to now changed velocity.
+
+        position[X] += velocity[X];
+        position[Y] += velocity[Y];
+        
+        // Update attack cooldown
+        
+        if (this.projectileCooldown > 0 || this.meleeCooldown > 0) {
+            this.meleeCooldown--;
+            this.projectileCooldown--;
+        }
+        
+        // Reset attacking state after attack is complete
+        
+        if (this.isAttacking && this.projectileCooldown <= 0 && this.meleeCooldown <= 0) {
+            this.isAttacking = false;
+        }
+    }
+
+    public void registerDamage(ArrayList<Player> players) {
+
+        // If the player is attacking.
+        if (latestActionPerformed.getKeysPressed()[PlayerAction.MELEE]) {
+            
+            // And isnt holding 'O' (attack keybind). 
+            if (!previouslyPressedMeleeAttack) {
+
+                // Perform attack.
+                meleeAttack(players);
+                previouslyPressedMeleeAttack = true;
+                
+            }
+        }
+        else {
+            previouslyPressedMeleeAttack = false;
+        }
+    }
+    
+
+    // == MOVEMENT / ATTACK METHODS ============================
+    
+    
     public void toggleSpectating() {
         isSpectating = true;
     }
@@ -221,127 +330,17 @@ public class Player {
     public boolean isSpecator() {
         return isSpectating;
     }
-
-    public void updatePosition() {
-
-        // Save the latest action performed by the player (to not be suddenly changed).
-
-        boolean[] keys_pressed = latestActionPerformed.getKeysPressed();
-
-        // Increment X velocity based on left/right keys being pressed.
-
-        if (keys_pressed[PlayerAction.LEFT]) {
-            moveLeft();  // Or apply acceleration
-        }
-        if (keys_pressed[PlayerAction.RIGHT]) {
-            moveRight();  // Or apply acceleration
-        }
-
-        // Register jumps (track if had jumped; counter and whatnot).
-
-        if (keys_pressed[PlayerAction.UP]) {
-
-            // Check that person is not holding but just jumping (check previous input).
-
-            if (!previouslyJumped) {
-                jump();
-                previouslyJumped = true;
-            }
-
-        }
-        else {
-            previouslyJumped = false;
-        }
-
-        // Set isCrouching variable based on the player's input.
-
-        isCrouching = keys_pressed[PlayerAction.DOWN];
-
-        // Apply gravity based on user's movement state (crouched or standing or air).
-
-//        if (isJumping) {
-
-            if (isCrouching) {
-                velocity[Y] += CROUCH_GRAVITY;
-
-            } else {
-                velocity[Y] += GRAVITY;
-            }
-//        }
-
-        // Apply friction (again, based on movement state).
-
-        if (!keys_pressed[PlayerAction.LEFT] && !keys_pressed[PlayerAction.RIGHT]) {
-
-            // Air resistance - least friction.
-            if (isJumping) {
-                velocity[X] *= AIR_FRICTION;
-            }
-
-            // Crouching - higher friction.
-            else if (isCrouching) {
-                velocity[X] *= CROUCH_FRICTION;
-            }
-
-            // Just standing - standard friction.
-            else {
-                velocity[X] *= FRICTION;  // Apply crouch friction
-            }
-        }
-
-        // Cap the velocity to the maximum variables set for the player.
-
-        capVelocity();
-
-        // Update the actual position with reference to now changed velocity.
-
-        position[X] += velocity[X];
-        position[Y] += velocity[Y];
-
-        // Check if player has landed
-        // TODO: Check collisions from game (where we can pass map through).
-
-        // Update attack cooldown
-
-        if (this.projectileCooldown > 0 || this.meleeCooldown > 0) {
-            this.meleeCooldown--;
-            this.projectileCooldown--;
-        }
-
-        // Reset attacking state after attack is complete
-
-        if (this.isAttacking && this.projectileCooldown <= 0 && this.meleeCooldown <= 0) {
-            this.isAttacking = false;
-        }
-    }
-
-    public void registerDamage(ArrayList<Player> players) {
-        if (latestActionPerformed.getKeysPressed()[PlayerAction.MELEE]) {
-            if (!previouslyPressedMeleeAttack) {
-                meleeAttack(players);
-                previouslyPressedMeleeAttack = true;
-
-            }
-//            System.out.println("called melee in updatePlayers");
-        }
-        else {
-            previouslyPressedMeleeAttack = false;
-        }
-    }
-
-    // == MOVEMENT / ATTACK METHODS ============================
-
-
+    
     public void moveLeft() {
         this.velocity[X] -= ACCELERATION * speedMultiplier;
         this.direction = false;
     }
-
+    
     public void moveRight() {
         this.velocity[X] += ACCELERATION * speedMultiplier;
         this.direction = true;
     }
-
+    
     public void crouch() {
         isCrouching = true;
     }
@@ -401,12 +400,12 @@ public class Player {
         if (!isAttacking && meleeCooldown >= 0) { //ensure the player isn't already attacking
             this.isAttacking = true;
             this.meleeCooldown = MAX_MELEE_COOLDOWN;
-//            System.out.println("Melee Attack!");
 
-            //calculate the attack area based on the player's direction
-            double attackStartX = position[X]; //start of the attack hitbox(X position)
+            // Calculate the attack area based on the player's direction.
+            double attackStartX = position[X]; // Start of the attack hitbox (X position).
             double attackEndX = position[X] + (direction ? DEFAULT_MELEE_WIDTH : -DEFAULT_MELEE_WIDTH); //end of the attack hitbox(X position)
 
+            // DASH WITH ATTACK FUNCTIONALITY.
 //            if (direction) {
 //                System.out.println("movin right");
 //                position[X] += ((double) DEFAULT_MELEE_WIDTH / 2); // move player forward a bit
@@ -419,8 +418,9 @@ public class Player {
 //
 //            }
 
+            // Iterate through the different players. 
             for (Player temp : players) {
-                if (temp != this) { //ensure the player isn't attacking themselves
+                if (temp != this) { // Ensure the player isn't attacking themselves.
                     double[] tempPos = temp.getPosition();
                     boolean withinHorizontalRange = (direction && tempPos[X] >= attackStartX && tempPos[X] <= attackEndX) || (!direction && tempPos[X] <= attackStartX && tempPos[X] >= attackEndX); //first check for if facing right, then if facing left
                     boolean withinVerticalRange = Math.abs(tempPos[Y] - position[Y]) < DEFAULT_MELEE_HEIGHT; //vertical check
@@ -460,14 +460,12 @@ public class Player {
         if (!isAttacking && projectileCooldown <= 0) {
             this.isAttacking = true;
             this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
-//            System.out.println("Default Projectile Attack!");
             Projectile projectile = new Projectile(this, 5, 20, "projectile");
             projectiles.add(projectile);
         }
     }
 
     public void checkMapCollisions(GameMap map) {
-
 
         // GROUND COLLISION
 
@@ -478,37 +476,47 @@ public class Player {
             isJumping = false;  // Player is no longer in the air
         }
 
+        // WALL COLLISIONS (set manually based cuz of screen resolution).
+
+        // Left side of screen.
         if (position[X] < 0) {
             position[X] = 0;
-        } else if (position[X] > 1675) {
+        } 
+
+        // Right side of screen.
+        else if (position[X] > 1675) {
             position[X] = 1675;
         }
 
+        // Note: 70px is the height of the player box.
 
-        // Check for collision with islands (or any other platforms in the map)
+        // Check for collision with islands (or any other platforms in the map).
         for (Island island : map.getIslands()) {
 
-            // Check if the player is within the horizontal bounds of the island
+            // Check if the player is within the horizontal bounds of the island.
+
             if (position[X] + 70 >= island.getTopLeftX() && position[X] <= island.getBottomRightX() && !isCrouching) {
 
+                // Check if player is falling above the island.
+
                 if (position[Y] + 70 >= island.getTopLeftY() &&  velocity[Y] > 0) {
-                    // Player is falling and above the island, they should land
-//                    System.out.println("Landing on the island...");
 
-                    // Adjust Y position to the top of the island
-                    position[Y] = island.getTopLeftY() - 70;  // 70 could be adjusted based on player height
+                    // Adjust Y position to the top of the island.
 
-                    // Stop downward velocity and prevent further falling
+                    position[Y] = island.getTopLeftY() - 70;
+
+                    // Stop downward velocity and prevent further falling.
+
                     velocity[Y] = 0;
 
-                    // Reset jump count since the player is on solid ground
-                    numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;
-                    isJumping = false;  // Player is no longer jumping
+                    // Reset jump count since the player is on solid ground.
 
-                    // Output to confirm the player has landed on the island
-//                    System.out.println("ON AN ISLAND --> " + topIslandCounter);
-                    topIslandCounter++;
-                } else
+                    numJumpsRemaining = MAX_CONSECUTIVE_JUMPS;
+                    isJumping = false;
+
+                } 
+                
+                else
                 {
                     if (position[Y] + 70 > island.getTopLeftY()  && position[Y] < island.getBottomRightY()) {
                         position[Y] = island.getTopLeftY() - 70;
@@ -518,9 +526,6 @@ public class Player {
             }
         }
     }
-
-    static int topIslandCounter = 0;
-    static int islandCounter = 0;
 
     public void capVelocity() {
 
@@ -532,16 +537,11 @@ public class Player {
             // Cap X velocity.
             if (velocity[X] > MAX_CROUCH_VELOCITY) {
                 velocity[X] = MAX_CROUCH_VELOCITY;
-            } else if (velocity[X] < -MAX_CROUCH_VELOCITY) {
+            } 
+            else if (velocity[X] < -MAX_CROUCH_VELOCITY) {
                 velocity[X] = -MAX_CROUCH_VELOCITY;
             }
 
-//            COMMENTED THIS: IT PREVENTS "SLAMS"
-//            if (velocity[Y] > MAX_CROUCH_VELOCITY) {
-//                velocity[Y] = MAX_CROUCH_VELOCITY;
-//            } else if (velocity[Y] < -MAX_CROUCH_VELOCITY) {
-//                velocity[Y] = -MAX_CROUCH_VELOCITY;
-//            }
         }
 
         // Player is standing.
@@ -555,13 +555,11 @@ public class Player {
                 velocity[X] = -MAX_X_VELOCITY;
             }
 
-            // CHANGED - else if is not suitable in combining these velocities.
-            // we check X velocities and Y velocities individually.
-
             // Cap Y velocity.
             if (velocity[Y] > MAX_Y_VELOCITY) {
                 velocity[Y] = MAX_Y_VELOCITY;
-            } else if (velocity[Y] < -MAX_Y_VELOCITY) {
+            } 
+            else if (velocity[Y] < -MAX_Y_VELOCITY) {
                 velocity[Y] = -MAX_Y_VELOCITY;
             }
         }
