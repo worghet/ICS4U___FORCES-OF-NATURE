@@ -67,7 +67,7 @@ public class GameMap {
     public double[] getSpawnPoint() {
 
         int randomSpawnPointIndex = new Random().nextInt(spawnPoints.length);
-        System.out.println("got spawn points.. player gonna spwan -->" +  spawnPoints[randomSpawnPointIndex][0] + " "+  spawnPoints[randomSpawnPointIndex][1]);
+//        System.out.println("got spawn points.. player gonna spwan -->" +  spawnPoints[randomSpawnPointIndex][0] + " "+  spawnPoints[randomSpawnPointIndex][1]);
         return spawnPoints[randomSpawnPointIndex];
 
 

@@ -139,7 +139,7 @@ public class Game {
         for (Player player : players) {
 
             player.setPosition(currentMap.getSpawnPoint());
-            System.out.println("set " + player.getUsername() + "spawn to [" + player.getPosition()[0] + ", " + player.getPosition()[1] + ")");
+//            System.out.println("set " + player.getUsername() + "spawn to [" + player.getPosition()[0] + ", " + player.getPosition()[1] + ")");
 
         }
     }

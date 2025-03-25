@@ -126,7 +126,7 @@ public class Player {
 
         MAX_PROJECTILE_COOLDOWN = 10;
         MAX_MELEE_COOLDOWN = 10;
-        DEFAULT_MELEE_WIDTH = 70;
+        DEFAULT_MELEE_WIDTH = 130;
         DEFAULT_MELEE_HEIGHT = 20;
         DEFAULT_MELEE_DAMAGE = 15;
         isSpectating = false;
@@ -172,7 +172,7 @@ public class Player {
         MAX_CONSECUTIVE_JUMPS = 3;
         MAX_PROJECTILE_COOLDOWN = 10;
         MAX_MELEE_COOLDOWN = 10;
-        DEFAULT_MELEE_WIDTH = 70;
+        DEFAULT_MELEE_WIDTH = 100;
         DEFAULT_MELEE_HEIGHT = 20;
         DEFAULT_MELEE_DAMAGE = 15;
         isSpectating = false;
@@ -400,7 +400,7 @@ public class Player {
         if (!isAttacking && meleeCooldown >= 0) { //ensure the player isn't already attacking
             this.isAttacking = true;
             this.meleeCooldown = MAX_MELEE_COOLDOWN;
-            System.out.println("Melee Attack!");
+//            System.out.println("Melee Attack!");
 
             //calculate the attack area based on the player's direction
             double attackStartX = position[X]; //start of the attack hitbox(X position)
@@ -427,18 +427,18 @@ public class Player {
                     if (withinHorizontalRange && withinVerticalRange) {
                         temp.takeDamage(DEFAULT_MELEE_DAMAGE); //deal damage to the player if they are within the attack range
                         this.damageDealt += 10;
-                        System.out.println("Hit " + temp.getUsername() + " for 10 damage!");
+//                        System.out.println("Hit " + temp.getUsername() + " for 10 damage!");
 
                         if (temp.getHealth() == 0) {
                             temp.setLives(temp.getLives() - 1);
-                            System.out.println(temp.getUsername() + "has " + temp.getLives() + " lives");
+//                            System.out.println(temp.getUsername() + "has " + temp.getLives() + " lives");
                             if (!temp.isDead()) {
                                 temp.respawn();
                             }
                             else {
-                                GameServer.reportToConsole(temp.getUsername() + "is Dead!!", GameServer.INTERESTING);
+                                GameServer.reportToConsole(temp.getUsername() + " HAS BEEN ELIMINATED!", GameServer.INTERESTING);
                                 temp.toggleSpectating();
-                                System.out.println("this guy is spectating: " + temp.isSpectating);
+//                                System.out.println("this guy is spectating: " + temp.isSpectating);
                             }
                         }
 
@@ -459,7 +459,7 @@ public class Player {
         if (!isAttacking && projectileCooldown <= 0) {
             this.isAttacking = true;
             this.projectileCooldown = MAX_PROJECTILE_COOLDOWN;
-            System.out.println("Default Projectile Attack!");
+//            System.out.println("Default Projectile Attack!");
             Projectile projectile = new Projectile(this, 5, 20, "projectile");
             projectiles.add(projectile);
         }

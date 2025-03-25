@@ -9,7 +9,8 @@ public class PlayerAction {
 
     private int playerId;
 
-    private boolean[] keys_pressed = new boolean[] {false, false, false, false, false, false}; // left, right, down, up
+    private boolean[] keys_pressed = new boolean[]
+    {false, false, false, false, false, false}; // left, right, down, up...
 
 
     // == CONSTANTS [FOR READABILITY] ==========================
