@@ -1,9 +1,8 @@
-      @font-face {
-        font-family: "KeyanCoffee";
-        src: url("/libraries/KeyanCoffee.otf") format("opentype");
-      }
-
-
+/* Load font into CSS. */
+@font-face {
+    font-family: "KeyanCoffee";
+    src: url("/libraries/KeyanCoffee.otf") format("opentype");
+}
 
 body {
     margin: 0;
@@ -21,24 +20,22 @@ body {
     background-repeat: no-repeat;
 }
 
-.box {
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    background-color: red;
-    top: 0px;
-    left: 0px;
-}
+
+/* ======================= */
+/* Spectator-related items */
+/* ======================= */
+
+
 .spectator-div {
-    visibility: hidden; /* can change to hidden in js for optimizing*/
+    visibility: hidden;
     position: absolute;
-    top:15px;
+    top: 15px;
     height: 25vh;
     width: 100vw;
     display: flex;
-    z-index 0;
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
+    z-index: 0;
+    justify-content: center;
+    align-items: center;
 }
 
 .spectating-notifier {
@@ -47,7 +44,7 @@ body {
     font-size: 5em;
     font-weight: bold;
     text-align: center;
-    margin-top: 0; /* Remove extra top margin to maintain tight positioning */
+    margin-top: 0;
 }
 
 .backToMainButton {
@@ -65,9 +62,11 @@ body {
     font-family: "KeyanCoffee", monospace;
     transition: all 0.15s;
 }
+
 .backToMainButton:hover {
     background-color: rgba(0, 0, 0, 0.8);
 }
+
 .backToMainButton:active {
     background-color: rgba(0, 0, 0, 0.9);
 }
@@ -80,24 +79,43 @@ body {
 }
 
 
+/* =================== */
+/* Player-related items*/
+/* =================== */
+
+
+.box {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background-color: red;
+    top: 0px;
+    left: 0px;
+}
+
 .tag {
     font-family: "KeyanCoffee", Monospace;
-    letter-spacing:0.03em;
-    background-color: rgba(0, 0, 0,0.6);
+    letter-spacing: 0.03em;
+    background-color: rgba(0, 0, 0, 0.6);
     padding: 5px 9px;
     min-width: 50px;
     text-align: center;
-    color:white;
+    color: white;
     position: absolute;
-    font-size:1.2em;
+    font-size: 1.2em;
 }
 
 
+/* ================= */
+/* Map-related items */
+/* ================= */
+
+
 .island {
-    position:absolute;
+    position: absolute;
     background-color: black;
     border: none;
-    width:200px;
+    width: 200px;
     height: 20px;
     border-radius: 0px 0px 5px 5px;
 }
@@ -108,18 +126,25 @@ body {
     width: 100vw;
     z-index: -1;
     background-color: yellow;
-
 }
+
+
+/* =============== */
+/* Game-info items */
+/* =============== */
+
+
 .game-info-div {
-    height: 15vh; /* 15% of the viewport height */
+    height: 15vh;
     width: 100vw;
     background-color: #1e1e2f;
     position: fixed;
     bottom: 0;
     left: 0;
-    display: grid; /* Use grid layout */
-    grid-template-columns: 70% 30%; /* Two columns, 70% and 30% width */
+    display: grid;
+    grid-template-columns: 70% 30%;
 }
+
 .other-players-div {
     height: 100%;
     display: grid;
@@ -128,7 +153,6 @@ body {
     gap: -10px;
 }
 
-
 .other-player {
     background-color: rgb(169, 106, 18);
     border-radius: 10px;
@@ -136,19 +160,18 @@ body {
     padding: 10px 0px 0px 10px;
     background-image: url("/images/podium-welder-active.png");
     background-position-x: 85%;
-    background-repeat: no-repeat; /* Prevent the background from repeating */
-    background-size: 35%; /* Adjust the image size to fit the container */
+    background-repeat: no-repeat;
+    background-size: 35%;
     background-position-y: -10px;
 }
 
 .other-player-username {
     font-family: "KeyanCoffee", monospace;
     letter-spacing: 0.05em;
-    /*position: absolute;*/
     bottom: 15px;
     left: 15px;
-    margin:0;
-        padding:0;
+    margin: 0;
+    padding: 0;
     color: white;
     font-size: 1.5em;
     margin: 0;
@@ -156,49 +179,47 @@ body {
 }
 
 .other-player-health-bar {
-    /*position: absolute; */
     bottom: 50px;
     left: 15px;
     width: 110px;
     border: none;
     border-radius: 4px;
     height: 10px;
-    margin:0;
-    padding:0;
-
+    margin: 0;
+    padding: 0;
     background-color: black;
 }
 
 .other-player-health-bar::-webkit-progress-value {
-    background-color: red; /* Change this color as needed */
+    background-color: red;
 }
 
 .other-player-health-bar::-moz-progress-bar {
-    background-color: red; /* Change this color as needed */
+    background-color: red;
 }
 
 .other-player-hearts {
-    /*position: absolute; */
     bottom: 65px;
     left: 15px;
-    letter-spacing:0.5em;
+    letter-spacing: 0.5em;
     font-weight: bold;
-    color:red;
+    color: red;
     font-size: 1.95em;
-    margin:0;
-        padding:0;
+    margin: 0;
+    padding: 0;
 }
+
 .player-info {
-    height: 100%; /* Take up the full height of the parent */
+    height: 100%;
     background-color: #292931;
-    position: relative;  /* Make sure the child elements can be positioned inside */
-    padding-right: 20px;  /* Add some padding on the right side */
+    position: relative;
+    padding-right: 20px;
     padding-top: 20px;
-     background-image: url("/images/podium-golem-active.png");
-        background-position-x: 10%;
-        background-repeat: no-repeat; /* Prevent the background from repeating */
-        background-size: 20%; /* Adjust the image size to fit the container */
-        background-position-y: -10px;
+    background-image: url("/images/podium-golem-active.png");
+    background-position-x: 10%;
+    background-repeat: no-repeat;
+    background-size: 20%;
+    background-position-y: -10px;
 
 }
 
@@ -207,27 +228,28 @@ body {
     font-family: "KeyanCoffee", monospace;
     font-size: 2.8em;
     letter-spacing: 0.1em;
-    text-align: right;  /* Align the text to the right */
-    margin: 0;  /* Remove default margins */
+    text-align: right;
+    margin: 0;
 }
 
 .this-player-health {
-    position: absolute; /* Make it absolute inside the parent */
+    position: absolute;
     bottom: 45px;
-    right: 25px; /* Align the progress bar to the right */
+    right: 25px;
     width: 175px;
     height: 20px;
     margin: 0;
     padding: 0;
     background-color: black;
-    border-radius: 100px; /* Corrected property name */
+    border-radius: 100px;
 }
+
 .this-player-health::-webkit-progress-value {
-    background-color: red; /* Change this color as needed */
+    background-color: red;
 }
 
 .this-player-health::-moz-progress-bar {
-    background-color: red; /* Change this color as needed */
+    background-color: red;
 }
 
 .this-player-hearts {
@@ -235,30 +257,32 @@ body {
     color: red;
     letter-spacing: 0.4em;
     position: absolute;
-    bottom:30px;
+    bottom: 30px;
     right: 210px;
 }
 
+
+/* ============== */
+/* End-game items */
+/* ============== */
 
 .end-game-popup {
     z-index: 1001;
     visibility: hidden;
     background-color: rgba(0, 0, 0, 0.8);
     padding: 40px;
-    position: fixed; /* Ensures it stays centered even when scrolling */
+    position: fixed;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -65%); /* Perfect centering */
+    transform: translate(-50%, -65%);
     height: 50vh;
     width: 50vw;
     border-radius: 10px;
-
-    /* Center contents */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center; /* Ensure text is centered */
+    text-align: center;
 }
 
 .game-over-text {
@@ -292,9 +316,7 @@ body {
     transition: all 0.5s;
     cursor: pointer;
 }
+
 .over-return-to-main-button:hover {
     background-color: rgba(255, 255, 255, 0.4);
 }
-
-
-
